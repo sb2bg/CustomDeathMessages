@@ -1,0 +1,7 @@
+name: CustomDeathMessages
+version: '${project.version}'
+main: org.spartandevs.cdmr.customdeathmessages.CustomDeathMessages
+api-version: 1.19
+authors: [ Sullivan, JP ]
+description: Create highly customizable death messages
+website: spartandevs.org
