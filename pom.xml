@@ -13,7 +13,7 @@
 
     <description>Create highly customizable death messages</description>
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>19</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <url>spartandevs.org</url>
