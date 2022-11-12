@@ -5,3 +5,19 @@ api-version: 1.19
 authors: [ Sullivan, JP ]
 description: Create highly customizable death messages
 website: spartandevs.org
+
+commands:
+  cdm:
+    description: Add, remove, edit, disable, or list death messages
+    usage: /cdm <add|remove|edit|disable|list> [args]
+    aliases: [ customdeathmessages, customdeathmessage, customdeathmsg, customdeathmsgs, cdm ]
+
+permissions:
+  cdm.reload:
+    description: Reload the plugin
+  cdm.updates:
+    description: Receive update notifications
+  cdm.modify:
+    description: Modify death messages
+  cdm.admin:
+    description: Access to all commands
