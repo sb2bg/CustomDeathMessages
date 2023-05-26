@@ -49,10 +49,10 @@ melee-death-messages:
 # Placeholders: %victim%, %victim-nick%, %entity-name%, %victim-x%, %victim-y%, %victim-z%
 enable-custom-name-entity-messages: true
 custom-name-entity-messages:
-  - "&c%victim% &egot rocked by a %entity-name%"
+  - "&c%victim% &egot rocked by %entity-name%"
   - "&c%victim% &ewas put to sleep by %entity-name%"
   - "%entity-name% &eate &c%victim%'s &esoul"
-  - "&c%victim% &ewish he didn't fight %entity-name%"
+  - "&c%victim% &ewishes he didn't fight %entity-name%"
 
 # Placeholders for ALL below messages: %victim%, %victim-nick%, %victim-x%, %victim-y%, %victim-z%
 fall-damage-messages:
@@ -88,18 +88,18 @@ suicide-messages:
   - "&c%victim% &ehad a mental breakdown and died"
 
 fire-messages:
-  - "&c%victim% &edecided to stand in the fireplace"
+  - "&c%victim% &estood in the fireplace"
   - "&c%victim% &eplayed with fire"
 
 fire-tick-messages:
-  - "&c%victim% &ecaught on fire and did not stop, drop, and roll"
+  - "&c%victim% &eforgot to stop, drop, and roll"
 
 starvation-messages:
   - "&c%victim% &eforgot to eat"
   - "&c%victim%'s &emom said we have food at home"
 
 cactus-messages:
-  - "&c%victim% &ewas poked to death"
+  - "&c%victim% &ewas pricked to death"
   - "&c%victim% &edied to a &a&lcactus"
 
 potion-messages:
@@ -230,14 +230,14 @@ vindicator-messages:
   - "&c%victim% &efound Johnny... a &f&lvindicator?"
 
 pufferfish-messages:
-  - "&c%victim% &ewas pricked by an expanding sea cactus... please re-evalute your life"
+  - "&c%victim% &edied to a pufferfish..."
 
 polar-bear-messages:
   - "&c%victim% &ewas murdered by a nice &f&lpolar bear... &ewhich means he hit it! (someone kill him)"
   - "&c%victim% &egot turned to snow by a &f&lpolar bear"
 
 dolphin-messages:
-  - "&c%victim% &eprovoked a nice dolphin... what did they do to you?"
+  - "&c%victim% &eprovoked a dolphin... and lost?"
   - "&c%victim% &ehit a dolphin and they retaliated"
 
 panda-messages:
