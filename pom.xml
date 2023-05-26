@@ -11,9 +11,26 @@
 
     <name>CustomDeathMessages</name>
 
+    <profiles>
+        <profile>
+            <id>prod</id>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <property>
+                    <name>build.dir</name>
+                </property>
+            </activation>
+            <build>
+                <directory>${build.dir}</directory>
+            </build>
+        </profile>
+    </profiles>
+
     <description>Create highly customizable death messages</description>
     <properties>
-        <java.version>19</java.version>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <url>spartandevs.org</url>
@@ -62,6 +79,10 @@
         <repository>
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>skullcreator-repo</id>
+            <url>https://github.com/deanveloper/SkullCreator/raw/mvn-repo/</url>
         </repository>
     </repositories>
 
