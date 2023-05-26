@@ -15,7 +15,7 @@ victim-message: '&e[&cDeathMessages&e] &eYou were killed by &c%killer%'
 head-name: "&c%victim%'s Head"
 do-lightning: true
 
-# Number between 0 and 1 (0 = 0%, 1 = 100%)
+# Number between 0 and 1 (0 = 0%, 0.5 = 50%, 1 = 100%)
 drop-head-percentage: 0.5
 
 # Enable Global Messages: enables global death messages
