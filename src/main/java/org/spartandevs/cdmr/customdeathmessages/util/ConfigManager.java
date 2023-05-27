@@ -2,6 +2,7 @@ package org.spartandevs.cdmr.customdeathmessages.util;
 
 import org.spartandevs.cdmr.customdeathmessages.CustomDeathMessages;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,10 +16,13 @@ public class ConfigManager {
     private boolean globalMessagesEnabled;
     private boolean doLightningStrike;
     private double dropHeadChance;
+    private String headName;
     private boolean doPvpMessages;
     private String killerMessage;
     private String victimMessage;
     private List<String> meleeMessages;
+    private boolean originalOnHoverEnabled;
+    private boolean itemOnHoverEnabled;
     private boolean debugEnabled;
 
     public ConfigManager(CustomDeathMessages plugin) {
@@ -41,10 +45,13 @@ public class ConfigManager {
         globalMessagesEnabled = plugin.getConfig().getBoolean("enable-global-messages");
         doLightningStrike = plugin.getConfig().getBoolean("do-lightning");
         dropHeadChance = plugin.getConfig().getDouble("drop-head-chance");
+        headName = plugin.getConfig().getString("head-name");
         doPvpMessages = plugin.getConfig().getBoolean("enable-pvp-messages");
         killerMessage = plugin.translateColorCodes(plugin.getConfig().getString("killer-message"));
         victimMessage = plugin.translateColorCodes(plugin.getConfig().getString("victim-message"));
         meleeMessages = plugin.getConfig().getStringList("melee-death-messages");
+        originalOnHoverEnabled = plugin.getConfig().getBoolean("original-hover-message");
+        itemOnHoverEnabled = plugin.getConfig().getBoolean("enable-item-hover");
         debugEnabled = plugin.getConfig().getBoolean("developer-mode");
     }
 
@@ -55,6 +62,11 @@ public class ConfigManager {
 
     public String getMessage(DeathCause cause) {
         List<String> messages = this.messages.get(cause);
+
+        if (invalidCollection(messages, cause.getPath(), plugin)) {
+            return null;
+        }
+
         return messages.get(new Random().nextInt(messages.size()));
     }
 
@@ -64,6 +76,10 @@ public class ConfigManager {
 
     public boolean dropHead() {
         return new Random().nextDouble() <= dropHeadChance;
+    }
+
+    public String getHeadName() {
+        return headName;
     }
 
     public boolean doPvpMessages() {
@@ -86,11 +102,32 @@ public class ConfigManager {
         return globalMessagesEnabled;
     }
 
+    public String getMeleeMessage() {
+        if (invalidCollection(meleeMessages, "melee-death-messages", plugin)) {
+            return null;
+        }
+
+        return meleeMessages.get(new Random().nextInt(meleeMessages.size()));
+    }
+
+    public boolean isOriginalOnHoverEnabled() {
+        return originalOnHoverEnabled;
+    }
+
+    public boolean isItemOnHoverEnabled() {
+        return itemOnHoverEnabled;
+    }
+
     public boolean isDebugEnabled() {
         return debugEnabled;
     }
 
-    public String getMeleeMessage() {
-        return meleeMessages.get(new Random().nextInt(meleeMessages.size()));
+    private static boolean invalidCollection(List<?> collection, String name, CustomDeathMessages plugin) {
+        if (collection == null || collection.isEmpty()) {
+            plugin.getLogger().warning(MessageFormat.format("No messages found for {0}! Check your config.yml.", name));
+            return true;
+        }
+
+        return false;
     }
 }
