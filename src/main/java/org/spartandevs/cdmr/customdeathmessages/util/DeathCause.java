@@ -1,5 +1,6 @@
 package org.spartandevs.cdmr.customdeathmessages.util;
 
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 enum Range {
@@ -56,8 +57,26 @@ public enum DeathCause {
     }
 
     public static DeathCause fromDamageCause(EntityDamageEvent.DamageCause cause) {
+        if (cause == null) {
+            return DeathCause.UNKNOWN;
+        }
+
         for (DeathCause deathCause : DeathCause.values()) {
             if (deathCause.name().equals(cause.name())) {
+                return deathCause;
+            }
+        }
+
+        return DeathCause.UNKNOWN;
+    }
+
+    public static DeathCause fromEntityType(EntityType entityType) {
+        if (entityType == null) {
+            return DeathCause.UNKNOWN;
+        }
+
+        for (DeathCause deathCause : DeathCause.values()) {
+            if (deathCause.name().equals(entityType.name())) {
                 return deathCause;
             }
         }
