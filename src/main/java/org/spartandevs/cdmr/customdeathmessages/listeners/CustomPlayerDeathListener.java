@@ -7,7 +7,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.spartandevs.cdmr.customdeathmessages.CustomDeathMessages;
-import org.spartandevs.cdmr.customdeathmessages.chat.ChatColor;
 import org.spartandevs.cdmr.customdeathmessages.chat.DeathMessage;
 import org.spartandevs.cdmr.customdeathmessages.chat.JsonTransforms;
 import org.spartandevs.cdmr.customdeathmessages.chat.PlaceholderPopulator;
@@ -28,17 +27,16 @@ public class CustomPlayerDeathListener implements Listener {
         ConfigManager config = plugin.getConfigManager();
 
         JsonTransforms jsonTransforms = JsonTransforms.getTransforms(plugin);
-        ChatColor chatColor = new ChatColor(plugin);
         PlaceholderPopulator populator;
         ItemStack weapon = null;
 
         if (event.getKiller() == null) {
-            populator = new PlaceholderPopulator(chatColor, event.getVictim());
+            populator = new PlaceholderPopulator(plugin, event.getVictim());
         } else if (event.getKiller() instanceof Player killer) {
             weapon = getKillWeapon(killer);
-            populator = new PlaceholderPopulator(chatColor, event.getVictim(), event.getKiller(), weapon);
+            populator = new PlaceholderPopulator(plugin, event.getVictim(), event.getKiller(), weapon);
         } else {
-            populator = new PlaceholderPopulator(chatColor, event.getVictim(), event.getKiller());
+            populator = new PlaceholderPopulator(plugin, event.getVictim(), event.getKiller());
         }
 
         if (config.doLightningStrike()) {
