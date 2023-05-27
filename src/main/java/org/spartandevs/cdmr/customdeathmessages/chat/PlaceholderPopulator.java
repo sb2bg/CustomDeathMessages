@@ -6,11 +6,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.spartandevs.cdmr.customdeathmessages.CustomDeathMessages;
 
 import java.util.*;
 
 public class PlaceholderPopulator {
-    private final ChatColor chatColor;
+    private final CustomDeathMessages plugin;
 
     interface PlayerPropertyGetter {
         String get(Player player);
@@ -62,24 +63,24 @@ public class PlaceholderPopulator {
         }
     }
 
-    public PlaceholderPopulator(ChatColor chatColor, Player victim) {
-        this.chatColor = chatColor;
+    public PlaceholderPopulator(CustomDeathMessages plugin, Player victim) {
+        this.plugin = plugin;
 
         for (Map.Entry<String, PlayerPropertyGetter> entry : VICTIM.entrySet()) {
             addFrom(entry.getKey(), entry.getValue().get(victim));
         }
     }
 
-    public PlaceholderPopulator(ChatColor chatColor, Player victim, Entity killer) {
-        this(chatColor, victim);
+    public PlaceholderPopulator(CustomDeathMessages plugin, Player victim, Entity killer) {
+        this(plugin, victim);
 
         for (Map.Entry<String, EntityPropertyGetter> entry : ENTITY_KILLER.entrySet()) {
             addFrom(entry.getKey(), entry.getValue().get(killer));
         }
     }
 
-    public PlaceholderPopulator(ChatColor chatColor, Player victim, Entity killer, ItemStack item) {
-        this(chatColor, victim, killer);
+    public PlaceholderPopulator(CustomDeathMessages plugin, Player victim, Entity killer, ItemStack item) {
+        this(plugin, victim, killer);
 
         if (item == null || item.getType() == Material.AIR) {
             return;
@@ -102,6 +103,6 @@ public class PlaceholderPopulator {
             message = message.replace("%" + placeholder.getKey() + "%", placeholder.getValue());
         }
 
-        return chatColor.translateAlternateColorCodes(message);
+        return plugin.translateColorCodes(message);
     }
 }
