@@ -8,9 +8,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.spartandevs.cdmr.customdeathmessages.CustomDeathMessages;
 import org.spartandevs.cdmr.customdeathmessages.chat.ChatColor;
+import org.spartandevs.cdmr.customdeathmessages.chat.DeathMessage;
+import org.spartandevs.cdmr.customdeathmessages.chat.JsonTransforms;
 import org.spartandevs.cdmr.customdeathmessages.chat.PlaceholderPopulator;
 import org.spartandevs.cdmr.customdeathmessages.events.CustomPlayerDeathEvent;
 import org.spartandevs.cdmr.customdeathmessages.util.ConfigManager;
+
+import java.util.Objects;
 
 public class CustomPlayerDeathListener implements Listener {
     private final CustomDeathMessages plugin;
@@ -23,6 +27,7 @@ public class CustomPlayerDeathListener implements Listener {
     public void onPlayerDeath(CustomPlayerDeathEvent event) {
         ConfigManager config = plugin.getConfigManager();
 
+        JsonTransforms jsonTransforms = JsonTransforms.getTransforms(plugin);
         ChatColor chatColor = new ChatColor(plugin);
         PlaceholderPopulator populator;
         ItemStack weapon = null;
@@ -42,6 +47,7 @@ public class CustomPlayerDeathListener implements Listener {
 
         if (config.dropHead()) {
             ItemStack item = SkullCreator.itemFromUuid(event.getVictim().getUniqueId());
+            Objects.requireNonNull(item.getItemMeta()).setDisplayName(populator.replace(config.getHeadName()));
             event.getVictim().getWorld().dropItemNaturally(event.getVictim().getLocation(), item);
         }
 
@@ -51,13 +57,22 @@ public class CustomPlayerDeathListener implements Listener {
         }
 
         if (config.isGlobalMessageEnabled()) {
-            if (weapon != null && weapon.getType() == Material.AIR) {
-                event.setDeathMessage(populator.replace(config.getMeleeMessage()));
+            DeathMessageResolver resolver = weapon != null && weapon.getType() == Material.AIR
+                    ? config::getMeleeMessage
+                    : () -> config.getMessage(event.getDeathCause());
+
+            String message = resolver.getStrMessage();
+
+            if (message == null) {
                 return;
             }
 
-            event.setDeathMessage(populator.replace(config.getMessage(event.getDeathCause())));
+            event.setDeathMessage(new DeathMessage(message, populator, jsonTransforms));
         }
+    }
+
+    interface DeathMessageResolver {
+        String getStrMessage();
     }
 
     private static ItemStack getKillWeapon(Player killer) {
