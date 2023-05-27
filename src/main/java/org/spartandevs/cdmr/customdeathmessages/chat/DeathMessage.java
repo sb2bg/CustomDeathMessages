@@ -1,25 +1,30 @@
 package org.spartandevs.cdmr.customdeathmessages.chat;
 
 import net.md_5.bungee.api.chat.TextComponent;
-import org.spartandevs.cdmr.customdeathmessages.CustomDeathMessages;
 
 public class DeathMessage {
-    private final String message;
-    private final CustomDeathMessages plugin;
+    private String message;
+    private TextComponent textComponent;
 
-    public DeathMessage(String message, PlaceholderPopulator populator, CustomDeathMessages plugin) {
-        this.plugin = plugin;
+    public DeathMessage(String message, PlaceholderPopulator populator, JsonTransforms transforms) {
         this.message = populator.replace(message);
+        this.textComponent = transforms == JsonTransforms.NONE ? null : transforms.transform(this.message);
     }
 
-    public String getMessage() {
+    public String getStringMessage() {
         return message;
     }
 
-    public TextComponent getDeathMessage() {
-        TextComponent textComponent = new TextComponent(plugin.translateColorCodes(message));
-
-        plugin.getServer().spigot().broadcast(textComponent);
+    public TextComponent getTextComponent() {
         return textComponent;
+    }
+
+    public enum MessageType {
+        STRING,
+        JSON
+    }
+
+    public MessageType getMessageType() {
+        return textComponent == null ? MessageType.STRING : MessageType.JSON;
     }
 }
