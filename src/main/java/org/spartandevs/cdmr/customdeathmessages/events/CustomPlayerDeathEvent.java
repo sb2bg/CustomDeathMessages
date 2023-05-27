@@ -4,17 +4,17 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.spartandevs.cdmr.customdeathmessages.chat.DeathMessage;
 import org.spartandevs.cdmr.customdeathmessages.util.DeathCause;
 
 public class CustomPlayerDeathEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private DeathCause deathCause;
-    private SetDeathMessage setDeathMessage;
+    private DeathMessageSetter setDeathMessage;
     private Entity killer;
     private Player victim;
 
-    public CustomPlayerDeathEvent(DeathCause deathCause, Entity killer, Player victim, SetDeathMessage setDeathMessage) {
+    public CustomPlayerDeathEvent(DeathCause deathCause, Entity killer, Player victim, DeathMessageSetter setDeathMessage) {
         this.deathCause = deathCause;
         this.setDeathMessage = setDeathMessage;
         this.killer = killer;
@@ -25,7 +25,7 @@ public class CustomPlayerDeathEvent extends Event {
         return deathCause;
     }
 
-    public void setDeathMessage(String deathMessage) {
+    public void setDeathMessage(DeathMessage deathMessage) {
         setDeathMessage.setDeathMessage(deathMessage);
     }
 
@@ -46,7 +46,7 @@ public class CustomPlayerDeathEvent extends Event {
         return handlers;
     }
 
-    public interface SetDeathMessage {
-        void setDeathMessage(String deathMessage);
+    public interface DeathMessageSetter {
+        void setDeathMessage(DeathMessage deathMessage);
     }
 }
