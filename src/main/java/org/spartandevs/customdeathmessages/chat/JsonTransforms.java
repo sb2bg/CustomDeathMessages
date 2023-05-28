@@ -39,7 +39,7 @@ enum JsonTransformers {
         return component;
     }),
     ITEM_ON_HOVER((message, original, item) -> {
-        TextComponent component = new TextComponent(message);
+        TextComponent component = new TextComponent();
         TextComponent hoverItem = ItemSerializer.serializeItemStack(item);
 
         for (String s : message.split("%")) {
@@ -54,7 +54,7 @@ enum JsonTransformers {
         return component;
     }),
     ORIGINAL_AND_ITEM_ON_HOVER((message, original, item) -> {
-        TextComponent component = new TextComponent(message);
+        TextComponent component = new TextComponent();
         TextComponent hoverItem = ItemSerializer.serializeItemStack(item);
         Text originalHover = new Text(original);
 
