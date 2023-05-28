@@ -1,6 +1,8 @@
 package org.spartandevs.customdeathmessages.util;
 
-import org.spartandevs.cdmr.customdeathmessages.CustomDeathMessages;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
+import org.spartandevs.customdeathmessages.CustomDeathMessages;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -10,7 +12,6 @@ import java.util.Random;
 
 public class ConfigManager {
     private final CustomDeathMessages plugin;
-    private final ServerVersion serverVersion;
     private final Map<DeathCause, List<String>> messages = new HashMap<>();
     private boolean checkUpdatesEnabled;
     private boolean globalMessagesEnabled;
@@ -27,19 +28,14 @@ public class ConfigManager {
 
     public ConfigManager(CustomDeathMessages plugin) {
         this.plugin = plugin;
-        this.serverVersion = plugin.getServerVersion();
     }
 
     public void loadConfig() {
         plugin.saveDefaultConfig();
 
         for (DeathCause cause : DeathCause.values()) {
-            if (cause.validForVersion(serverVersion)) {
-                messages.put(cause, plugin.getConfig().getStringList(cause.getPath()));
-            }
+            messages.put(cause, plugin.getConfig().getStringList(cause.getPath()));
         }
-
-        System.out.println(messages);
 
         checkUpdatesEnabled = plugin.getConfig().getBoolean("enable-update-messages");
         globalMessagesEnabled = plugin.getConfig().getBoolean("enable-global-messages");
@@ -120,6 +116,23 @@ public class ConfigManager {
 
     public boolean isDebugEnabled() {
         return debugEnabled;
+    }
+
+    private void registerStatistics() {
+        Metrics metrics = new Metrics(plugin, 7287);
+        metrics.addCustomChart(new SimplePie("head_drop_percentage", () -> String.valueOf(dropHeadChance)));
+        metrics.addCustomChart(new SimplePie("give_killer_speed", () -> getBooleanString(plugin.getConfig().getBoolean("give-killer-speed")))); // legacy
+        metrics.addCustomChart(new SimplePie("heart_sucker", () -> getBooleanString(plugin.getConfig().getBoolean("heart-sucker")))); // legacy
+        metrics.addCustomChart(new SimplePie("do_lightning", () -> getBooleanString(doLightningStrike)));
+        metrics.addCustomChart(new SimplePie("enable_global_messages", () -> getBooleanString(globalMessagesEnabled)));
+        metrics.addCustomChart(new SimplePie("enable_pvp_messages", () -> getBooleanString(doPvpMessages)));
+        metrics.addCustomChart(new SimplePie("enable_entity_name_messages", () -> getBooleanString(plugin.getConfig().getBoolean("enable-entity-name-messages"))));
+        metrics.addCustomChart(new SimplePie("enable_original_hover_message", () -> getBooleanString(originalOnHoverEnabled)));
+        metrics.addCustomChart(new SimplePie("enable_item_tooltip_message", () -> getBooleanString(itemOnHoverEnabled)));
+    }
+
+    private static String getBooleanString(boolean value) {
+        return value ? "Enabled" : "Disabled";
     }
 
     private static boolean invalidCollection(List<?> collection, String name, CustomDeathMessages plugin) {
