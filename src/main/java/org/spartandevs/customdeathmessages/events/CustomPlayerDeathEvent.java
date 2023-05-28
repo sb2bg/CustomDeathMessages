@@ -4,18 +4,21 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.spartandevs.cdmr.customdeathmessages.chat.DeathMessage;
-import org.spartandevs.cdmr.customdeathmessages.util.DeathCause;
+import org.spartandevs.customdeathmessages.chat.DeathMessage;
+import org.spartandevs.customdeathmessages.chat.JsonTransforms;
+import org.spartandevs.customdeathmessages.util.DeathCause;
 
 public class CustomPlayerDeathEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    private DeathCause deathCause;
     private DeathMessageSetter setDeathMessage;
+    private DeathCause deathCause;
+    private final String originalDeathMessage;
     private Entity killer;
     private Player victim;
 
-    public CustomPlayerDeathEvent(DeathCause deathCause, Entity killer, Player victim, DeathMessageSetter setDeathMessage) {
+    public CustomPlayerDeathEvent(DeathCause deathCause, String originalDeathMessage, Entity killer, Player victim, DeathMessageSetter setDeathMessage) {
         this.deathCause = deathCause;
+        this.originalDeathMessage = originalDeathMessage;
         this.setDeathMessage = setDeathMessage;
         this.killer = killer;
         this.victim = victim;
@@ -25,8 +28,12 @@ public class CustomPlayerDeathEvent extends Event {
         return deathCause;
     }
 
-    public void setDeathMessage(DeathMessage deathMessage) {
-        setDeathMessage.setDeathMessage(deathMessage);
+    public void setDeathMessage(DeathMessage deathMessage, JsonTransforms jsonTransforms) {
+        setDeathMessage.setDeathMessage(deathMessage, jsonTransforms);
+    }
+
+    public String getOriginalDeathMessage() {
+        return originalDeathMessage;
     }
 
     public Entity getKiller() {
@@ -47,6 +54,6 @@ public class CustomPlayerDeathEvent extends Event {
     }
 
     public interface DeathMessageSetter {
-        void setDeathMessage(DeathMessage deathMessage);
+        void setDeathMessage(DeathMessage deathMessage, JsonTransforms jsonTransforms);
     }
 }
