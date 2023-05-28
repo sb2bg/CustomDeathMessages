@@ -1,12 +1,10 @@
-package org.spartandevs.cdmr.customdeathmessages.chat;
+package org.spartandevs.customdeathmessages.chat;
 
-import org.apache.commons.text.WordUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.spartandevs.cdmr.customdeathmessages.CustomDeathMessages;
+import org.spartandevs.customdeathmessages.CustomDeathMessages;
 
 import java.util.*;
 
@@ -22,7 +20,7 @@ public class PlaceholderPopulator {
     }
 
     interface ItemPropertyGetter {
-        String get(ItemMeta meta, Material type);
+        String get(ItemStack item);
     }
 
     private static final Map<String, PlayerPropertyGetter> VICTIM = new HashMap<>();
@@ -40,6 +38,7 @@ public class PlaceholderPopulator {
 
     static {
         ENTITY_KILLER.put("killer", Entity::getName);
+        ENTITY_KILLER.put("entity-name", Entity::getCustomName);
         ENTITY_KILLER.put("killer-x", e -> String.valueOf(e.getLocation().getBlockX()));
         ENTITY_KILLER.put("killer-y", e -> String.valueOf(e.getLocation().getBlockY()));
         ENTITY_KILLER.put("killer-z", e -> String.valueOf(e.getLocation().getBlockZ()));
@@ -50,9 +49,7 @@ public class PlaceholderPopulator {
     private static final Map<String, ItemPropertyGetter> ITEM = new HashMap<>();
 
     static {
-        ITEM.put("item", (meta, type) -> meta.hasDisplayName()
-                ? meta.getDisplayName()
-                : WordUtils.capitalize(type.name().replaceAll("_", " ").toLowerCase()));
+        ITEM.put("kill-weapon", ItemSerializer::getItemName);
     }
 
     private static final Set<Map.Entry<String, String>> populatedPlaceholders = new HashSet<>();
@@ -90,11 +87,8 @@ public class PlaceholderPopulator {
             return;
         }
 
-        ItemMeta meta = item.getItemMeta();
-        Material type = item.getType();
-
         for (Map.Entry<String, ItemPropertyGetter> entry : ITEM.entrySet()) {
-            addFrom(entry.getKey(), entry.getValue().get(meta, type));
+            addFrom(entry.getKey(), entry.getValue().get(item));
         }
     }
 
