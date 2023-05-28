@@ -67,6 +67,10 @@ suffocation-messages:
   - "&c%victim% &ecouldn't catch his breath while in a block"
   - "&c%victim% &ecouldn't breathe while inside of a block"
 
+cramming-messages:
+  - "&c%victim% &egot crushed and couldn't breathe"
+  - "Poor &c%victim%&e, he thought he could live in a 1x1 space"
+
 lava-messages:
   - "&c%victim% &eburned up in a pit of lava"
   - "&c%victim% &efell into a lava pool... say goodbye to his items"
@@ -100,7 +104,8 @@ starvation-messages:
 
 cactus-messages:
   - "&c%victim% &ewas pricked to death"
-  - "&c%victim% &edied to a &a&lcactus"
+  - "&c%victim% &etried acupuncture, but died"
+  - "&c%victim% &e"
 
 potion-messages:
   - "&c%victim% &edied of black magic"
@@ -115,6 +120,10 @@ lightning-messages:
 
 falling-block-messages:
   - "&c%victim% &ewas crushed by a falling block"
+
+freeze-messages:
+  - "&c%victim% &efroze to death. &b&lBrrrrr!"
+  - "&c%victim% &eforgot his winter jacket"
 
 slime-messages:
   - "&c%victim% &ewas crushed by a &a&lGIANT SLIME"
@@ -148,16 +157,29 @@ witherskeleton-messages:
 
 witherboss-messages:
   - "&c%victim% &egot his head blown off by the Wither"
+  - "&c%victim% &egot a Wither skull to the face"
 
 
 dragon-messages:
   - "&c%victim% &egot his guts ripped out by the &d&lEnder Dragon"
+  - "&c%victim% &egot his head blown off by the &d&lEnder Dragon"
+  - "&cc%victim% &efound a respawn screen, not the end portal"
+
+dragon-breath-messages:
+  - "&c%victim% &etook a bath in the &d&lEnder Dragon's &ebreath"
+  - "&c%victim% &etook a deep breath of the &d&lEnder Dragon's &e(nasty)"
 
 elderguardian-messages:
   - "&c%victim% &etried to clear a ocean monument but the &7&lElder Guardian &esaid no"
 
 tnt-messages:
   - "&c%victim% &egot his head blown off by &c&lTNT"
+  - "&c%victim% &egot blown up by &c&lTNT"
+  - "&e&lBOOM! &c%victim% &efound out about explosives the hard way"
+
+end-crystal-messages:
+  - "&c%victim% &egot pieced by an &d&lEnd Crystal"
+  - "&c%victim% &egot blown up by an &d&lEnd Crystal"
 
 creeper-messages:
   - "&c%victim% &egot blown up by a &a&lCreeper Ahhhh Man"
@@ -176,6 +198,8 @@ witch-messages:
 
 shulker-messages:
   - "&c%victim% &edied trying to get some &d&lshulker &eshells"
+  - "&c%victim% &egot shot by a &d&lShulker"
+  - "&eLeviooosa! &c%victim% &egot ruined by a &d&lShulker"
 
 guardian-messages:
   - "&c%victim% &egot killed by a &7&lGuardian... &esomehow?"
@@ -203,63 +227,84 @@ ravager-messages:
 
 illusioner-messages:
   - "&c%victim% &ewas sent to the illusion world by an Illusioner"
+  - "&c%victim% &ewas tricked by an &7&lIllusioner"
+  - "&c%victim% &ewas killed by an &7&lIllusioner"
 
 bee-messages:
   - "&c%victim% &ewas stung by a &lBEE"
 
 wolf-messages:
-  - "&c%victim% &ewas ripped apart by a &f&lwolf"
-  - "&c%victim% &eprovoked a &f&lwolf"
+  - "&c%victim% &ewas ripped apart by a &f&lWolf"
+  - "&c%victim% &eprovoked a &f&lWolf"
 
 llama-messages:
   - "&c%victim% &ewas spit to death by a Llama"
   - "&c%victim% &ecould not handle being spat on by a Llama"
 
 blaze-messages:
-  - "&c%victim% &ewas charred by a &6&lblaze"
-  - "&c%victim% &ewas turned into charcoal by a &6&lblaze"
+  - "&c%victim% &ewas charred by a &6&lBlaze"
+  - "&c%victim% &ewas turned into charcoal by a &6&lBlaze"
 
 stray-messages:
-  - "&c%victim% &ewas domed by a stray"
+  - "&c%victim% &ewas domed by a Stray"
 
 vex-messages:
-  - "&c%victim% &ewas eaten by a tiny flying (and annoying) &f&lvex"
+  - "&c%victim% &ewas eaten by a tiny flying (and annoying) &f&lVex"
+  - "&c%victim% &egot vexed by a &f&lVex"
 
 vindicator-messages:
-  - "&c%victim% &ewas hunted down by a &f&lvindicator"
-  - "&c%victim% &efound Johnny... a &f&lvindicator?"
+  - "&c%victim% &ewas hunted down by a &f&lVindicator"
+  - "&c%victim% &efound Johnny... a &f&lVindicator?"
+
+evoker-messages:
+  - "&c%victim% &ewas summoned to the dead by an &f&lEvoker"
+  - "&c%victim% &etried the wrath of an &f&lEvoker"
+  - "&c%victim% &ewas evoked by an &f&lEvoker"
 
 pufferfish-messages:
-  - "&c%victim% &edied to a pufferfish..."
+  - "&c%victim% &edied to a Pufferfish..."
 
 polar-bear-messages:
-  - "&c%victim% &ewas murdered by a nice &f&lpolar bear... &ewhich means he hit it! (someone kill him)"
-  - "&c%victim% &egot turned to snow by a &f&lpolar bear"
+  - "&c%victim% &ewas murdered by a nice Polar Bear... &ewhich means he hit it! (someone kill him)"
+  - "&c%victim% &egot turned to snow by a &f&lPolar Bear"
 
 dolphin-messages:
-  - "&c%victim% &eprovoked a dolphin... and lost?"
-  - "&c%victim% &ehit a dolphin and they retaliated"
+  - "&c%victim% &eprovoked a Dolphin... and lost?"
+  - "&c%victim% &ehit a Dolphin and they retaliated"
 
 panda-messages:
-  - "&c%victim% &ewas made into a pandas dinner"
-  - "&c%victim% &etried stealing a pandas bamboo"
+  - "&c%victim% &ewas made into a Pandas dinner"
+  - "&c%victim% &etried stealing a Pandas bamboo"
 
 piglin-messages:
-  - "&c%victim% &emet his maker against the new piglins"
-  - "&c%victim% &emade the piglins mad. I mean, we warned you, don't steal from them..."
-  - "&c%victim% &emissed the old zombie pigmen so he took his anger out on a piglin... and lost"
+  - "&c%victim% &emet his maker against the new Piglins"
+  - "&c%victim% &emade the Piglins mad. I mean, we warned you, don't steal from them..."
+  - "&c%victim% &emisses Zombie Pigmen, so he took his anger out on a Piglin... and lost"
 
 hoglin-messages:
-  - "&c%victim% &ewas charged by a hoglin, kind of rude?"
-  - "&c%victim% &edidn't read patch notes about hoglins"
+  - "&c%victim% &ewas charged by a Hoglin, kind of rude?"
+  - "&c%victim% &edidn't read the patch notes about Hoglins"
 
 zoglin-messages:
-  - "&c%victim% &eate a zoglins horn for dinner"
-  - "&c%victim% &ewas rammed by a zoglin"
+  - "&c%victim% &eate a Zoglins horn for dinner"
+  - "&c%victim% &ewas rammed by a Zoglin"
+  -
+goat-messages:
+  - "&c%victim% &ewas headbutted by a Goat"
+  - "&c%victim% &ewas impaled by a Goat horn"
 
 zombified-piglin-messages:
-  - "&c%victim% &etook a piglin to the overworld and was murdered by their new, not so friendly pet"
-  - "&c%victim% &edied to a transformed piglin"
+  - "&c%victim% &etook a Piglin to the overworld and was murdered by their new, not so friendly pet"
+  - "&c%victim% &edied to a Piglin... I mean, Pigman... I mean, Zombified Piglin"
+
+fox-messages:
+  - "&c%victim% &efoxed around and found out"
+  - "&c%victim% &ewas chewed up by a Fox"
+
+warden-messages:
+  - "&c%victim% &ewas killed by a Warden... I mean, what did you expect?"
+  - "&c%victim% &egot sonic boomed by a Warden"
+  - "&eA Warden protected the Deep Dark from &c%victim%"
 
 # This is for any messages that haven't been added, so if you die to a cause which doesn't have any messages,
 #  one of these messages will display instead. (Please report any missing messages in my spigot discussion)
