@@ -1,7 +1,6 @@
 package org.spartandevs.customdeathmessages.chat;
 
-import org.spartandevs.cdmr.customdeathmessages.CustomDeathMessages;
-import org.spartandevs.cdmr.customdeathmessages.util.ServerVersion;
+import org.spartandevs.customdeathmessages.CustomDeathMessages;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,10 +32,6 @@ public class ChatColor {
     }
 
     public String translateAlternateColorCodes(String textToTranslate) {
-        if (plugin.getServerVersion().isVersionOrHigher(ServerVersion.V16)) {
-            return translate(textToTranslate);
-        }
-
-        return org.bukkit.ChatColor.translateAlternateColorCodes('&', textToTranslate);
+        return translate(textToTranslate);
     }
 }
