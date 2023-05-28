@@ -41,14 +41,14 @@ enum HoverTransformers {
     ITEM_ON_HOVER((message, original, item) -> {
         TextComponent component = new TextComponent();
         TextComponent hoverItem = ItemSerializer.serializeItemStack(item);
+        String[] split = message.split("%kill-weapon%");
 
-        for (String s : message.split("%")) {
-            if (s.equals("kill-weapon")) {
+        for (int i = 0; i < split.length; i++) {
+            component.addExtra(split[i]);
+
+            if (i != split.length - 1) {
                 component.addExtra(hoverItem);
-                continue;
             }
-
-            component.addExtra(s);
         }
 
         return component;
@@ -57,14 +57,15 @@ enum HoverTransformers {
         TextComponent component = new TextComponent();
         TextComponent hoverItem = ItemSerializer.serializeItemStack(item);
         Text originalHover = new Text(original);
+        String[] split = message.split("%kill-weapon%");
 
-        for (String s : message.split("%")) {
-            if (s.equals("kill-weapon")) {
+        for (int i = 0; i < split.length; i++) {
+            TextComponent hoverChunk = new TextComponent(split[i]);
+            hoverChunk.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, originalHover));
+            component.addExtra(hoverChunk);
+
+            if (i != split.length - 1) {
                 component.addExtra(hoverItem);
-            } else {
-                TextComponent hoverChunk = new TextComponent(s);
-                hoverChunk.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, originalHover));
-                component.addExtra(hoverChunk);
             }
         }
 
