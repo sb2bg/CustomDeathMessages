@@ -1,4 +1,4 @@
-package org.spartandevs.cdmr.customdeathmessages.util;
+package org.spartandevs.customdeathmessages.util;
 
 import org.spartandevs.cdmr.customdeathmessages.CustomDeathMessages;
 

@@ -1,4 +1,4 @@
-package org.spartandevs.cdmr.customdeathmessages.listeners;
+package org.spartandevs.customdeathmessages.listeners;
 
 import dev.dbassett.skullcreator.SkullCreator;
 import org.bukkit.Material;

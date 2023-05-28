@@ -1,4 +1,4 @@
-package org.spartandevs.cdmr.customdeathmessages.chat;
+package org.spartandevs.customdeathmessages.chat;
 
 import org.spartandevs.cdmr.customdeathmessages.CustomDeathMessages;
 import org.spartandevs.cdmr.customdeathmessages.util.ServerVersion;

@@ -1,4 +1,4 @@
-package org.spartandevs.cdmr.customdeathmessages.listeners;
+package org.spartandevs.customdeathmessages.listeners;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

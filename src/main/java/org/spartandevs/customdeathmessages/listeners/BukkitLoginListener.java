@@ -1,4 +1,4 @@
-package org.spartandevs.cdmr.customdeathmessages.listeners;
+package org.spartandevs.customdeathmessages.listeners;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -6,7 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.spartandevs.cdmr.customdeathmessages.CustomDeathMessages;
+import org.spartandevs.customdeathmessages.CustomDeathMessages;
 
 import java.io.IOException;
 import java.io.InputStream;

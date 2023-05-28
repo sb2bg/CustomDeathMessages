@@ -1,4 +1,4 @@
-package org.spartandevs.cdmr.customdeathmessages;
+package org.spartandevs.customdeathmessages;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spartandevs.cdmr.customdeathmessages.chat.ChatColor;
