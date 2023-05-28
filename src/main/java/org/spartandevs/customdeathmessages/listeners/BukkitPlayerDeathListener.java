@@ -4,10 +4,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.spartandevs.cdmr.customdeathmessages.CustomDeathMessages;
-import org.spartandevs.cdmr.customdeathmessages.chat.DeathMessage;
-import org.spartandevs.cdmr.customdeathmessages.events.CustomPlayerDeathEvent;
-import org.spartandevs.cdmr.customdeathmessages.util.DeathCause;
+import org.spartandevs.customdeathmessages.CustomDeathMessages;
+import org.spartandevs.customdeathmessages.chat.DeathMessage;
+import org.spartandevs.customdeathmessages.chat.JsonTransforms;
+import org.spartandevs.customdeathmessages.events.CustomPlayerDeathEvent;
+import org.spartandevs.customdeathmessages.util.DeathCause;
 
 public class BukkitPlayerDeathListener implements Listener {
     public interface OriginalDeathMessageSetter {
@@ -36,17 +37,17 @@ public class BukkitPlayerDeathListener implements Listener {
         deathMessageSetter = event::setDeathMessage;
 
         CustomPlayerDeathEvent customPlayerDeathEvent = new CustomPlayerDeathEvent(
-                deathCause, killer, victim, this::setDeathMessage);
+                deathCause, event.getDeathMessage(), killer, victim, this::setDeathMessage);
 
         plugin.getServer().getPluginManager().callEvent(customPlayerDeathEvent);
     }
 
-    private void setDeathMessage(DeathMessage deathMessage) {
+    private void setDeathMessage(DeathMessage deathMessage, JsonTransforms jsonTransforms) {
         switch (deathMessage.getMessageType()) {
             case STRING -> deathMessageSetter.setDeathMessage(deathMessage.getStringMessage());
             case JSON -> {
                 deathMessageSetter.setDeathMessage("");
-                plugin.getServer().spigot().broadcast(deathMessage.getTextComponent());
+                plugin.getServer().spigot().broadcast(deathMessage.getTextComponent(jsonTransforms));
             }
         }
     }
