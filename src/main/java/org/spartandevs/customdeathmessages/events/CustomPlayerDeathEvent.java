@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.spartandevs.customdeathmessages.chat.DeathMessage;
-import org.spartandevs.customdeathmessages.chat.JsonTransforms;
+import org.spartandevs.customdeathmessages.chat.HoverTransforms;
 import org.spartandevs.customdeathmessages.util.DeathCause;
 
 public class CustomPlayerDeathEvent extends Event {
@@ -28,8 +28,8 @@ public class CustomPlayerDeathEvent extends Event {
         return deathCause;
     }
 
-    public void setDeathMessage(DeathMessage deathMessage, JsonTransforms jsonTransforms) {
-        setDeathMessage.setDeathMessage(deathMessage, jsonTransforms);
+    public void setDeathMessage(DeathMessage deathMessage, HoverTransforms hoverTransforms) {
+        setDeathMessage.setDeathMessage(deathMessage, hoverTransforms);
     }
 
     public String getOriginalDeathMessage() {
@@ -54,6 +54,6 @@ public class CustomPlayerDeathEvent extends Event {
     }
 
     public interface DeathMessageSetter {
-        void setDeathMessage(DeathMessage deathMessage, JsonTransforms jsonTransforms);
+        void setDeathMessage(DeathMessage deathMessage, HoverTransforms hoverTransforms);
     }
 }

@@ -6,7 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
 import org.spartandevs.customdeathmessages.chat.DeathMessage;
-import org.spartandevs.customdeathmessages.chat.JsonTransforms;
+import org.spartandevs.customdeathmessages.chat.HoverTransforms;
 import org.spartandevs.customdeathmessages.events.CustomPlayerDeathEvent;
 import org.spartandevs.customdeathmessages.util.DeathCause;
 
@@ -42,12 +42,12 @@ public class BukkitPlayerDeathListener implements Listener {
         plugin.getServer().getPluginManager().callEvent(customPlayerDeathEvent);
     }
 
-    private void setDeathMessage(DeathMessage deathMessage, JsonTransforms jsonTransforms) {
+    private void setDeathMessage(DeathMessage deathMessage, HoverTransforms hoverTransforms) {
         switch (deathMessage.getMessageType()) {
             case STRING -> deathMessageSetter.setDeathMessage(deathMessage.getStringMessage());
             case JSON -> {
                 deathMessageSetter.setDeathMessage("");
-                plugin.getServer().spigot().broadcast(deathMessage.getTextComponent(jsonTransforms));
+                plugin.getServer().spigot().broadcast(deathMessage.getTextComponent(hoverTransforms));
             }
         }
     }

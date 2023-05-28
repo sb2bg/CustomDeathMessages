@@ -17,8 +17,8 @@ public class DeathMessage {
         return populator.replace(message);
     }
 
-    public TextComponent getTextComponent(JsonTransforms transforms) {
-        return transforms.getTransformers() == JsonTransformers.NONE ? null : transforms.transform(getStringMessage());
+    public TextComponent getTextComponent(HoverTransforms transforms) {
+        return transforms.getTransformers() == HoverTransformers.NONE ? null : transforms.transform(getStringMessage());
     }
 
     public enum MessageType {

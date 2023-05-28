@@ -7,13 +7,13 @@ import org.bukkit.inventory.ItemStack;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
 import org.spartandevs.customdeathmessages.util.ConfigManager;
 
-public class JsonTransforms {
-    private final JsonTransformers transformers;
+public class HoverTransforms {
+    private final HoverTransformers transformers;
     private final String original;
     private final ItemStack item;
 
-    public JsonTransforms(CustomDeathMessages plugin, String original, ItemStack item) {
-        this.transformers = JsonTransformers.getTransforms(plugin, item);
+    public HoverTransforms(CustomDeathMessages plugin, String original, ItemStack item) {
+        this.transformers = HoverTransformers.getTransforms(plugin, item);
         this.original = original;
         this.item = item;
     }
@@ -22,7 +22,7 @@ public class JsonTransforms {
         return transformers.transform(message, original, item);
     }
 
-    public JsonTransformers getTransformers() {
+    public HoverTransformers getTransformers() {
         return transformers;
     }
 }
@@ -31,7 +31,7 @@ interface Transform {
     TextComponent transform(String message, String original, ItemStack item);
 }
 
-enum JsonTransformers {
+enum HoverTransformers {
     NONE((message, original, item) -> new TextComponent(message)),
     ORIGINAL_ON_HOVER((message, original, item) -> {
         TextComponent component = new TextComponent(message);
@@ -73,7 +73,7 @@ enum JsonTransformers {
 
     private final Transform transform;
 
-    JsonTransformers(Transform transform) {
+    HoverTransformers(Transform transform) {
         this.transform = transform;
     }
 
@@ -81,17 +81,17 @@ enum JsonTransformers {
         return transform.transform(message, original, item);
     }
 
-    public static JsonTransformers getTransforms(CustomDeathMessages plugin, ItemStack item) {
+    public static HoverTransformers getTransforms(CustomDeathMessages plugin, ItemStack item) {
         ConfigManager config = plugin.getConfigManager();
 
         if (config.isItemOnHoverEnabled() && config.isOriginalOnHoverEnabled()) {
-            return item != null ? JsonTransformers.ORIGINAL_AND_ITEM_ON_HOVER : JsonTransformers.ORIGINAL_ON_HOVER;
+            return item != null ? HoverTransformers.ORIGINAL_AND_ITEM_ON_HOVER : HoverTransformers.ORIGINAL_ON_HOVER;
         } else if (config.isItemOnHoverEnabled() && item != null) {
-            return JsonTransformers.ITEM_ON_HOVER;
+            return HoverTransformers.ITEM_ON_HOVER;
         } else if (config.isOriginalOnHoverEnabled()) {
-            return JsonTransformers.ORIGINAL_ON_HOVER;
+            return HoverTransformers.ORIGINAL_ON_HOVER;
         } else {
-            return JsonTransformers.NONE;
+            return HoverTransformers.NONE;
         }
     }
 }

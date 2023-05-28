@@ -8,7 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
 import org.spartandevs.customdeathmessages.chat.DeathMessage;
-import org.spartandevs.customdeathmessages.chat.JsonTransforms;
+import org.spartandevs.customdeathmessages.chat.HoverTransforms;
 import org.spartandevs.customdeathmessages.chat.PlaceholderPopulator;
 import org.spartandevs.customdeathmessages.events.CustomPlayerDeathEvent;
 import org.spartandevs.customdeathmessages.util.ConfigManager;
@@ -42,7 +42,7 @@ public class CustomPlayerDeathListener implements Listener {
             populator = new PlaceholderPopulator(plugin, event.getVictim(), event.getKiller());
         }
 
-        JsonTransforms jsonTransforms = new JsonTransforms(plugin, event.getOriginalDeathMessage(), weapon);
+        HoverTransforms hoverTransforms = new HoverTransforms(plugin, event.getOriginalDeathMessage(), weapon);
 
         if (config.doLightningStrike()) {
             event.getVictim().getWorld().strikeLightningEffect(event.getVictim().getLocation());
@@ -78,7 +78,7 @@ public class CustomPlayerDeathListener implements Listener {
                     ? DeathMessage.MessageType.JSON
                     : DeathMessage.MessageType.STRING;
 
-            event.setDeathMessage(new DeathMessage(message, populator, type), jsonTransforms);
+            event.setDeathMessage(new DeathMessage(message, populator, type), hoverTransforms);
         }
     }
 
