@@ -13,7 +13,7 @@ public class JsonTransforms {
     private final ItemStack item;
 
     public JsonTransforms(CustomDeathMessages plugin, String original, ItemStack item) {
-        this.transformers = JsonTransformers.getTransforms(plugin);
+        this.transformers = JsonTransformers.getTransforms(plugin, item);
         this.original = original;
         this.item = item;
     }
@@ -45,7 +45,7 @@ enum JsonTransformers {
         for (String s : message.split("%")) {
             if (s.equals("kill-weapon")) {
                 component.addExtra(hoverItem);
-                break;
+                continue;
             }
 
             component.addExtra(s);
@@ -81,12 +81,12 @@ enum JsonTransformers {
         return transform.transform(message, original, item);
     }
 
-    public static JsonTransformers getTransforms(CustomDeathMessages plugin) {
+    public static JsonTransformers getTransforms(CustomDeathMessages plugin, ItemStack item) {
         ConfigManager config = plugin.getConfigManager();
 
         if (config.isItemOnHoverEnabled() && config.isOriginalOnHoverEnabled()) {
-            return JsonTransformers.ORIGINAL_AND_ITEM_ON_HOVER;
-        } else if (config.isItemOnHoverEnabled()) {
+            return item != null ? JsonTransformers.ORIGINAL_AND_ITEM_ON_HOVER : JsonTransformers.ORIGINAL_ON_HOVER;
+        } else if (config.isItemOnHoverEnabled() && item != null) {
             return JsonTransformers.ITEM_ON_HOVER;
         } else if (config.isOriginalOnHoverEnabled()) {
             return JsonTransformers.ORIGINAL_ON_HOVER;
