@@ -11,58 +11,113 @@ enum Range {
 
 public enum DeathCause {
 
-    UNKNOWN("unknown-messages", ServerVersion.ALL, Range.EQUAL),
-    CUSTOM("unknown-messages", ServerVersion.ALL, Range.EQUAL),
-    PLAYER("player-messages", ServerVersion.ALL, Range.EQUAL),
-    ENTITY("entity-messages", ServerVersion.ALL, Range.EQUAL),
-    BLOCK("falling-block-messages", ServerVersion.ALL, Range.EQUAL),
-    VOID("void-messages", ServerVersion.ALL, Range.EQUAL),
-    FALL("fall-damage-messages", ServerVersion.ALL, Range.EQUAL),
-    FIRE("fire-messages", ServerVersion.ALL, Range.EQUAL),
-    FIRE_TICK("fire-tick-messages", ServerVersion.ALL, Range.EQUAL),
-    SUICIDE("suicide-messages", ServerVersion.ALL, Range.EQUAL),
-    LAVA("lava-messages", ServerVersion.ALL, Range.EQUAL),
-    DROWNING("drowning-messages", ServerVersion.ALL, Range.EQUAL),
-    STARVATION("starvation-messages", ServerVersion.ALL, Range.EQUAL),
-    //    POISON("potion-messages", ServerVersion.ALL, Range.EQUAL),
-    MAGIC("potion-messages", ServerVersion.ALL, Range.EQUAL),
-    WITHER("wither-messages", ServerVersion.ALL, Range.EQUAL),
-    //    ANVIL("anvil-messages", ServerVersion.ALL, Range.EQUAL),
-    FALLING_BLOCK("falling-block-messages", ServerVersion.ALL, Range.EQUAL),
-    //    THORNS("thorns-messages", ServerVersion.ALL, Range.EQUAL),
-//    DRAGON_BREATH("dragon-breath-messages", ServerVersion.ALL, Range.EQUAL),
-    SUFFOCATION("suffocation-messages", ServerVersion.ALL, Range.EQUAL);
-
+    UNKNOWN("unknown-messages"),
+    CUSTOM("unknown-messages"),
+    CUSTOM_NAMED_ENTITY("custom-name-entity-messages"),
+    PLAYER("global-pvp-death-messages"),
+    ENTITY("entity-messages"),
+    BLOCK("falling-block-messages"),
+    VOID("void-messages"),
+    FALL("fall-damage-messages"),
+    FIRE("fire-messages"),
+    FIRE_TICK("fire-tick-messages"),
+    SUICIDE("suicide-messages"),
+    LAVA("lava-messages"),
+    DROWNING("drowning-messages"),
+    STARVATION("starvation-messages"),
+    //    POISON("potion-messages"),
+    MAGIC("potion-messages"),
+    WITHER("wither-messages"),
+    WITHER_BOSS("witherboss-messages"),
+    //    ANVIL("anvil-messages"),
+    FALLING_BLOCK("falling-block-messages"),
+    THORNS("thorns-messages"), // todo: add thorns messages?
+    //    DRAGON_BREATH("dragon-breath-messages"),
+    SUFFOCATION("suffocation-messages"),
+    CONTACT("cactus-messages"),
+    BLOCK_EXPLOSION("tnt-messages"),
+    ENTITY_EXPLOSION("creeper-messages"),
+    LIGHTNING("lightning-messages"),
+    DRAGON_BREATH("dragon-breath-messages"),
+    FLY_INTO_WALL("elytra-messages"),
+    HOT_FLOOR("magma-block-messages"),
+    CRAMMING("cramming-messages"),
+    FREEZE("freeze-messages"),
+    SONIC_BOOM("warden-messages"),
+    ELDER_GUARDIAN("elderguardian-messages"),
+    WITHER_SKELETON("witherskeleton-messages"),
+    STRAY("stray-messages"),
+    ARROW("arrow-messages"),
+    FIREBALL("fireball-messages"),
+    SMALL_FIREBALL("fireball-messages"),
+    WITHER_SKULL("witherboss-messages"),
+    PRIMED_TNT("tnt-messages"),
+    FIREWORK("firework-messages"),
+    HUSK("husk-messages"),
+    SPECTRAL_ARROW("arrow-messages"),
+    SHULKER_BULLET("shulker-messages"),
+    DRAGON_FIREBALL("dragon-messages"),
+    ZOMBIE_VILLAGER("zombievillager-messages"),
+    EVOKER_FANGS("evoker-messages"),
+    EVOKER("evoker-messages"),
+    VEX("vex-messages"),
+    VINDICATOR("vindicator-messages"),
+    ILLUSIONER("illusioner-messages"),
+    CREEPER("creeper-messages"),
+    SKELETON("skeleton-messages"),
+    SPIDER("spider-messages"),
+    GIANT("zombie-messages"), // Maybe change to giant-messages?
+    ZOMBIE("zombie-messages"),
+    SLIME("slime-messages"),
+    GHAST("ghast-messages"),
+    ZOMBIFIED_PIGLIN("zombified-piglin-messages"),
+    ENDERMAN("enderman-messages"),
+    CAVE_SPIDER("cavespider-messages"),
+    SILVERFISH("silverfish-messages"),
+    BLAZE("blaze-messages"),
+    MAGMA_CUBE("magmacube-messages"),
+    ENDER_DRAGON("dragon-messages"),
+    WITCH("witch-messages"),
+    ENDERMITE("endermite-messages"),
+    GUARDIAN("guardian-messages"),
+    SHULKER("shulker-messages"),
+    WOLF("wolf-messages"),
+    IRON_GOLEM("golem-messages"),
+    POLAR_BEAR("polar-bear-messages"),
+    LLAMA("llama-messages"),
+    LLAMA_SPIT("llama-messages"),
+    ENDER_CRYSTAL("end-crystal-messages"),
+    PHANTOM("phantom-messages"),
+    TRIDENT("trident-messages"), // todo: add trident messages
+    PUFFERFISH("pufferfish-messages"),
+    DROWNED("drowned-messages"),
+    DOLPHIN("dolphin-messages"),
+    PANDA("panda-messages"),
+    PILLAGER("pillager-messages"),
+    RAVAGER("ravager-messages"),
+    FOX("fox-messages"),
+    BEE("bee-messages"),
+    HOGLIN("hoglin-messages"),
+    PIGLIN("piglin-messages"),
+    ZOGLIN("zoglin-messages"),
+    PIGLIN_BRUTE("piglin-messages"),
+    GOAT("goat-messages"),
+    WARDEN("warden-messages");
 
     private final String path;
-    private final ServerVersion messageVersion;
-    private final Range range;
 
-    DeathCause(String path, ServerVersion messageVersion, Range range) {
+    DeathCause(String path) {
         this.path = path;
-        this.messageVersion = messageVersion;
-        this.range = range;
     }
 
     public String getPath() {
         return path;
     }
 
-    public boolean validForVersion(ServerVersion serverVersion) {
-        return switch (range) {
-            case ABOVE -> messageVersion.isVersionOrHigher(serverVersion);
-            case BELOW -> messageVersion.isVersionOrLower(serverVersion);
-            case EQUAL -> messageVersion.isVersion(serverVersion);
-        };
-    }
 
     public static DeathCause fromDamageCause(EntityDamageEvent.DamageCause cause) {
-        if (cause == null) {
-            return DeathCause.UNKNOWN;
-        }
-
-        for (DeathCause deathCause : DeathCause.values()) {
-            if (deathCause.name().equals(cause.name())) {
+        for (DeathCause deathCause : values()) {
+            if (deathCause.name().equalsIgnoreCase(cause.name())) {
                 return deathCause;
             }
         }
@@ -70,13 +125,9 @@ public enum DeathCause {
         return DeathCause.UNKNOWN;
     }
 
-    public static DeathCause fromEntityType(EntityType entityType) {
-        if (entityType == null) {
-            return DeathCause.UNKNOWN;
-        }
-
-        for (DeathCause deathCause : DeathCause.values()) {
-            if (deathCause.name().equals(entityType.name())) {
+    public static DeathCause fromEntityType(EntityType entity) {
+        for (DeathCause deathCause : values()) {
+            if (deathCause.name().equalsIgnoreCase(entity.name())) {
                 return deathCause;
             }
         }
