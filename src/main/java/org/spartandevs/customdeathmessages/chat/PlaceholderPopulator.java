@@ -83,7 +83,7 @@ public class PlaceholderPopulator {
             return;
         }
 
-        if (!item.hasItemMeta() || !Objects.requireNonNull(item.getItemMeta()).hasDisplayName()) {
+        if (!item.hasItemMeta()) {
             return;
         }
 
