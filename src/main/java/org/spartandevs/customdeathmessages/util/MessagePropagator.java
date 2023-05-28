@@ -1,43 +1,24 @@
-package org.spartandevs.cdmr.customdeathmessages.util;
+package org.spartandevs.customdeathmessages.util;
 
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-import org.spartandevs.cdmr.customdeathmessages.CustomDeathMessages;
-import org.spartandevs.cdmr.customdeathmessages.chat.DeathMessage;
+import org.spartandevs.customdeathmessages.CustomDeathMessages;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.UUID;
 
 public class MessagePropagator {
-    public class MessageInfo {
-        private final DeathMessage deathMessage;
-        private final boolean customNamedEntity;
-
-        public MessageInfo(DeathMessage deathMessage, boolean customNamedEntity) {
-            this.deathMessage = deathMessage;
-            this.customNamedEntity = customNamedEntity;
-        }
-
-        public DeathMessage getDeathMessage() {
-            return deathMessage;
-        }
-
-        public boolean isCustomNamedEntity() {
-            return customNamedEntity;
-        }
-    }
-
     private final CustomDeathMessages plugin;
 
     public MessagePropagator(CustomDeathMessages plugin) {
         this.plugin = plugin;
     }
 
-    private final HashMap<UUID, MessageInfo> propagator = new HashMap<>();
+    private final HashMap<UUID, DeathCause> propagator = new HashMap<>();
     private final HashMap<UUID, BukkitTask> cancellers = new HashMap<>();
 
-    public MessageInfo getDeathMessage(UUID uuid) {
+    public DeathCause getDeathMessage(UUID uuid) {
         if (cancellers.containsKey(uuid)) {
             cancellers.remove(uuid).cancel();
         }
@@ -45,7 +26,7 @@ public class MessagePropagator {
         return propagator.remove(uuid);
     }
 
-    public void setDeathMessage(UUID uuid, MessageInfo messageInfo) {
+    public void setDeathMessage(UUID uuid, DeathCause messageInfo) {
         propagator.put(uuid, messageInfo);
 
         BukkitTask task = new BukkitRunnable() {
@@ -57,5 +38,10 @@ public class MessagePropagator {
         }.runTaskLaterAsynchronously(plugin, 20 * 5);
 
         cancellers.put(uuid, task);
+    }
+
+    public void clear() {
+        propagator.clear();
+        cancellers.clear();
     }
 }
