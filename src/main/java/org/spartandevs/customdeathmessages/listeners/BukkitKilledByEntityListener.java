@@ -29,7 +29,7 @@ public class BukkitKilledByEntityListener implements Listener {
         Entity entity = event.getDamager();
         DeathCause deathCause = DeathCause.fromEntityType(entity.getType());
 
-        if (entity instanceof Arrow arrow) {
+        if (entity instanceof Projectile arrow) {
             if (arrow.getShooter() instanceof Player) {
                 deathCause = DeathCause.PLAYER;
             }
