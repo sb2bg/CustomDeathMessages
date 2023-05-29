@@ -33,7 +33,7 @@ public class BukkitPlayerDeathListener implements Listener {
             return;
         }
 
-        DeathCause deathCause = DeathCause.fromDamageCause(victim.getLastDamageCause().getCause());
+        DeathCause deathCause = DeathCause.fromDamageCause(victim.getLastDamageCause().getCause(), plugin);
 
         deathMessageSetter = event::setDeathMessage;
 

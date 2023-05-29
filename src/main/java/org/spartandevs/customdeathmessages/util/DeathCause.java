@@ -2,6 +2,7 @@ package org.spartandevs.customdeathmessages.util;
 
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.spartandevs.customdeathmessages.CustomDeathMessages;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -85,7 +86,7 @@ public enum DeathCause {
     LLAMA_SPIT("llama-messages"),
     ENDER_CRYSTAL("end-crystal-messages"),
     PHANTOM("phantom-messages"),
-    TRIDENT("trident-messages"), // todo: add trident messages
+    TRIDENT("drowned-messages"),
     PUFFERFISH("pufferfish-messages"),
     DROWNED("drowned-messages"),
     DOLPHIN("dolphin-messages"),
@@ -114,23 +115,25 @@ public enum DeathCause {
     }
 
 
-    public static DeathCause fromDamageCause(EntityDamageEvent.DamageCause cause) {
+    public static DeathCause fromDamageCause(EntityDamageEvent.DamageCause cause, CustomDeathMessages plugin) {
         for (DeathCause deathCause : values()) {
             if (deathCause.name().equalsIgnoreCase(cause.name())) {
                 return deathCause;
             }
         }
 
+        plugin.getLogger().warning("Unknown damage cause '" + cause.name() + "'. If you would like this message to be added, please leave a message on the plugin discussion.");
         return DeathCause.UNKNOWN;
     }
 
-    public static DeathCause fromEntityType(EntityType entity) {
+    public static DeathCause fromEntityType(EntityType entity, CustomDeathMessages plugin) {
         for (DeathCause deathCause : values()) {
             if (deathCause.name().equalsIgnoreCase(entity.name())) {
                 return deathCause;
             }
         }
 
+        plugin.getLogger().warning("Unknown entity '" + entity.name() + "'. If you would like this message to be added, please leave a message on the plugin discussion.");
         return DeathCause.UNKNOWN;
     }
 
