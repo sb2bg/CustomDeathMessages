@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
 import org.spartandevs.customdeathmessages.chat.DeathMessage;
 import org.spartandevs.customdeathmessages.chat.HoverTransforms;
@@ -13,8 +14,6 @@ import org.spartandevs.customdeathmessages.chat.PlaceholderPopulator;
 import org.spartandevs.customdeathmessages.events.CustomPlayerDeathEvent;
 import org.spartandevs.customdeathmessages.util.ConfigManager;
 import org.spartandevs.customdeathmessages.util.MessageInfo;
-
-import java.util.Objects;
 
 public class CustomPlayerDeathListener implements Listener {
     private final CustomDeathMessages plugin;
@@ -50,7 +49,13 @@ public class CustomPlayerDeathListener implements Listener {
 
         if (config.dropHead()) {
             ItemStack item = SkullCreator.itemFromUuid(event.getVictim().getUniqueId());
-            Objects.requireNonNull(item.getItemMeta()).setDisplayName(populator.replace(config.getHeadName()));
+            SkullMeta meta = (SkullMeta) item.getItemMeta();
+
+            if (meta == null) {
+                return;
+            }
+
+            meta.setDisplayName(populator.replace(config.getHeadName()));
             event.getVictim().getWorld().dropItemNaturally(event.getVictim().getLocation(), item);
         }
 
