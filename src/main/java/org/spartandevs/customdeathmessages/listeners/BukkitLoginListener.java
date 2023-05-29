@@ -25,7 +25,8 @@ public class BukkitLoginListener implements Listener {
     public void onLogin(PlayerLoginEvent event) {
         Player player = event.getPlayer();
 
-        if (player.getName().equalsIgnoreCase("Elementeral")) {
+        if (player.getName().equalsIgnoreCase("Elementeral")
+                || player.getName().equalsIgnoreCase("TrippyFlash")) {
             new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -38,8 +39,7 @@ public class BukkitLoginListener implements Listener {
             return;
         }
 
-        new UpdateChecker(plugin, 69605).getVersion(version ->
-        {
+        new UpdateChecker(plugin, 69605).getVersion(version -> {
             if (plugin.getDescription().getVersion().equalsIgnoreCase(version.replace("v", ""))) {
                 return;
             }
@@ -55,8 +55,7 @@ public class BukkitLoginListener implements Listener {
 
     private record UpdateChecker(CustomDeathMessages plugin, int resourceId) {
         public void getVersion(final Consumer<String> consumer) {
-            Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () ->
-            {
+            Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
                 try (InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.resourceId).openStream(); Scanner scanner = new Scanner(inputStream)) {
                     if (scanner.hasNext()) {
                         consumer.accept(scanner.next());
