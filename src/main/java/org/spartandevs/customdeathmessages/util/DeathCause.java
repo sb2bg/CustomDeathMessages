@@ -3,6 +3,10 @@ package org.spartandevs.customdeathmessages.util;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.EntityDamageEvent;
 
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 enum Range {
     ABOVE,
     BELOW,
@@ -99,12 +103,14 @@ public enum DeathCause {
     BEE("bee-messages"),
     HOGLIN("hoglin-messages"),
     PIGLIN("piglin-messages"),
+    PIG_ZOMBIE("pigman-messages"),
     ZOGLIN("zoglin-messages"),
     PIGLIN_BRUTE("piglin-messages"),
     GOAT("goat-messages"),
     WARDEN("warden-messages");
 
     private final String path;
+    public static final Set<String> PATH_SET = Arrays.stream(DeathCause.values()).map(DeathCause::getPath).collect(Collectors.toSet());
 
     DeathCause(String path) {
         this.path = path;
@@ -133,5 +139,15 @@ public enum DeathCause {
         }
 
         return DeathCause.UNKNOWN;
+    }
+
+    public static DeathCause fromPath(String path) {
+        for (DeathCause deathCause : values()) {
+            if (deathCause.getPath().equalsIgnoreCase(path)) {
+                return deathCause;
+            }
+        }
+
+        return null;
     }
 }
