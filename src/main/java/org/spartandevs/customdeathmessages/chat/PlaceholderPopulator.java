@@ -4,13 +4,10 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.spartandevs.customdeathmessages.CustomDeathMessages;
 
 import java.util.*;
 
 public class PlaceholderPopulator {
-    private final CustomDeathMessages plugin;
-
     interface PlayerPropertyGetter {
         String get(Player player);
     }
@@ -60,24 +57,22 @@ public class PlaceholderPopulator {
         }
     }
 
-    public PlaceholderPopulator(CustomDeathMessages plugin, Player victim) {
-        this.plugin = plugin;
-
+    public PlaceholderPopulator(Player victim) {
         for (Map.Entry<String, PlayerPropertyGetter> entry : VICTIM.entrySet()) {
             addFrom(entry.getKey(), entry.getValue().get(victim));
         }
     }
 
-    public PlaceholderPopulator(CustomDeathMessages plugin, Player victim, Entity killer) {
-        this(plugin, victim);
+    public PlaceholderPopulator(Player victim, Entity killer) {
+        this(victim);
 
         for (Map.Entry<String, EntityPropertyGetter> entry : ENTITY_KILLER.entrySet()) {
             addFrom(entry.getKey(), entry.getValue().get(killer));
         }
     }
 
-    public PlaceholderPopulator(CustomDeathMessages plugin, Player victim, Entity killer, ItemStack item) {
-        this(plugin, victim, killer);
+    public PlaceholderPopulator(Player victim, Entity killer, ItemStack item) {
+        this(victim, killer);
 
         if (item == null || item.getType() == Material.AIR) {
             return;

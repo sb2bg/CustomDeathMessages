@@ -22,10 +22,6 @@ public class HoverTransforms {
     public TextComponent transform(String message) {
         return transformers.transform(message, original, item);
     }
-
-    public HoverTransformers getTransformers() {
-        return transformers;
-    }
 }
 
 interface Transform {
