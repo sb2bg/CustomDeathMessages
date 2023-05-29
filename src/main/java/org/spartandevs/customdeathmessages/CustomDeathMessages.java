@@ -61,12 +61,12 @@ public final class CustomDeathMessages extends JavaPlugin {
         commandManager.getCommandCompletions().registerStaticCompletion("configPaths", configPaths);
         commandManager.getCommandCompletions().registerStaticCompletion("deathMessagePaths", DeathCause.PATH_SET);
 
-        commandManager.getCommandConditions().addCondition(Integer.class, "indexInBounds", (c, exec, value) -> {
+        commandManager.getCommandConditions().addCondition(int.class, "indexInBounds", (c, exec, value) -> {
             if (value < 0) {
                 throw new InvalidCommandArgument("Index cannot be negative.");
             }
 
-            DeathCause path = exec.getResolvedArg("path", DeathCause.class);
+            DeathCause path = (DeathCause) exec.getResolvedArg(DeathCause.class);
             int count = configManager.getMessagesCount(path);
 
             if (value >= count) {
