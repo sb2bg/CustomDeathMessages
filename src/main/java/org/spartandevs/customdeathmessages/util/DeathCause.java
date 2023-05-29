@@ -19,7 +19,6 @@ public enum DeathCause {
     CUSTOM("unknown-messages"),
     CUSTOM_NAMED_ENTITY("custom-name-entity-messages"),
     PLAYER("global-pvp-death-messages"),
-    ENTITY("entity-messages"),
     BLOCK("falling-block-messages"),
     VOID("void-messages"),
     FALL("fall-damage-messages"),
