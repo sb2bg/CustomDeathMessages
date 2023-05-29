@@ -138,4 +138,14 @@ public enum DeathCause {
         return Arrays.stream(DeathCause.values()).filter(deathCause ->
                 deathCause.getPath().equalsIgnoreCase(cause.getPath())).collect(Collectors.toSet());
     }
+
+    public static DeathCause fromPathSingle(String path) {
+        for (DeathCause deathCause : values()) {
+            if (deathCause.getPath().equalsIgnoreCase(path)) {
+                return deathCause;
+            }
+        }
+
+        return null;
+    }
 }
