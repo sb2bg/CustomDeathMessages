@@ -49,7 +49,7 @@ public class PlaceholderPopulator {
         ITEM.put("kill-weapon", ItemSerializer::getItemName);
     }
 
-    private static final Set<Map.Entry<String, String>> populatedPlaceholders = new HashSet<>();
+    private final Set<Map.Entry<String, String>> populatedPlaceholders = new HashSet<>();
 
     private void addFrom(String key, String value) {
         if (value != null) {
@@ -65,6 +65,10 @@ public class PlaceholderPopulator {
 
     public PlaceholderPopulator(Player victim, Entity killer) {
         this(victim);
+
+        if (killer == null) {
+            return;
+        }
 
         for (Map.Entry<String, EntityPropertyGetter> entry : ENTITY_KILLER.entrySet()) {
             addFrom(entry.getKey(), entry.getValue().get(killer));
@@ -93,5 +97,10 @@ public class PlaceholderPopulator {
         }
 
         return ChatColor.translate(message);
+    }
+
+    @Override
+    public String toString() {
+        return populatedPlaceholders.toString();
     }
 }
