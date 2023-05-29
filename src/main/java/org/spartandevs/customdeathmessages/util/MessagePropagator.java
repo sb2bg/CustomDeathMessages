@@ -15,10 +15,10 @@ public class MessagePropagator {
         this.plugin = plugin;
     }
 
-    private final HashMap<UUID, DeathCause> propagator = new HashMap<>();
+    private final HashMap<UUID, MessageInfo> propagator = new HashMap<>();
     private final HashMap<UUID, BukkitTask> cancellers = new HashMap<>();
 
-    public DeathCause getDeathMessage(UUID uuid) {
+    public MessageInfo getDeathMessage(UUID uuid) {
         if (cancellers.containsKey(uuid)) {
             cancellers.remove(uuid).cancel();
         }
@@ -26,7 +26,7 @@ public class MessagePropagator {
         return propagator.remove(uuid);
     }
 
-    public void setDeathMessage(UUID uuid, DeathCause messageInfo) {
+    public void setDeathMessage(UUID uuid, MessageInfo messageInfo) {
         propagator.put(uuid, messageInfo);
 
         BukkitTask task = new BukkitRunnable() {
