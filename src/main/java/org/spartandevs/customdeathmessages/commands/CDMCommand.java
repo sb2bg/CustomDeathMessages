@@ -3,9 +3,11 @@ package org.spartandevs.customdeathmessages.commands;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import org.bukkit.command.CommandSender;
+import org.spartandevs.customdeathmessages.chat.ItemSerializer;
 import org.spartandevs.customdeathmessages.util.DeathCause;
 
 import java.util.List;
+import java.util.Set;
 
 @CommandAlias("customdeathmessages|deathmessages|cdm")
 public class CDMCommand extends CDMBaseCommand {
@@ -38,12 +40,25 @@ public class CDMCommand extends CDMBaseCommand {
     @Description("Lists all custom death messages and their indices.")
     @CommandCompletion("@deathMessagePaths")
     public void onList(CommandSender sender, DeathCause path) {
-        sendMessage(sender, "&aCustom death messages for &e&l" + path);
+        Set<DeathCause> causes = DeathCause.deathCauseWithPath(path);
+
+        sendMessage(sender, "&aCustom death messages for &e&l" + setToString(causes));
         List<String> messages = plugin.getConfigManager().listDeathMessages(path);
 
         for (int i = 0; i < messages.size(); i++) {
             sendMessage(sender, "&e&l" + i + ": &f" + messages.get(i));
         }
+    }
+
+    private static String setToString(Set<?> set) {
+        StringBuilder builder = new StringBuilder();
+
+        for (Object o : set) {
+            builder.append(ItemSerializer.capitalize(o.toString().toLowerCase().replace("_", " ")));
+            builder.append(", ");
+        }
+        builder.delete(builder.length() - 2, builder.length());
+        return builder.toString();
     }
 
     @Subcommand("remove")
