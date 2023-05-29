@@ -4,8 +4,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 public class DeathMessage {
     private final PlaceholderPopulator populator;
-    private String message;
-    private MessageType messageType;
+    private final String message;
+    private final MessageType messageType;
 
     public DeathMessage(String message, PlaceholderPopulator populator, MessageType messageType) {
         this.populator = populator;
@@ -18,7 +18,7 @@ public class DeathMessage {
     }
 
     public TextComponent getTextComponent(HoverTransforms transforms) {
-        return transforms.getTransformers() == HoverTransformers.NONE ? null : transforms.transform(getStringMessage());
+        return transforms.transform(getStringMessage());
     }
 
     public enum MessageType {
