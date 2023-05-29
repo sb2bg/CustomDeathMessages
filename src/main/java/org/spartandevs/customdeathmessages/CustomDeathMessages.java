@@ -39,10 +39,10 @@ public final class CustomDeathMessages extends JavaPlugin {
     private void registerCommands() {
         BukkitCommandManager commandManager = new BukkitCommandManager(this);
         commandManager.enableUnstableAPI("help");
-
+        
         commandManager.getCommandContexts().registerContext(DeathCause.class, c -> {
             String path = c.popFirstArg();
-            DeathCause cause = DeathCause.fromPath(path);
+            DeathCause cause = DeathCause.fromPathSingle(path);
 
             if (cause == null) {
                 throw new InvalidCommandArgument("Invalid path.");
