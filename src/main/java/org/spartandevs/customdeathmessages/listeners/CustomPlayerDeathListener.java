@@ -12,7 +12,7 @@ import org.spartandevs.customdeathmessages.chat.HoverTransforms;
 import org.spartandevs.customdeathmessages.chat.PlaceholderPopulator;
 import org.spartandevs.customdeathmessages.events.CustomPlayerDeathEvent;
 import org.spartandevs.customdeathmessages.util.ConfigManager;
-import org.spartandevs.customdeathmessages.util.DeathCause;
+import org.spartandevs.customdeathmessages.util.MessageInfo;
 
 import java.util.Objects;
 
@@ -60,13 +60,19 @@ public class CustomPlayerDeathListener implements Listener {
         }
 
         if (config.isGlobalMessageEnabled()) {
-            DeathCause propagated = plugin.getMessagePropagator().getDeathMessage(event.getVictim().getUniqueId());
+            MessageInfo propagated = plugin.getMessagePropagator().getDeathMessage(event.getVictim().getUniqueId());
+
+            if (propagated != null) {
+                populator = weapon == null
+                        ? new PlaceholderPopulator(plugin, event.getVictim(), propagated.killer())
+                        : new PlaceholderPopulator(plugin, event.getVictim(), propagated.killer(), weapon);
+            }
 
             DeathMessageResolver resolver = weapon != null && weapon.getType() == Material.AIR
                     ? config::getMeleeMessage
                     : (propagated == null
                     ? () -> config.getMessage(event.getDeathCause())
-                    : () -> config.getMessage(propagated));
+                    : () -> config.getMessage(propagated.deathCause()));
 
             String message = resolver.getMessage();
 
