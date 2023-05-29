@@ -133,21 +133,28 @@ public class ConfigManager {
         return value ? "Enabled" : "Disabled";
     }
 
-    private void updateConfigMessages(DeathCause cause) {
-        plugin.getConfig().set(cause.getPath(), messages.get(cause));
+    public void addCustomMessage(DeathCause cause, String message) {
+        Set<DeathCause> causes = DeathCause.deathCauseWithPath(cause);
+
+        for (DeathCause deathCause : causes) {
+            List<String> configMessages = messages.get(deathCause);
+            configMessages.add(message);
+            plugin.getConfig().set(deathCause.getPath(), configMessages);
+        }
+
         plugin.saveConfig();
     }
 
-    public void addCustomMessage(DeathCause cause, String message) {
-        List<String> configMessages = messages.get(cause);
-        configMessages.add(message);
-        updateConfigMessages(cause);
-    }
-
     public void removeCustomMessage(DeathCause cause, int index) {
-        List<String> configMessages = messages.get(cause);
-        configMessages.remove(index);
-        updateConfigMessages(cause);
+        Set<DeathCause> causes = DeathCause.deathCauseWithPath(cause);
+
+        for (DeathCause deathCause : causes) {
+            List<String> configMessages = messages.get(deathCause);
+            configMessages.remove(index);
+            plugin.getConfig().set(deathCause.getPath(), configMessages);
+        }
+
+        plugin.saveConfig();
     }
 
     public List<String> listDeathMessages(DeathCause cause) {
