@@ -12,6 +12,7 @@ public enum DeathCause {
 
     UNKNOWN("unknown-messages"),
     CUSTOM("unknown-messages"),
+    ENTITY_ATTACK("unknown-messages"),
     CUSTOM_NAMED_ENTITY("custom-name-entity-messages"),
     PLAYER("global-pvp-death-messages"),
     BLOCK("falling-block-messages"),
@@ -122,7 +123,6 @@ public enum DeathCause {
             }
         }
 
-        plugin.getLogger().warning("Unknown damage cause '" + cause.name() + "'. If you would like this message to be added, please leave a message on the plugin discussion.");
         return DeathCause.UNKNOWN;
     }
 
