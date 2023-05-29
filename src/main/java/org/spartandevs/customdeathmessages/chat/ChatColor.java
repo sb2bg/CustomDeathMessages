@@ -8,20 +8,25 @@ public class ChatColor {
     private static final char COLOR_CHAR = '§';
 
     public static String translate(String message) {
-        Matcher matcher = ChatColor.HEX_PATTERN.matcher(message);
+        Matcher matcher = HEX_PATTERN.matcher(message);
         StringBuilder buffer = new StringBuilder(message.length() + 4 * 8);
 
         while (matcher.find()) {
             String group = matcher.group(1);
 
-            matcher.appendReplacement(buffer, COLOR_CHAR + "x"
-                    + COLOR_CHAR + group.charAt(0) + COLOR_CHAR + group.charAt(1)
-                    + COLOR_CHAR + group.charAt(2) + COLOR_CHAR + group.charAt(3)
-                    + COLOR_CHAR + group.charAt(4) + COLOR_CHAR + group.charAt(5)
-            );
+            buffer.append(message, 0, matcher.start())
+                    .append(COLOR_CHAR).append("x").append(COLOR_CHAR)
+                    .append(group.charAt(0)).append(COLOR_CHAR).append(group.charAt(1))
+                    .append(COLOR_CHAR).append(group.charAt(2)).append(COLOR_CHAR)
+                    .append(group.charAt(3)).append(COLOR_CHAR).append(group.charAt(4))
+                    .append(COLOR_CHAR).append(group.charAt(5));
+
+            message = message.substring(matcher.end());
+            matcher.reset(message);
         }
 
-        return org.bukkit.ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString());
+        buffer.append(message);
+        return org.bukkit.ChatColor.translateAlternateColorCodes('&', buffer.toString());
     }
 
     public static String capitalize(String str) {

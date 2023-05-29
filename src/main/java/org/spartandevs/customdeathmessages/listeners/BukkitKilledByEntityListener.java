@@ -18,9 +18,11 @@ public class BukkitKilledByEntityListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerDeath(EntityDamageByEntityEvent event) {
-        if (!(event.getEntity() instanceof Player player)) {
+        if (!(event.getEntity() instanceof Player)) {
             return;
         }
+
+        Player player = (Player) event.getEntity();
 
         if (player.getHealth() - event.getFinalDamage() > 0) {
             return;
@@ -29,45 +31,32 @@ public class BukkitKilledByEntityListener implements Listener {
         Entity entity = event.getDamager();
         DeathCause deathCause = DeathCause.fromEntityType(entity.getType(), plugin);
 
-        if (entity instanceof Projectile proj) {
-            if (proj.getShooter() instanceof Player) {
-                deathCause = DeathCause.PLAYER;
-            }
-
-            if (proj.getShooter() instanceof Skeleton) {
-                deathCause = DeathCause.SKELETON;
-            }
-
-            if (proj.getShooter() instanceof Husk) {
-                deathCause = DeathCause.HUSK;
-            }
-
-            if (proj.getShooter() instanceof Stray) {
-                deathCause = DeathCause.STRAY;
-            }
-
-            if (proj.getShooter() instanceof WitherSkeleton) {
-                deathCause = DeathCause.WITHER_SKELETON;
-            }
-
-            if (proj.getShooter() instanceof Pillager) {
-                deathCause = DeathCause.PILLAGER;
-            }
-
-            if (proj.getShooter() instanceof Drowned) {
-                deathCause = DeathCause.DROWNED;
-            }
+        if (entity instanceof Projectile) {
+            Projectile proj = (Projectile) entity;
 
             if (proj.getShooter() != null) {
                 entity = (Entity) proj.getShooter();
+
+                if (entity instanceof Player) {
+                    deathCause = DeathCause.PLAYER;
+                } else if (entity instanceof Skeleton) {
+                    deathCause = DeathCause.SKELETON;
+                } else if (entity instanceof Husk) {
+                    deathCause = DeathCause.HUSK;
+                } else if (entity instanceof Stray) {
+                    deathCause = DeathCause.STRAY;
+                } else if (entity instanceof WitherSkeleton) {
+                    deathCause = DeathCause.WITHER_SKELETON;
+                } else if (entity instanceof Pillager) {
+                    deathCause = DeathCause.PILLAGER;
+                } else if (entity instanceof Drowned) {
+                    deathCause = DeathCause.DROWNED;
+                }
             }
         }
 
-        if (deathCause == DeathCause.UNKNOWN) {
-            return;
-        }
-
         // WITHER is used as an effect and entity damage cause, so we need to differentiate
+        // here, WITHER is the boss, so we use WITHER_BOSS
         if (deathCause == DeathCause.WITHER) {
             deathCause = DeathCause.WITHER_BOSS;
         }

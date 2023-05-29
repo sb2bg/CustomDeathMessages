@@ -11,7 +11,8 @@ import org.spartandevs.customdeathmessages.chat.ChatColor;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
@@ -54,14 +55,22 @@ public class BukkitLoginListener implements Listener {
         });
     }
 
-    private record UpdateChecker(CustomDeathMessages plugin, int resourceId) {
+    private static class UpdateChecker {
+        private final CustomDeathMessages plugin;
+        private final int resourceId;
+
+        public UpdateChecker(CustomDeathMessages plugin, int resourceId) {
+            this.plugin = plugin;
+            this.resourceId = resourceId;
+        }
+
         public void getVersion(final Consumer<String> consumer) {
             Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
-                try (InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.resourceId).openStream(); Scanner scanner = new Scanner(inputStream)) {
+                try (InputStream inputStream = new URI("https://api.spigotmc.org/legacy/update.php?resource=" + this.resourceId).toURL().openStream(); Scanner scanner = new Scanner(inputStream)) {
                     if (scanner.hasNext()) {
                         consumer.accept(scanner.next());
                     }
-                } catch (IOException exception) {
+                } catch (IOException | URISyntaxException exception) {
                     this.plugin.getLogger().info("Failed to check plugin for updates: " + exception.getMessage());
                 }
             });

@@ -45,13 +45,16 @@ public class BukkitPlayerDeathListener implements Listener {
 
     private void setDeathMessage(DeathMessage deathMessage, HoverTransforms hoverTransforms) {
         switch (deathMessage.getMessageType()) {
-            case STRING -> deathMessageSetter.setDeathMessage(deathMessage.getStringMessage());
-            case JSON -> {
+            case STRING:
+                deathMessageSetter.setDeathMessage(deathMessage.getStringMessage());
+                break;
+            case JSON: {
                 deathMessageSetter.setDeathMessage("");
                 TextComponent textComponent = deathMessage.getTextComponent(hoverTransforms);
                 plugin.getServer().spigot().broadcast(textComponent);
                 // Console doesn't receive spigot broadcasts, so we have to send it manually
                 plugin.getServer().getConsoleSender().sendMessage(textComponent.toLegacyText());
+                break;
             }
         }
     }

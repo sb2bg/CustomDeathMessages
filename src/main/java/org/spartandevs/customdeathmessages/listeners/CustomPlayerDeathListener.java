@@ -13,6 +13,7 @@ import org.spartandevs.customdeathmessages.chat.HoverTransforms;
 import org.spartandevs.customdeathmessages.chat.PlaceholderPopulator;
 import org.spartandevs.customdeathmessages.events.CustomPlayerDeathEvent;
 import org.spartandevs.customdeathmessages.util.ConfigManager;
+import org.spartandevs.customdeathmessages.util.DeathCause;
 import org.spartandevs.customdeathmessages.util.MessageInfo;
 
 public class CustomPlayerDeathListener implements Listener {
@@ -30,15 +31,16 @@ public class CustomPlayerDeathListener implements Listener {
         ItemStack weapon = null;
 
         if (event.getKiller() == null) {
-            populator = new PlaceholderPopulator(plugin, event.getVictim());
-        } else if (event.getKiller() instanceof Player killer) {
+            populator = new PlaceholderPopulator(event.getVictim());
+        } else if (event.getKiller() instanceof Player) {
+            Player killer = (Player) event.getKiller();
             weapon = getKillWeapon(killer);
 
             populator = config.isItemOnHoverEnabled()
-                    ? new PlaceholderPopulator(plugin, event.getVictim(), event.getKiller())
-                    : new PlaceholderPopulator(plugin, event.getVictim(), event.getKiller(), weapon);
+                    ? new PlaceholderPopulator(event.getVictim(), event.getKiller())
+                    : new PlaceholderPopulator(event.getVictim(), event.getKiller(), weapon);
         } else {
-            populator = new PlaceholderPopulator(plugin, event.getVictim(), event.getKiller());
+            populator = new PlaceholderPopulator(event.getVictim(), event.getKiller());
         }
 
         HoverTransforms hoverTransforms = new HoverTransforms(plugin, event.getOriginalDeathMessage(), weapon);
@@ -59,7 +61,8 @@ public class CustomPlayerDeathListener implements Listener {
             event.getVictim().getWorld().dropItemNaturally(event.getVictim().getLocation(), item);
         }
 
-        if (config.doPvpMessages() && event.getKiller() instanceof Player killer) {
+        if (config.doPvpMessages() && event.getKiller() instanceof Player) {
+            Player killer = (Player) event.getKiller();
             killer.sendMessage(populator.replace(config.getKillerMessage()));
             event.getVictim().sendMessage(populator.replace(config.getVictimMessage()));
         }
@@ -67,17 +70,23 @@ public class CustomPlayerDeathListener implements Listener {
         if (config.isGlobalMessageEnabled()) {
             MessageInfo propagated = plugin.getMessagePropagator().getDeathMessage(event.getVictim().getUniqueId());
 
+            if (propagated.deathCause() == DeathCause.UNKNOWN) {
+                propagated = null;
+            }
+
             if (propagated != null) {
                 populator = weapon == null
-                        ? new PlaceholderPopulator(plugin, event.getVictim(), propagated.killer())
-                        : new PlaceholderPopulator(plugin, event.getVictim(), propagated.killer(), weapon);
+                        ? new PlaceholderPopulator(event.getVictim(), propagated.killer())
+                        : new PlaceholderPopulator(event.getVictim(), propagated.killer(), weapon);
             }
+
+            MessageInfo finalPropagated = propagated; // for lambda
 
             DeathMessageResolver resolver = weapon != null && weapon.getType() == Material.AIR
                     ? config::getMeleeMessage
                     : (propagated == null
                     ? () -> config.getMessage(event.getDeathCause())
-                    : () -> config.getMessage(propagated.deathCause()));
+                    : () -> config.getMessage(finalPropagated.deathCause()));
 
             String message = resolver.getMessage();
 
