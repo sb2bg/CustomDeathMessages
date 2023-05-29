@@ -3,6 +3,7 @@ package org.spartandevs.customdeathmessages.chat;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
 import org.spartandevs.customdeathmessages.util.ConfigManager;
@@ -55,9 +56,9 @@ enum HoverTransformers {
     }),
     ORIGINAL_AND_ITEM_ON_HOVER((message, original, item) -> {
         TextComponent component = new TextComponent();
-        TextComponent hoverItem = ItemSerializer.serializeItemStack(item);
         Text originalHover = new Text(original);
         String[] split = message.split("%kill-weapon%");
+        TextComponent hoverItem = null;
 
         for (int i = 0; i < split.length; i++) {
             TextComponent hoverChunk = new TextComponent(split[i]);
@@ -65,6 +66,10 @@ enum HoverTransformers {
             component.addExtra(hoverChunk);
 
             if (i != split.length - 1) {
+                if (hoverItem == null) {
+                    hoverItem = ItemSerializer.serializeItemStack(item);
+                }
+
                 component.addExtra(hoverItem);
             }
         }
@@ -86,7 +91,9 @@ enum HoverTransformers {
         ConfigManager config = plugin.getConfigManager();
 
         if (config.isItemOnHoverEnabled() && config.isOriginalOnHoverEnabled()) {
-            return item != null ? HoverTransformers.ORIGINAL_AND_ITEM_ON_HOVER : HoverTransformers.ORIGINAL_ON_HOVER;
+            return item != null && item.getType() != Material.AIR
+                    ? HoverTransformers.ORIGINAL_AND_ITEM_ON_HOVER
+                    : HoverTransformers.ORIGINAL_ON_HOVER;
         } else if (config.isItemOnHoverEnabled() && item != null) {
             return HoverTransformers.ITEM_ON_HOVER;
         } else if (config.isOriginalOnHoverEnabled()) {
