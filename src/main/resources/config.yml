@@ -69,7 +69,7 @@ suffocation-messages:
 
 cramming-messages:
   - "&c%victim% &egot crushed and couldn't breathe"
-  - "Poor &c%victim%&e, he thought he could live in a 1x1 space"
+  - "&ePoor &c%victim%&e, he thought he could live in a 1x1 space"
 
 lava-messages:
   - "&c%victim% &eburned up in a pit of lava"
