@@ -8,7 +8,6 @@ import org.spartandevs.customdeathmessages.CustomDeathMessages;
 public class CDMBaseCommand extends BaseCommand {
     @Dependency
     protected CustomDeathMessages plugin;
-    protected static final String PERMISSION_PREFIX = "customdeathmessages.";
     private static final String MSG_PREFIX = "&8&l[&e&lCDM&8&l] ";
 
     protected void sendMessage(CommandSender sender, String message) {
