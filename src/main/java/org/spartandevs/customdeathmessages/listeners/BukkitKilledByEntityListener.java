@@ -63,6 +63,7 @@ public class BukkitKilledByEntityListener implements Listener {
             return;
         }
 
+        // WITHER is used as an effect and entity damage cause, so we need to differentiate
         if (deathCause == DeathCause.WITHER) {
             deathCause = DeathCause.WITHER_BOSS;
         }
