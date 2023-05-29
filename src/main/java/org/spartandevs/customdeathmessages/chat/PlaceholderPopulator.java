@@ -97,6 +97,6 @@ public class PlaceholderPopulator {
             message = message.replace("%" + placeholder.getKey() + "%", placeholder.getValue());
         }
 
-        return plugin.translateColorCodes(message);
+        return ChatColor.translate(message);
     }
 }

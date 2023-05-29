@@ -41,8 +41,8 @@ public class ConfigManager {
         dropHeadChance = plugin.getConfig().getDouble("drop-head-chance");
         headName = plugin.getConfig().getString("head-name");
         doPvpMessages = plugin.getConfig().getBoolean("enable-pvp-messages");
-        killerMessage = plugin.translateColorCodes(plugin.getConfig().getString("killer-message"));
-        victimMessage = plugin.translateColorCodes(plugin.getConfig().getString("victim-message"));
+        killerMessage = plugin.getConfig().getString("killer-message");
+        victimMessage = plugin.getConfig().getString("victim-message");
         meleeMessages = plugin.getConfig().getStringList("melee-death-messages");
         originalOnHoverEnabled = plugin.getConfig().getBoolean("original-hover-message");
         itemOnHoverEnabled = plugin.getConfig().getBoolean("enable-item-hover");

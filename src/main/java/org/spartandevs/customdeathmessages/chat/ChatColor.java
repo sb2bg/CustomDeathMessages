@@ -1,20 +1,13 @@
 package org.spartandevs.customdeathmessages.chat;
 
-import org.spartandevs.customdeathmessages.CustomDeathMessages;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ChatColor {
     private static final Pattern HEX_PATTERN = Pattern.compile("&#([A-Fa-f0-9]{6})");
     private static final char COLOR_CHAR = '§';
-    private final CustomDeathMessages plugin;
 
-    public ChatColor(CustomDeathMessages plugin) {
-        this.plugin = plugin;
-    }
-
-    private String translate(String message) {
+    public static String translate(String message) {
         Matcher matcher = ChatColor.HEX_PATTERN.matcher(message);
         StringBuilder buffer = new StringBuilder(message.length() + 4 * 8);
 
@@ -29,9 +22,5 @@ public class ChatColor {
         }
 
         return org.bukkit.ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString());
-    }
-
-    public String translateAlternateColorCodes(String textToTranslate) {
-        return translate(textToTranslate);
     }
 }

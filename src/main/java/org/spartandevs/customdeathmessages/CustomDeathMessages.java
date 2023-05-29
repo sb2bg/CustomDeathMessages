@@ -3,7 +3,6 @@ package org.spartandevs.customdeathmessages;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.InvalidCommandArgument;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.spartandevs.customdeathmessages.chat.ChatColor;
 import org.spartandevs.customdeathmessages.commands.CDMCommand;
 import org.spartandevs.customdeathmessages.listeners.BukkitKilledByEntityListener;
 import org.spartandevs.customdeathmessages.listeners.BukkitLoginListener;
@@ -19,7 +18,6 @@ import java.util.stream.IntStream;
 
 public final class CustomDeathMessages extends JavaPlugin {
     private final ConfigManager configManager = new ConfigManager(this);
-    private final ChatColor chatColor = new ChatColor(this);
     private final MessagePropagator messagePropagator = new MessagePropagator(this);
     private Set<String> configPaths;
 
@@ -93,10 +91,6 @@ public final class CustomDeathMessages extends JavaPlugin {
 
     public ConfigManager getConfigManager() {
         return configManager;
-    }
-
-    public String translateColorCodes(String message) {
-        return chatColor.translateAlternateColorCodes(message);
     }
 
     public void reload() {

@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
+import org.spartandevs.customdeathmessages.chat.ChatColor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +31,7 @@ public class BukkitLoginListener implements Listener {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    player.sendMessage(plugin.translateColorCodes("&bCustomDeathMessages: &7This server uses your plugin!"));
+                    player.sendMessage(ChatColor.translate("&bCustomDeathMessages: &7This server uses your plugin!"));
                 }
             }.runTaskLaterAsynchronously(plugin, 10L);
         }
@@ -45,10 +46,10 @@ public class BukkitLoginListener implements Listener {
             }
 
             if (player.hasPermission("cdm.updates")) {
-                player.sendMessage(plugin.translateColorCodes("&8-----------------------------------------------------"));
-                player.sendMessage(plugin.translateColorCodes("&bCustomDeathMessages: &7New version &f" + version + " &7is available."));
-                player.sendMessage(plugin.translateColorCodes("&fhttps://www.spigotmc.org/resources/customdeathmessages-cdm.69605/"));
-                player.sendMessage(plugin.translateColorCodes("&8-----------------------------------------------------"));
+                player.sendMessage(ChatColor.translate("&8-----------------------------------------------------"));
+                player.sendMessage(ChatColor.translate("&bCustomDeathMessages: &7New version &f" + version + " &7is available."));
+                player.sendMessage(ChatColor.translate("&fhttps://www.spigotmc.org/resources/customdeathmessages-cdm.69605/"));
+                player.sendMessage(ChatColor.translate("&8-----------------------------------------------------"));
             }
         });
     }
