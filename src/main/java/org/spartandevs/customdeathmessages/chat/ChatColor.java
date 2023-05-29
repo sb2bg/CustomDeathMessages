@@ -23,4 +23,26 @@ public class ChatColor {
 
         return org.bukkit.ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString());
     }
+
+    public static String capitalize(String str) {
+        if (str.isEmpty()) {
+            return str;
+        }
+
+        StringBuilder result = new StringBuilder(str.length());
+        boolean capitalizeNext = true;
+
+        for (char ch : str.toCharArray()) {
+            if (Character.isWhitespace(ch)) {
+                capitalizeNext = true;
+            } else if (capitalizeNext) {
+                ch = Character.toTitleCase(ch);
+                capitalizeNext = false;
+            }
+
+            result.append(ch);
+        }
+
+        return result.toString();
+    }
 }

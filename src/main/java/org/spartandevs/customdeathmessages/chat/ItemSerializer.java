@@ -8,6 +8,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.lang.reflect.Method;
+
 public class ItemSerializer {
     private static final String VERSION = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
 
@@ -34,37 +36,25 @@ public class ItemSerializer {
 
         return meta.hasDisplayName()
                 ? meta.getDisplayName()
-                : capitalize(item.getType().name().replaceAll("_", " ").toLowerCase());
-    }
-
-    private static String capitalize(String str) {
-        if (str.isEmpty()) {
-            return str;
-        }
-
-        StringBuilder result = new StringBuilder(str.length());
-        boolean capitalizeNext = true;
-
-        for (char ch : str.toCharArray()) {
-            if (Character.isWhitespace(ch)) {
-                capitalizeNext = true;
-            } else if (capitalizeNext) {
-                ch = Character.toTitleCase(ch);
-                capitalizeNext = false;
-            }
-
-            result.append(ch);
-        }
-
-        return result.toString();
+                : ChatColor.capitalize(item.getType().name().replaceAll("_", " ").toLowerCase());
     }
 
     private static synchronized String getNMSItemStackTag(ItemStack itemStack) {
         try {
-            Class<?> nmsItemClass = Class.forName("org.bukkit.craftbukkit." + VERSION + "inventory.CraftItemStack");
-            Object nmsItemStack = nmsItemClass.getMethod("asNMSCopy", ItemStack.class).invoke(null, itemStack);
-            return nmsItemStack.getClass().getMethod("getTag").invoke(nmsItemStack).toString();
+            Class<?> nmsCraftItemStack = Class.forName("org.bukkit.craftbukkit." + VERSION + ".inventory.CraftItemStack");
+            Class<?> nmsItemStack = Class.forName("net.minecraft.server." + VERSION + ".ItemStack");
+            Class<?> nbtCompoundClass = Class.forName("net.minecraft.server." + VERSION + ".NBTTagCompound");
+            Method saveNmsItemStack = nmsItemStack.getMethod("save", nbtCompoundClass);
+
+            Object nmsCopy = nmsCraftItemStack.getMethod("asNMSCopy", ItemStack.class).invoke(null, itemStack);
+            Object nmsNbtTagCompound = nbtCompoundClass.getConstructor().newInstance();
+            Object itemAsJson = saveNmsItemStack.invoke(nmsCopy, nmsNbtTagCompound);
+
+            System.out.println(itemAsJson);
+
+            return itemAsJson.toString();
         } catch (Throwable t) {
+            t.printStackTrace();
             return null;
         }
     }

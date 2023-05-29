@@ -3,7 +3,7 @@ package org.spartandevs.customdeathmessages.commands;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import org.bukkit.command.CommandSender;
-import org.spartandevs.customdeathmessages.chat.ItemSerializer;
+import org.spartandevs.customdeathmessages.chat.ChatColor;
 import org.spartandevs.customdeathmessages.util.DeathCause;
 
 import java.util.List;
@@ -54,7 +54,7 @@ public class CDMCommand extends CDMBaseCommand {
         StringBuilder builder = new StringBuilder();
 
         for (Object o : set) {
-            builder.append(ItemSerializer.capitalize(o.toString().toLowerCase().replace("_", " ")));
+            builder.append(ChatColor.capitalize(o.toString().toLowerCase().replace("_", " ")));
             builder.append(", ");
         }
         builder.delete(builder.length() - 2, builder.length());
