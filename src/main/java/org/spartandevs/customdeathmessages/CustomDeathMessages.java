@@ -1,6 +1,7 @@
 package org.spartandevs.customdeathmessages;
 
 import co.aikar.commands.BukkitCommandManager;
+import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.InvalidCommandArgument;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spartandevs.customdeathmessages.commands.CDMCommand;
@@ -39,7 +40,7 @@ public final class CustomDeathMessages extends JavaPlugin {
     private void registerCommands() {
         BukkitCommandManager commandManager = new BukkitCommandManager(this);
         commandManager.enableUnstableAPI("help");
-        
+
         commandManager.getCommandContexts().registerContext(DeathCause.class, c -> {
             String path = c.popFirstArg();
             DeathCause cause = DeathCause.fromPathSingle(path);
@@ -61,18 +62,24 @@ public final class CustomDeathMessages extends JavaPlugin {
 
         commandManager.getCommandConditions().addCondition(int.class, "indexInBounds", (c, exec, value) -> {
             if (value < 0) {
-                throw new InvalidCommandArgument("Index cannot be negative.");
+                throw new ConditionFailedException("Index cannot be negative.");
             }
 
             DeathCause path = (DeathCause) exec.getResolvedArg(DeathCause.class);
             int count = configManager.getMessagesCount(path);
 
             if (value >= count) {
-                throw new InvalidCommandArgument("Index " + value + " is out of bounds. The maximum index is " + (count - 1) + ".");
+                throw new ConditionFailedException("Index " + value + " is out of bounds. The maximum index is " + (count - 1) + ".");
             }
 
             if (count == 1) {
-                throw new InvalidCommandArgument("Cannot remove the last death message.");
+                throw new ConditionFailedException("Cannot remove the last death message.");
+            }
+        });
+
+        commandManager.getCommandConditions().addCondition("debugEnabled", c -> {
+            if (!configManager.isDebugEnabled()) {
+                throw new ConditionFailedException("Debug mode is not enabled.");
             }
         });
 

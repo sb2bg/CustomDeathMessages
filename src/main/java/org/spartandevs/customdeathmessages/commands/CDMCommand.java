@@ -3,6 +3,7 @@ package org.spartandevs.customdeathmessages.commands;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.spartandevs.customdeathmessages.chat.ChatColor;
 import org.spartandevs.customdeathmessages.util.DeathCause;
 
@@ -89,6 +90,21 @@ public class CDMCommand extends CDMBaseCommand {
     public void onSet(CommandSender sender, @Conditions("validConfigPath") String configPath, String value) {
         plugin.getConfigManager().setString(configPath, value);
         sendMessage(sender, "&aSet config value. You may need to reload the plugin for this to take effect.");
+    }
+
+    @Subcommand("debug shoot")
+    @Syntax("<player>")
+    @CommandCompletion("@players")
+    @CommandPermission("customdeathmessages.admin")
+    @Description("Shoots the player with an instant-kill arrow. Used for debugging.")
+    @Conditions("debugEnabled")
+    public void onDebugShoot(Player sender, @Optional Player target) {
+        if (target == null) {
+            target = sender;
+        }
+
+        target.damage(1000, sender);
+        sendMessage(sender, "&aShot " + target.getName() + " with an instant-kill arrow.");
     }
 
     @CatchUnknown
