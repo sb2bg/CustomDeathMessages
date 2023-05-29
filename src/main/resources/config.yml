@@ -52,24 +52,24 @@ custom-name-entity-messages:
   - "&c%victim% &egot rocked by %entity-name%"
   - "&c%victim% &ewas put to sleep by %entity-name%"
   - "%entity-name% &eate &c%victim%'s &esoul"
-  - "&c%victim% &ewishes he didn't fight %entity-name%"
+  - "&c%victim% &ewishes they didn't fight %entity-name%"
 
 # Placeholders for ALL below messages: %victim%, %victim-nick%, %victim-x%, %victim-y%, %victim-z%
 fall-damage-messages:
-  - "&c%victim% &emade himself a pancake on the ground"
+  - "&c%victim% &emade themself a pancake on the ground"
   - "&c%victim% &efell from a high spot"
 
 drowning-messages:
-  - "&c%victim% &efound out the hard way he doesn't have gills"
-  - "&c%victim% &ethought he could make it to oxygen in time"
+  - "&c%victim% &efound out the hard way they don't have gills"
+  - "&c%victim% &ethought they could make it to oxygen in time"
 
 suffocation-messages:
-  - "&c%victim% &ecouldn't catch his breath while in a block"
+  - "&c%victim% &ecouldn't catch their breath while in a block"
   - "&c%victim% &ecouldn't breathe while inside of a block"
 
 cramming-messages:
   - "&c%victim% &egot crushed and couldn't breathe"
-  - "&ePoor &c%victim%&e, he thought he could live in a 1x1 space"
+  - "&ePoor &c%victim%&e, they thought they could live in a 1x1 space"
 
 lava-messages:
   - "&c%victim% &eburned up in a pit of lava"
@@ -88,7 +88,7 @@ wither-messages:
   - "&c%victim% &ewithered away to the 4th dimension"
 
 suicide-messages:
-  - "&c%victim% &ekilled himself"
+  - "&c%victim% &ekilled themself"
   - "&c%victim% &ehad a mental breakdown and died"
 
 fire-messages:
@@ -134,7 +134,7 @@ zombie-messages:
   - "&c%victim% &ethought a &a&lZombie &ewas friendly"
 
 pigman-messages:
-  - "&c%victim% &eaggroed the &d&lPigmen, &eso they ate him"
+  - "&c%victim% &eaggroed the &d&lPigmen &eand got eaten alive"
 
 skeleton-messages:
   - "&c%victim% &egot sniped by a bony &f&lSkeleton"
@@ -265,7 +265,7 @@ pufferfish-messages:
   - "&c%victim% &edied to a Pufferfish..."
 
 polar-bear-messages:
-  - "&c%victim% &ewas murdered by a nice Polar Bear... &ewhich means he hit it! (someone kill him)"
+  - "&c%victim% &ewas murdered by a nice Polar Bear... &ewhich means they hit it! (someone kill them)"
   - "&c%victim% &egot turned to snow by a &f&lPolar Bear"
 
 dolphin-messages:
@@ -279,7 +279,7 @@ panda-messages:
 piglin-messages:
   - "&c%victim% &emet his maker against the new Piglins"
   - "&c%victim% &emade the Piglins mad. I mean, we warned you, don't steal from them..."
-  - "&c%victim% &emisses Zombie Pigmen, so he took his anger out on a Piglin... and lost"
+  - "&c%victim% &emisses Zombie Pigmen, so they took their anger out on a Piglin... and lost"
 
 hoglin-messages:
   - "&c%victim% &ewas charged by a Hoglin, kind of rude?"
@@ -315,7 +315,7 @@ unknown-messages:
 
 # The following messages only apply to projectiles shot by a mob, and not a player
 fireball-messages:
-  - "&c%victim% &ewas fireballed until he burnt to death"
+  - "&c%victim% &ewas fireballed until they burnt to death"
 
 arrow-messages:
   - "&c%victim% &elooked like a porcupine after getting shot to death"
