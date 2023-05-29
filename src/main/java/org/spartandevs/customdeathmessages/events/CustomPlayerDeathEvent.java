@@ -10,11 +10,11 @@ import org.spartandevs.customdeathmessages.util.DeathCause;
 
 public class CustomPlayerDeathEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    private DeathMessageSetter setDeathMessage;
-    private DeathCause deathCause;
+    private final DeathMessageSetter setDeathMessage;
+    private final DeathCause deathCause;
     private final String originalDeathMessage;
-    private Entity killer;
-    private Player victim;
+    private final Entity killer;
+    private final Player victim;
 
     public CustomPlayerDeathEvent(DeathCause deathCause, String originalDeathMessage, Entity killer, Player victim, DeathMessageSetter setDeathMessage) {
         this.deathCause = deathCause;
