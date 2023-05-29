@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
 import org.spartandevs.customdeathmessages.chat.DeathMessage;
 import org.spartandevs.customdeathmessages.chat.HoverTransforms;
@@ -24,23 +24,15 @@ public class CustomPlayerDeathListener implements Listener {
     @EventHandler
     public void onPlayerDeath(CustomPlayerDeathEvent event) {
         ConfigManager config = plugin.getConfigManager();
-
-        PlaceholderPopulator populator;
         ItemStack weapon = null;
 
-        if (event.getKiller() == null) {
-            populator = new PlaceholderPopulator(event.getVictim());
-        } else if (event.getKiller() instanceof Player) {
+        if (event.getKiller() instanceof Player) {
             Player killer = (Player) event.getKiller();
             weapon = getKillWeapon(killer);
-
-            populator = config.isItemOnHoverEnabled()
-                    ? new PlaceholderPopulator(event.getVictim(), killer)
-                    : new PlaceholderPopulator(event.getVictim(), killer, weapon);
-        } else {
-            populator = new PlaceholderPopulator(event.getVictim(), event.getKiller());
         }
 
+        PlaceholderPopulator populator = new PlaceholderPopulator(event.getVictim(),
+                event.getKiller(), config.isItemOnHoverEnabled() ? null : weapon);
         HoverTransforms hoverTransforms = new HoverTransforms(plugin, event.getOriginalDeathMessage(), weapon);
 
         if (config.doLightningStrike()) {
@@ -49,13 +41,15 @@ public class CustomPlayerDeathListener implements Listener {
 
         if (config.dropHead()) {
             ItemStack item = SkullCreator.itemFromUuid(event.getVictim().getUniqueId());
-            SkullMeta meta = (SkullMeta) item.getItemMeta();
+            ItemMeta meta = item.getItemMeta();
 
             if (meta == null) {
                 return;
             }
 
             meta.setDisplayName(populator.replace(config.getHeadName()));
+            item.setItemMeta(meta);
+
             event.getVictim().getWorld().dropItemNaturally(event.getVictim().getLocation(), item);
         }
 
