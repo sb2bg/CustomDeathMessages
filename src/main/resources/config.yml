@@ -71,6 +71,10 @@ cramming-messages:
   - "&c%victim% &egot crushed and couldn't breathe"
   - "&ePoor &c%victim%&e, they thought they could live in a 1x1 space"
 
+thorns-messages:
+  - "&c%victim% &egot karma'd by &c%killer%'s &ethorns"
+  - "&c%victim% &egot the tables turned on them by &c%killer%'s &ethorns"
+
 lava-messages:
   - "&c%victim% &eburned up in a pit of lava"
   - "&c%victim% &efell into a lava pool... say goodbye to his items"
