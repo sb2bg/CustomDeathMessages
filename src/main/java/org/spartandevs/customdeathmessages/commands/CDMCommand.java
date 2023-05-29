@@ -56,13 +56,23 @@ public class CDMCommand extends CDMBaseCommand {
         sendMessage(sender, "&aRemoved death message.");
     }
 
-    @Subcommand("set")
+    @Subcommand("toggle")
     @Syntax("<path> <boolean>")
+    @CommandPermission("customdeathmessages.modify")
+    @Description("Toggles a config value.")
+    @CommandCompletion("@configPaths @nothing")
+    public void onToggle(CommandSender sender, @Conditions("validConfigPath") String configPath, boolean value) {
+        plugin.getConfigManager().setBoolean(configPath, value);
+        sendMessage(sender, "&aToggled config value to " + value + ".");
+    }
+
+    @Subcommand("set")
+    @Syntax("<path> <value>")
     @CommandPermission("customdeathmessages.modify")
     @Description("Sets a config value.")
     @CommandCompletion("@configPaths @nothing")
-    public void onSet(CommandSender sender, @Conditions("validConfigPath") String configPath, boolean value) {
-        plugin.getConfigManager().setBoolean(configPath, value);
+    public void onSet(CommandSender sender, @Conditions("validConfigPath") String configPath, String value) {
+        plugin.getConfigManager().setString(configPath, value);
         sendMessage(sender, "&aSet config value.");
     }
 
