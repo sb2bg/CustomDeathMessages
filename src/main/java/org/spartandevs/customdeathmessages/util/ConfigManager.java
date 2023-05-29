@@ -5,10 +5,7 @@ import org.bstats.charts.SimplePie;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
 
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class ConfigManager {
     private final CustomDeathMessages plugin;
@@ -32,6 +29,7 @@ public class ConfigManager {
 
     public void loadConfig() {
         plugin.saveDefaultConfig();
+        registerStatistics();
 
         for (DeathCause cause : DeathCause.values()) {
             messages.put(cause, plugin.getConfig().getStringList(cause.getPath()));
@@ -59,7 +57,7 @@ public class ConfigManager {
     public String getMessage(DeathCause cause) {
         List<String> messages = this.messages.get(cause);
 
-        if (invalidCollection(messages, cause.getPath(), plugin)) {
+        if (invalidCollection(messages, cause.getPath())) {
             return null;
         }
 
@@ -99,7 +97,7 @@ public class ConfigManager {
     }
 
     public String getMeleeMessage() {
-        if (invalidCollection(meleeMessages, "melee-death-messages", plugin)) {
+        if (invalidCollection(meleeMessages, "melee-death-messages")) {
             return null;
         }
 
@@ -135,7 +133,53 @@ public class ConfigManager {
         return value ? "Enabled" : "Disabled";
     }
 
-    private static boolean invalidCollection(List<?> collection, String name, CustomDeathMessages plugin) {
+    private void updateConfigMessages(DeathCause cause) {
+        plugin.getConfig().set(cause.getPath(), messages.get(cause));
+        plugin.saveConfig();
+    }
+
+    public void addCustomMessage(DeathCause cause, String message) {
+        List<String> configMessages = messages.get(cause);
+        configMessages.add(message);
+        updateConfigMessages(cause);
+    }
+
+    public void removeCustomMessage(DeathCause cause, int index) {
+        List<String> configMessages = messages.get(cause);
+        configMessages.remove(index);
+        updateConfigMessages(cause);
+    }
+
+    public List<String> listDeathMessages(DeathCause cause) {
+        return messages.get(cause);
+    }
+
+    public void setBoolean(String path, boolean value) {
+        plugin.getConfig().set(path, value);
+        plugin.saveConfig();
+    }
+
+    public void setDouble(String path, double value) {
+        plugin.getConfig().set(path, value);
+        plugin.saveConfig();
+    }
+
+    public void setString(String path, String value) {
+        plugin.getConfig().set(path, value);
+        plugin.saveConfig();
+    }
+
+    public int getMessagesCount(DeathCause cause) {
+        return messages.get(cause).size();
+    }
+
+    public Set<String> getConfigPaths() {
+        Set<String> set = plugin.getConfig().getKeys(true);
+        set.removeAll(DeathCause.PATH_SET);
+        return set;
+    }
+
+    private boolean invalidCollection(List<?> collection, String name) {
         if (collection == null || collection.isEmpty()) {
             plugin.getLogger().warning(MessageFormat.format("No messages found for {0}! Check your config.yml.", name));
             return true;
