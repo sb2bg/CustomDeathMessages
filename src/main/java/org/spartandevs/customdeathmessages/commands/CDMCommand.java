@@ -63,7 +63,7 @@ public class CDMCommand extends CDMBaseCommand {
     @CommandCompletion("@configPaths @nothing")
     public void onToggle(CommandSender sender, @Conditions("validConfigPath") String configPath, boolean value) {
         plugin.getConfigManager().setBoolean(configPath, value);
-        sendMessage(sender, "&aToggled config value to " + value + ".");
+        sendMessage(sender, "&aToggled config value to " + value + ". You may need to reload the plugin for this to take effect.");
     }
 
     @Subcommand("set")
@@ -73,7 +73,7 @@ public class CDMCommand extends CDMBaseCommand {
     @CommandCompletion("@configPaths @nothing")
     public void onSet(CommandSender sender, @Conditions("validConfigPath") String configPath, String value) {
         plugin.getConfigManager().setString(configPath, value);
-        sendMessage(sender, "&aSet config value.");
+        sendMessage(sender, "&aSet config value. You may need to reload the plugin for this to take effect.");
     }
 
     @CatchUnknown
