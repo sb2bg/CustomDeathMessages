@@ -7,12 +7,6 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-enum Range {
-    ABOVE,
-    BELOW,
-    EQUAL,
-}
-
 public enum DeathCause {
 
     UNKNOWN("unknown-messages"),
