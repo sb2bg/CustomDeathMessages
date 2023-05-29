@@ -13,8 +13,6 @@ import org.spartandevs.customdeathmessages.chat.HoverTransforms;
 import org.spartandevs.customdeathmessages.chat.PlaceholderPopulator;
 import org.spartandevs.customdeathmessages.events.CustomPlayerDeathEvent;
 import org.spartandevs.customdeathmessages.util.ConfigManager;
-import org.spartandevs.customdeathmessages.util.DeathCause;
-import org.spartandevs.customdeathmessages.util.MessageInfo;
 
 public class CustomPlayerDeathListener implements Listener {
     private final CustomDeathMessages plugin;
@@ -37,8 +35,8 @@ public class CustomPlayerDeathListener implements Listener {
             weapon = getKillWeapon(killer);
 
             populator = config.isItemOnHoverEnabled()
-                    ? new PlaceholderPopulator(event.getVictim(), event.getKiller())
-                    : new PlaceholderPopulator(event.getVictim(), event.getKiller(), weapon);
+                    ? new PlaceholderPopulator(event.getVictim(), killer)
+                    : new PlaceholderPopulator(event.getVictim(), killer, weapon);
         } else {
             populator = new PlaceholderPopulator(event.getVictim(), event.getKiller());
         }
@@ -68,25 +66,9 @@ public class CustomPlayerDeathListener implements Listener {
         }
 
         if (config.isGlobalMessageEnabled()) {
-            MessageInfo propagated = plugin.getMessagePropagator().getDeathMessage(event.getVictim().getUniqueId());
-
-            if (propagated.deathCause() == DeathCause.UNKNOWN) {
-                propagated = null;
-            }
-
-            if (propagated != null) {
-                populator = weapon == null
-                        ? new PlaceholderPopulator(event.getVictim(), propagated.killer())
-                        : new PlaceholderPopulator(event.getVictim(), propagated.killer(), weapon);
-            }
-
-            MessageInfo finalPropagated = propagated; // for lambda
-
             DeathMessageResolver resolver = weapon != null && weapon.getType() == Material.AIR
                     ? config::getMeleeMessage
-                    : (propagated == null
-                    ? () -> config.getMessage(event.getDeathCause())
-                    : () -> config.getMessage(finalPropagated.deathCause()));
+                    : () -> config.getMessage(event.getDeathCause());
 
             String message = resolver.getMessage();
 
