@@ -11,11 +11,11 @@ public final class MessageInfo {
         this.killer = killer;
     }
 
-    public DeathCause deathCause() {
+    public DeathCause getDeathCause() {
         return deathCause;
     }
 
-    public Entity killer() {
+    public Entity getKiller() {
         return killer;
     }
 }
