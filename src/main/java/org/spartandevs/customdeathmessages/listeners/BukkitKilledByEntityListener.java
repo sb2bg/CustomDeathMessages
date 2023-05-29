@@ -27,35 +27,39 @@ public class BukkitKilledByEntityListener implements Listener {
         }
 
         Entity entity = event.getDamager();
-        DeathCause deathCause = DeathCause.fromEntityType(entity.getType());
+        DeathCause deathCause = DeathCause.fromEntityType(entity.getType(), plugin);
 
-        if (entity instanceof Projectile arrow) {
-            if (arrow.getShooter() instanceof Player) {
+        if (entity instanceof Projectile proj) {
+            if (proj.getShooter() instanceof Player) {
                 deathCause = DeathCause.PLAYER;
             }
 
-            if (arrow.getShooter() instanceof Skeleton) {
+            if (proj.getShooter() instanceof Skeleton) {
                 deathCause = DeathCause.SKELETON;
             }
 
-            if (arrow.getShooter() instanceof Husk) {
+            if (proj.getShooter() instanceof Husk) {
                 deathCause = DeathCause.HUSK;
             }
 
-            if (arrow.getShooter() instanceof Stray) {
+            if (proj.getShooter() instanceof Stray) {
                 deathCause = DeathCause.STRAY;
             }
 
-            if (arrow.getShooter() instanceof WitherSkeleton) {
+            if (proj.getShooter() instanceof WitherSkeleton) {
                 deathCause = DeathCause.WITHER_SKELETON;
             }
 
-            if (arrow.getShooter() instanceof Pillager) {
+            if (proj.getShooter() instanceof Pillager) {
                 deathCause = DeathCause.PILLAGER;
             }
 
-            if (arrow.getShooter() != null) {
-                entity = (Entity) arrow.getShooter();
+            if (proj.getShooter() instanceof Drowned) {
+                deathCause = DeathCause.DROWNED;
+            }
+
+            if (proj.getShooter() != null) {
+                entity = (Entity) proj.getShooter();
             }
         }
 
