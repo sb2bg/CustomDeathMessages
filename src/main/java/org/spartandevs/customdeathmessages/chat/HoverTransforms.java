@@ -1,5 +1,6 @@
 package org.spartandevs.customdeathmessages.chat;
 
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
@@ -7,6 +8,10 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
 import org.spartandevs.customdeathmessages.util.ConfigManager;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class HoverTransforms {
     private final HoverTransformers transformers;
@@ -19,58 +24,58 @@ public class HoverTransforms {
         this.item = item;
     }
 
-    public TextComponent transform(String message) {
+    public BaseComponent[] transform(String message) {
         return transformers.transform(message, original, item);
     }
 }
 
 interface Transform {
-    TextComponent transform(String message, String original, ItemStack item);
+    BaseComponent[] transform(String message, String original, ItemStack item);
 }
 
 enum HoverTransformers {
-    NONE((message, original, item) -> new TextComponent(message)),
+    NONE((message, original, item) -> createBaseComponent(message)),
     ORIGINAL_ON_HOVER((message, original, item) -> {
-        TextComponent component = new TextComponent(message);
-        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(original)));
+        BaseComponent[] component = createBaseComponent(message);
+        setHoverEvent(component, new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(original)));
         return component;
     }),
     ITEM_ON_HOVER((message, original, item) -> {
-        TextComponent component = new TextComponent();
-        TextComponent hoverItem = ItemSerializer.serializeItemStack(item);
+        List<BaseComponent> component = new ArrayList<>();
+        BaseComponent hoverItem = ItemSerializer.serializeItemStack(item);
         String[] split = message.split("%kill-weapon%");
 
         for (int i = 0; i < split.length; i++) {
-            component.addExtra(split[i]);
+            addExtra(component, createBaseComponent(split[i]));
 
             if (i != split.length - 1) {
-                component.addExtra(hoverItem);
+                addExtra(component, hoverItem);
             }
         }
 
-        return component;
+        return createBaseComponent(component);
     }),
     ORIGINAL_AND_ITEM_ON_HOVER((message, original, item) -> {
-        TextComponent component = new TextComponent();
+        List<BaseComponent> component = new ArrayList<>();
         Text originalHover = new Text(original);
         String[] split = message.split("%kill-weapon%");
-        TextComponent hoverItem = null;
+        BaseComponent hoverItem = null;
 
         for (int i = 0; i < split.length; i++) {
-            TextComponent hoverChunk = new TextComponent(split[i]);
-            hoverChunk.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, originalHover));
-            component.addExtra(hoverChunk);
+            BaseComponent[] hoverChunk = createBaseComponent(split[i]);
+            setHoverEvent(hoverChunk, new HoverEvent(HoverEvent.Action.SHOW_TEXT, originalHover));
+            addExtra(component, hoverChunk);
 
             if (i != split.length - 1) {
                 if (hoverItem == null) {
                     hoverItem = ItemSerializer.serializeItemStack(item);
                 }
 
-                component.addExtra(hoverItem);
+                addExtra(component, hoverItem);
             }
         }
 
-        return component;
+        return createBaseComponent(component);
     });
 
     private final Transform transform;
@@ -79,7 +84,7 @@ enum HoverTransformers {
         this.transform = transform;
     }
 
-    public TextComponent transform(String message, String original, ItemStack item) {
+    public BaseComponent[] transform(String message, String original, ItemStack item) {
         return transform.transform(message, original, item);
     }
 
@@ -90,12 +95,34 @@ enum HoverTransformers {
             return item != null && item.getType() != Material.AIR
                     ? HoverTransformers.ORIGINAL_AND_ITEM_ON_HOVER
                     : HoverTransformers.ORIGINAL_ON_HOVER;
-        } else if (config.isItemOnHoverEnabled() && item != null) {
+        } else if (config.isItemOnHoverEnabled() && item != null && item.getType() != Material.AIR) {
             return HoverTransformers.ITEM_ON_HOVER;
         } else if (config.isOriginalOnHoverEnabled()) {
             return HoverTransformers.ORIGINAL_ON_HOVER;
         } else {
             return HoverTransformers.NONE;
         }
+    }
+
+    private static BaseComponent[] createBaseComponent(String message) {
+        return TextComponent.fromLegacyText(message);
+    }
+
+    private static void setHoverEvent(BaseComponent[] component, HoverEvent hoverEvent) {
+        for (BaseComponent baseComponent : component) {
+            baseComponent.setHoverEvent(hoverEvent);
+        }
+    }
+
+    private static BaseComponent[] createBaseComponent(List<BaseComponent> component) {
+        return component.toArray(new BaseComponent[0]);
+    }
+
+    private static void addExtra(List<BaseComponent> component, BaseComponent extra) {
+        component.add(extra);
+    }
+
+    private static void addExtra(List<BaseComponent> component, BaseComponent[] extra) {
+        component.addAll(Arrays.asList(extra));
     }
 }

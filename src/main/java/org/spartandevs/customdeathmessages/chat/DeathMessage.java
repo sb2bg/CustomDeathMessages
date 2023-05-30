@@ -1,6 +1,6 @@
 package org.spartandevs.customdeathmessages.chat;
 
-import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.BaseComponent;
 
 public class DeathMessage {
     private final PlaceholderPopulator populator;
@@ -17,7 +17,7 @@ public class DeathMessage {
         return populator.replace(message);
     }
 
-    public TextComponent getTextComponent(HoverTransforms transforms) {
+    public BaseComponent[] getTextComponent(HoverTransforms transforms) {
         return transforms.transform(getStringMessage());
     }
 

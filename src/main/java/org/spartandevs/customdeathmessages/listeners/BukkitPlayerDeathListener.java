@@ -1,6 +1,6 @@
 package org.spartandevs.customdeathmessages.listeners;
 
-import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -62,12 +62,22 @@ public class BukkitPlayerDeathListener implements Listener {
                 break;
             case JSON: {
                 deathMessageSetter.setDeathMessage("");
-                TextComponent textComponent = deathMessage.getTextComponent(hoverTransforms);
+                BaseComponent[] textComponent = deathMessage.getTextComponent(hoverTransforms);
                 plugin.getServer().spigot().broadcast(textComponent);
                 // Console doesn't receive spigot broadcasts, so we have to send it manually
-                plugin.getServer().getConsoleSender().sendMessage(textComponent.toLegacyText());
+                plugin.getServer().getConsoleSender().sendMessage(baseComponentArrayToString(textComponent));
                 break;
             }
         }
+    }
+
+    private static String baseComponentArrayToString(BaseComponent[] baseComponents) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (BaseComponent baseComponent : baseComponents) {
+            stringBuilder.append(baseComponent.toLegacyText());
+        }
+
+        return stringBuilder.toString();
     }
 }
