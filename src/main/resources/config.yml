@@ -2,14 +2,14 @@
 enable-update-messages: true
 
 # To use hex colors: &#hex
-# PvP Messages only for when  a player is killed by another player, enabled by default
+# PvP Messages only for when a player is killed by another player, enabled by default
 # Placeholders for pvp messages: %victim%, %victim-nick%, %killer%, %killer-nick%, %killer-x%, %killer-y%, %killer-z%, %victim-x%, %victim-y%, %victim-z%
 enable-pvp-messages: true
 killer-message: '&e[&cDeathMessages&e] &eYou killed &c%victim%'
 victim-message: '&e[&cDeathMessages&e] &eYou were killed by &c%killer%'
 
 # Toggleable features: set true to enable, false to disable. All features except lightning-effect are false by default.
-# Drop Head Percentage: self-explanatory, chance of a player head to drop (0 = 0%, 1 = 100%)
+# Drop Head Percentage: self-explanatory, chance of a player head to drop
 # Do Lightning: creates a lightning effect that will not harm or damage anything when the victim is killed. True by default.
 # Head Name: Sets the name of a head whenever dropped from a player.
 head-name: "&c%victim%'s Head"
@@ -25,8 +25,7 @@ enable-global-messages: true
 original-hover-message: false
 
 # You can add messages or remove any of these messages. Toggleable by boolean above.
-# This chooses a death message at random. You may add %kill-weapon% to any line in killed-death-messages.
-# Placeholders for melee messages: %victim%, %victim-nick%, %killer%, %killer-nick%, %kill-weapon%, %killer-x%, %killer-y%, %killer-z%, %victim-x%, %victim-y%, %victim-z%
+# Placeholders for melee messages: %kill-weapon%, %victim%, %victim-nick%, %killer%, %killer-nick%, %killer-x%, %killer-y%, %killer-z%, %victim-x%, %victim-y%, %victim-z%
 # Enable Item Hover: When hovering over the kill-weapons name, it will display the items enchantments, etc.
 enable-item-hover: false
 global-pvp-death-messages:
@@ -54,7 +53,7 @@ custom-name-entity-messages:
   - "%entity-name% &eate &c%victim%'s &esoul"
   - "&c%victim% &ewishes they didn't fight %entity-name%"
 
-# Placeholders for ALL below messages: %victim%, %victim-nick%, %victim-x%, %victim-y%, %victim-z%
+# Placeholders for ALL below messages: %victim%, %victim-nick%, %entity-name%, %victim-x%, %victim-y%, %victim-z%
 fall-damage-messages:
   - "&c%victim% &emade themself a pancake on the ground"
   - "&c%victim% &efell from a high spot"
@@ -311,13 +310,12 @@ warden-messages:
   - "&eA Warden protected the Deep Dark from &c%victim%"
 
 # This is for any messages that haven't been added, so if you die to a cause which doesn't have any messages,
-#  one of these messages will display instead. (Please report any missing messages in my spigot discussion)
+# one of these messages will display instead. (Please report any missing messages in my spigot discussion)
 unknown-messages:
   - "&c%victim% &edied to unknown causes"
   - "&c%victim% &edied"
   - "&c%victim% &ewas killed"
 
-# The following messages only apply to projectiles shot by a mob, and not a player
 fireball-messages:
   - "&c%victim% &ewas fireballed until they burnt to death"
 
