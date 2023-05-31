@@ -3,7 +3,6 @@ package org.spartandevs.customdeathmessages.chat;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
@@ -35,9 +34,10 @@ interface Transform {
 
 enum HoverTransformers {
     NONE((message, original, item) -> createBaseComponent(message)),
+    @SuppressWarnings("deprecation")
     ORIGINAL_ON_HOVER((message, original, item) -> {
         BaseComponent[] component = createBaseComponent(message);
-        setHoverEvent(component, new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(original)));
+        setHoverEvent(component, new HoverEvent(HoverEvent.Action.SHOW_TEXT, createBaseComponent(original)));
         return component;
     }),
     ITEM_ON_HOVER((message, original, item) -> {
@@ -55,9 +55,10 @@ enum HoverTransformers {
 
         return createBaseComponent(component);
     }),
+    @SuppressWarnings("deprecation")
     ORIGINAL_AND_ITEM_ON_HOVER((message, original, item) -> {
         List<BaseComponent> component = new ArrayList<>();
-        Text originalHover = new Text(original);
+        BaseComponent[] originalHover = createBaseComponent(original);
         String[] split = message.split("%kill-weapon%");
         BaseComponent[] hoverItem = null;
 

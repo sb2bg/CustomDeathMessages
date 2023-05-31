@@ -42,8 +42,7 @@ public class BukkitPlayerDeathListener implements Listener {
             killer = propagated.getKiller();
         }
 
-        // If the death was caused by an entity, we want to use the entity's death message
-        if (propagated != null && deathCause == DeathCause.ENTITY_ATTACK) {
+        if (propagated != null && (deathCause == DeathCause.UNKNOWN || deathCause == DeathCause.ENTITY_ATTACK)) {
             deathCause = propagated.getDeathCause();
         }
 
