@@ -13,6 +13,7 @@ import org.spartandevs.customdeathmessages.chat.HoverTransforms;
 import org.spartandevs.customdeathmessages.chat.PlaceholderPopulator;
 import org.spartandevs.customdeathmessages.events.CustomPlayerDeathEvent;
 import org.spartandevs.customdeathmessages.util.ConfigManager;
+import org.spartandevs.customdeathmessages.util.DeathCause;
 
 public class CustomPlayerDeathListener implements Listener {
     private final CustomDeathMessages plugin;
@@ -60,6 +61,10 @@ public class CustomPlayerDeathListener implements Listener {
         }
 
         if (config.isGlobalMessageEnabled()) {
+            if (event.getDeathCause() == DeathCause.UNKNOWN) {
+                plugin.getLogger().warning("Unknown death cause for killer " + event.getKiller().getType());
+            }
+
             DeathMessageResolver resolver = weapon != null && weapon.getType() == Material.AIR
                     ? config::getMeleeMessage
                     : () -> config.getMessage(event.getDeathCause());
@@ -82,7 +87,8 @@ public class CustomPlayerDeathListener implements Listener {
         String getMessage();
     }
 
+    @SuppressWarnings("deprecation") // 1.8 support
     private static ItemStack getKillWeapon(Player killer) {
-        return killer.getInventory().getItemInMainHand();
+        return killer.getInventory().getItemInHand();
     }
 }
