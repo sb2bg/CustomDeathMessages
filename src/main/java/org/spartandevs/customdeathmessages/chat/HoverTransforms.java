@@ -42,7 +42,7 @@ enum HoverTransformers {
     }),
     ITEM_ON_HOVER((message, original, item) -> {
         List<BaseComponent> component = new ArrayList<>();
-        BaseComponent hoverItem = ItemSerializer.serializeItemStack(item);
+        BaseComponent[] hoverItem = ItemSerializer.serializeItemStack(item);
         String[] split = message.split("%kill-weapon%");
 
         for (int i = 0; i < split.length; i++) {
@@ -59,7 +59,7 @@ enum HoverTransformers {
         List<BaseComponent> component = new ArrayList<>();
         Text originalHover = new Text(original);
         String[] split = message.split("%kill-weapon%");
-        BaseComponent hoverItem = null;
+        BaseComponent[] hoverItem = null;
 
         for (int i = 0; i < split.length; i++) {
             BaseComponent[] hoverChunk = createBaseComponent(split[i]);
@@ -104,11 +104,11 @@ enum HoverTransformers {
         }
     }
 
-    private static BaseComponent[] createBaseComponent(String message) {
+    public static BaseComponent[] createBaseComponent(String message) {
         return TextComponent.fromLegacyText(message);
     }
 
-    private static void setHoverEvent(BaseComponent[] component, HoverEvent hoverEvent) {
+    public static void setHoverEvent(BaseComponent[] component, HoverEvent hoverEvent) {
         for (BaseComponent baseComponent : component) {
             baseComponent.setHoverEvent(hoverEvent);
         }
@@ -116,10 +116,6 @@ enum HoverTransformers {
 
     private static BaseComponent[] createBaseComponent(List<BaseComponent> component) {
         return component.toArray(new BaseComponent[0]);
-    }
-
-    private static void addExtra(List<BaseComponent> component, BaseComponent extra) {
-        component.add(extra);
     }
 
     private static void addExtra(List<BaseComponent> component, BaseComponent[] extra) {
