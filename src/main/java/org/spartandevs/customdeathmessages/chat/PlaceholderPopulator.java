@@ -35,12 +35,17 @@ public class PlaceholderPopulator {
 
     static {
         ENTITY_KILLER.put("killer", Entity::getName);
-        ENTITY_KILLER.put("entity-name", Entity::getCustomName);
+        ENTITY_KILLER.put("entity-name", Entity::getName);
         ENTITY_KILLER.put("killer-x", e -> String.valueOf(e.getLocation().getBlockX()));
         ENTITY_KILLER.put("killer-y", e -> String.valueOf(e.getLocation().getBlockY()));
         ENTITY_KILLER.put("killer-z", e -> String.valueOf(e.getLocation().getBlockZ()));
-        ENTITY_KILLER.put("killer-nick", Entity::getCustomName);
         ENTITY_KILLER.put("killer-world", e -> e.getWorld().getName());
+    }
+
+    private static final Map<String, PlayerPropertyGetter> PLAYER_KILLER = new HashMap<>();
+
+    static {
+        PLAYER_KILLER.put("killer-nick", Player::getDisplayName);
     }
 
     private static final Map<String, ItemPropertyGetter> ITEM = new HashMap<>();
@@ -57,14 +62,10 @@ public class PlaceholderPopulator {
         }
     }
 
-    public PlaceholderPopulator(Player victim) {
+    public PlaceholderPopulator(Player victim, Entity killer, ItemStack item) {
         for (Map.Entry<String, PlayerPropertyGetter> entry : VICTIM.entrySet()) {
             addFrom(entry.getKey(), entry.getValue().get(victim));
         }
-    }
-
-    public PlaceholderPopulator(Player victim, Entity killer) {
-        this(victim);
 
         if (killer == null) {
             return;
@@ -73,10 +74,12 @@ public class PlaceholderPopulator {
         for (Map.Entry<String, EntityPropertyGetter> entry : ENTITY_KILLER.entrySet()) {
             addFrom(entry.getKey(), entry.getValue().get(killer));
         }
-    }
 
-    public PlaceholderPopulator(Player victim, Entity killer, ItemStack item) {
-        this(victim, killer);
+        if (killer instanceof Player) {
+            for (Map.Entry<String, PlayerPropertyGetter> entry : PLAYER_KILLER.entrySet()) {
+                addFrom(entry.getKey(), entry.getValue().get((Player) killer));
+            }
+        }
 
         if (item == null || item.getType() == Material.AIR) {
             return;
