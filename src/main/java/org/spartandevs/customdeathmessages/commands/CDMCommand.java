@@ -72,23 +72,33 @@ public class CDMCommand extends CDMBaseCommand {
         sendMessage(sender, "&aRemoved death message.");
     }
 
-    @Subcommand("toggle")
-    @Syntax("<path> <boolean>")
+    @Subcommand("set flag")
+    @Syntax("<path> <true|false>")
     @CommandPermission("customdeathmessages.modify")
-    @Description("Toggles a config value.")
-    @CommandCompletion("@configPaths @nothing")
-    public void onToggle(CommandSender sender, @Conditions("validConfigPath") String configPath, boolean value) {
+    @Description("Sets a config flag.")
+    @CommandCompletion("@boolConfigPaths true|false")
+    public void onSetBoolean(CommandSender sender, @Conditions("validBoolConfigPath") String configPath, boolean value) {
         plugin.getConfigManager().setBoolean(configPath, value);
-        sendMessage(sender, "&aToggled config value to " + value + ". You may need to reload the plugin for this to take effect.");
+        sendMessage(sender, "&aSet config value. You may need to reload the plugin for this to take effect.");
     }
 
-    @Subcommand("set")
+    @Subcommand("set message")
+    @Syntax("<path> <message>")
+    @CommandPermission("customdeathmessages.modify")
+    @Description("Sets a config message.")
+    @CommandCompletion("@stringConfigPaths @nothing")
+    public void onSetString(CommandSender sender, @Conditions("validStringConfigPath") String configPath, String value) {
+        plugin.getConfigManager().setString(configPath, value);
+        sendMessage(sender, "&aSet config value. You may need to reload the plugin for this to take effect.");
+    }
+
+    @Subcommand("set number")
     @Syntax("<path> <value>")
     @CommandPermission("customdeathmessages.modify")
-    @Description("Sets a config value.")
-    @CommandCompletion("@configPaths @nothing")
-    public void onSet(CommandSender sender, @Conditions("validConfigPath") String configPath, String value) {
-        plugin.getConfigManager().setString(configPath, value);
+    @Description("Sets a config number.")
+    @CommandCompletion("@numConfigPaths @nothing")
+    public void onSetNumber(CommandSender sender, @Conditions("validNumConfigPath") String configPath, double value) {
+        plugin.getConfigManager().setDouble(configPath, value);
         sendMessage(sender, "&aSet config value. You may need to reload the plugin for this to take effect.");
     }
 

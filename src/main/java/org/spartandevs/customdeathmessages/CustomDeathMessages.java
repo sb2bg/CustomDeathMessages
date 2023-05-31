@@ -20,12 +20,16 @@ import java.util.stream.IntStream;
 public final class CustomDeathMessages extends JavaPlugin {
     private final ConfigManager configManager = new ConfigManager(this);
     private final MessagePropagator messagePropagator = new MessagePropagator(this);
-    private Set<String> configPaths;
+    private Set<String> stringConfigPaths;
+    private Set<String> boolConfigPaths;
+    private Set<String> numConfigPaths;
 
     @Override
     public void onEnable() {
         configManager.loadConfig();
-        configPaths = configManager.getConfigPaths();
+        stringConfigPaths = configManager.getStringConfigPaths();
+        boolConfigPaths = configManager.getBoolConfigPaths();
+        numConfigPaths = configManager.getNumConfigPaths();
         registerEvents();
         registerCommands();
     }
@@ -57,7 +61,9 @@ public final class CustomDeathMessages extends JavaPlugin {
             return IntStream.range(0, configManager.getMessagesCount(path)).mapToObj(String::valueOf).collect(Collectors.toList());
         });
 
-        commandManager.getCommandCompletions().registerStaticCompletion("configPaths", configPaths);
+        commandManager.getCommandCompletions().registerStaticCompletion("stringConfigPaths", stringConfigPaths);
+        commandManager.getCommandCompletions().registerStaticCompletion("boolConfigPaths", boolConfigPaths);
+        commandManager.getCommandCompletions().registerStaticCompletion("numConfigPaths", numConfigPaths);
         commandManager.getCommandCompletions().registerStaticCompletion("deathMessagePaths", DeathCause.PATH_SET);
 
         commandManager.getCommandConditions().addCondition(int.class, "indexInBounds", (c, exec, value) -> {
@@ -83,8 +89,20 @@ public final class CustomDeathMessages extends JavaPlugin {
             }
         });
 
-        commandManager.getCommandConditions().addCondition(String.class, "validConfigPath", (c, exec, value) -> {
-            if (!configPaths.contains(value)) {
+        commandManager.getCommandConditions().addCondition(String.class, "validStringConfigPath", (c, exec, value) -> {
+            if (!stringConfigPaths.contains(value)) {
+                throw new InvalidCommandArgument("Invalid config path.");
+            }
+        });
+
+        commandManager.getCommandConditions().addCondition(String.class, "validBoolConfigPath", (c, exec, value) -> {
+            if (!boolConfigPaths.contains(value)) {
+                throw new InvalidCommandArgument("Invalid config path.");
+            }
+        });
+
+        commandManager.getCommandConditions().addCondition(String.class, "validNumConfigPath", (c, exec, value) -> {
+            if (!numConfigPaths.contains(value)) {
                 throw new InvalidCommandArgument("Invalid config path.");
             }
         });

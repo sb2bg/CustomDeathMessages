@@ -9,6 +9,7 @@ import java.util.*;
 
 public class ConfigManager {
     private final CustomDeathMessages plugin;
+    private Set<String> keys;
     private final Map<DeathCause, List<String>> messages = new HashMap<>();
     private boolean checkUpdatesEnabled;
     private boolean globalMessagesEnabled;
@@ -30,6 +31,8 @@ public class ConfigManager {
     public void loadConfig() {
         plugin.saveDefaultConfig();
         registerStatistics();
+
+        keys = plugin.getConfig().getValues(true).keySet();
 
         for (DeathCause cause : DeathCause.values()) {
             messages.put(cause, plugin.getConfig().getStringList(cause.getPath()));
@@ -180,10 +183,40 @@ public class ConfigManager {
         return messages.get(cause).size();
     }
 
-    public Set<String> getConfigPaths() {
-        Set<String> set = plugin.getConfig().getKeys(true);
-        set.removeAll(DeathCause.PATH_SET);
-        return set;
+    public Set<String> getStringConfigPaths() {
+        Set<String> paths = new HashSet<>();
+
+        for (String path : keys) {
+            if (plugin.getConfig().get(path) instanceof String) {
+                paths.add(path);
+            }
+        }
+
+        return paths;
+    }
+
+    public Set<String> getBoolConfigPaths() {
+        Set<String> paths = new HashSet<>();
+
+        for (String path : keys) {
+            if (plugin.getConfig().get(path) instanceof Boolean) {
+                paths.add(path);
+            }
+        }
+
+        return paths;
+    }
+
+    public Set<String> getNumConfigPaths() {
+        Set<String> paths = new HashSet<>();
+
+        for (String path : keys) {
+            if (plugin.getConfig().get(path) instanceof Double || plugin.getConfig().get(path) instanceof Integer) {
+                paths.add(path);
+            }
+        }
+
+        return paths;
     }
 
     private boolean invalidCollection(List<?> collection, String name) {
