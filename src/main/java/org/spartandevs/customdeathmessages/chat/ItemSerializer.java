@@ -1,24 +1,20 @@
 package org.spartandevs.customdeathmessages.chat;
 
+import io.github.bananapuncher714.nbteditor.NBTEditor;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.ItemTag;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Item;
-import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.lang.reflect.Method;
-
 public class ItemSerializer {
-    private static final String VERSION = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-
-    public static TextComponent serializeItemStack(ItemStack itemStack) {
-        Item item = new Item(itemStack.getType().getKey().getKey(), itemStack.getAmount(), ItemTag.ofNbt(getNMSItemStackTag(itemStack)));
-        HoverEvent event = new HoverEvent(HoverEvent.Action.SHOW_ITEM, item);
-
-        TextComponent component = new TextComponent(getItemName(itemStack));
-        component.setHoverEvent(event);
+    @SuppressWarnings("deprecation")
+    public static BaseComponent[] serializeItemStack(ItemStack itemStack) {
+        String nbt = NBTEditor.getNBTCompound(itemStack).toString();
+        HoverEvent event = new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[]{new TextComponent(nbt)});
+        BaseComponent[] component = HoverTransformers.createBaseComponent(getItemName(itemStack));
+        System.out.println(getItemName(itemStack));
+        HoverTransformers.setHoverEvent(component, event);
 
         return component;
     }
@@ -37,25 +33,5 @@ public class ItemSerializer {
         return meta.hasDisplayName()
                 ? meta.getDisplayName()
                 : ChatColor.capitalize(item.getType().name().replaceAll("_", " ").toLowerCase());
-    }
-
-    private static synchronized String getNMSItemStackTag(ItemStack itemStack) {
-        try {
-            Class<?> nmsCraftItemStack = Class.forName("org.bukkit.craftbukkit." + VERSION + ".inventory.CraftItemStack");
-            Class<?> nmsItemStack = Class.forName("net.minecraft.server." + VERSION + ".ItemStack");
-            Class<?> nbtCompoundClass = Class.forName("net.minecraft.server." + VERSION + ".NBTTagCompound");
-            Method saveNmsItemStack = nmsItemStack.getMethod("save", nbtCompoundClass);
-
-            Object nmsCopy = nmsCraftItemStack.getMethod("asNMSCopy", ItemStack.class).invoke(null, itemStack);
-            Object nmsNbtTagCompound = nbtCompoundClass.getConstructor().newInstance();
-            Object itemAsJson = saveNmsItemStack.invoke(nmsCopy, nmsNbtTagCompound);
-
-            System.out.println(itemAsJson);
-
-            return itemAsJson.toString();
-        } catch (Throwable t) {
-            t.printStackTrace();
-            return null;
-        }
     }
 }
