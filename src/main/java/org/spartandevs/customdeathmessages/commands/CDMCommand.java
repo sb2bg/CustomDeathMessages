@@ -95,7 +95,7 @@ public class CDMCommand extends CDMBaseCommand {
     @Subcommand("debug shoot")
     @Syntax("<player>")
     @CommandCompletion("@players")
-    @CommandPermission("customdeathmessages.admin")
+    @CommandPermission("customdeathmessages.debug")
     @Description("Shoots the player with an instant-kill arrow. Used for debugging.")
     @Conditions("debugEnabled")
     public void onDebugShoot(Player sender, @Optional Player target) {

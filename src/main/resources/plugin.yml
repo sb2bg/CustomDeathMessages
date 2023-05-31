@@ -18,5 +18,5 @@ permissions:
     description: Receive update notifications
   cdm.modify:
     description: View and modify death messages
-  cdm.admin:
-    description: Access to all commands
+  cdm.debug:
+    description: Access to debug commands
