@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.spartandevs.customdeathmessages</groupId>
-    <artifactId>custom-death-messages</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>CustomDeathMessages</artifactId>
+    <version>2.0.0</version>
     <packaging>jar</packaging>
 
     <name>CustomDeathMessages</name>
