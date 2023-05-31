@@ -13,7 +13,6 @@ public class ItemSerializer {
         String nbt = NBTEditor.getNBTCompound(itemStack).toString();
         HoverEvent event = new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[]{new TextComponent(nbt)});
         BaseComponent[] component = HoverTransformers.createBaseComponent(getItemName(itemStack));
-        System.out.println(getItemName(itemStack));
         HoverTransformers.setHoverEvent(component, event);
 
         return component;
