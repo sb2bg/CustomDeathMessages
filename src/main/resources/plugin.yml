@@ -9,7 +9,7 @@ website: spartandevs.org
 commands:
   cdm:
     description: Add, remove, edit, disable, or list death messages.
-    aliases: [ customdeathmessages, customdeathmessage, customdeathmsg, customdeathmsgs, cdm ]
+    aliases: [ customdeathmessages, customdeathmessage, deathmessage, cdm ]
 
 permissions:
   cdm.reload:

@@ -10,7 +10,7 @@ import org.spartandevs.customdeathmessages.util.DeathCause;
 import java.util.List;
 import java.util.Set;
 
-@CommandAlias("customdeathmessages|deathmessages|cdm")
+@CommandAlias("customdeathmessages|customdeathmessage|deathmessages|cdm")
 public class CDMCommand extends CDMBaseCommand {
     @HelpCommand
     public void onHelp(CommandSender sender, CommandHelp help) {
@@ -18,7 +18,7 @@ public class CDMCommand extends CDMBaseCommand {
     }
 
     @Subcommand("reload")
-    @CommandPermission("customdeathmessages.reload")
+    @CommandPermission("cdm.reload")
     @Description("Reloads the config file and other resources.")
     public void onReload(CommandSender sender) {
         plugin.reload();
@@ -27,7 +27,7 @@ public class CDMCommand extends CDMBaseCommand {
 
     @Subcommand("add")
     @Syntax("<path> <death message>")
-    @CommandPermission("customdeathmessages.modify")
+    @CommandPermission("cdm.modify")
     @Description("Adds a custom death message.")
     @CommandCompletion("@deathMessagePaths @nothing")
     public void onAdd(CommandSender sender, DeathCause path, String deathMessage) {
@@ -37,7 +37,7 @@ public class CDMCommand extends CDMBaseCommand {
 
     @Subcommand("list")
     @Syntax("<path>")
-    @CommandPermission("customdeathmessages.modify")
+    @CommandPermission("cdm.modify")
     @Description("Lists all custom death messages and their indices.")
     @CommandCompletion("@deathMessagePaths")
     public void onList(CommandSender sender, DeathCause path) {
@@ -64,7 +64,7 @@ public class CDMCommand extends CDMBaseCommand {
 
     @Subcommand("remove")
     @Syntax("<path> <index>")
-    @CommandPermission("customdeathmessages.modify")
+    @CommandPermission("cdm.modify")
     @Description("Removes a custom death message.")
     @CommandCompletion("@deathMessagePaths @deathMessageIndices")
     public void onRemove(CommandSender sender, DeathCause path, @Conditions("indexInBounds") int index) {
@@ -74,7 +74,7 @@ public class CDMCommand extends CDMBaseCommand {
 
     @Subcommand("set flag")
     @Syntax("<path> <true|false>")
-    @CommandPermission("customdeathmessages.modify")
+    @CommandPermission("cdm.modify")
     @Description("Sets a config flag.")
     @CommandCompletion("@boolConfigPaths true|false")
     public void onSetBoolean(CommandSender sender, @Conditions("validBoolConfigPath") String configPath, boolean value) {
@@ -84,7 +84,7 @@ public class CDMCommand extends CDMBaseCommand {
 
     @Subcommand("set message")
     @Syntax("<path> <message>")
-    @CommandPermission("customdeathmessages.modify")
+    @CommandPermission("cdm.modify")
     @Description("Sets a config message.")
     @CommandCompletion("@stringConfigPaths @nothing")
     public void onSetString(CommandSender sender, @Conditions("validStringConfigPath") String configPath, String value) {
@@ -94,7 +94,7 @@ public class CDMCommand extends CDMBaseCommand {
 
     @Subcommand("set number")
     @Syntax("<path> <value>")
-    @CommandPermission("customdeathmessages.modify")
+    @CommandPermission("cdm.modify")
     @Description("Sets a config number.")
     @CommandCompletion("@numConfigPaths @nothing")
     public void onSetNumber(CommandSender sender, @Conditions("validNumConfigPath") String configPath, double value) {
@@ -105,7 +105,7 @@ public class CDMCommand extends CDMBaseCommand {
     @Subcommand("debug shoot")
     @Syntax("<player>")
     @CommandCompletion("@players")
-    @CommandPermission("customdeathmessages.debug")
+    @CommandPermission("cdm.debug")
     @Description("Shoots the player with an instant-kill arrow. Used for debugging.")
     @Conditions("debugEnabled")
     public void onDebugShoot(Player sender, @Optional Player target) {
