@@ -24,6 +24,11 @@ public class CustomPlayerDeathListener implements Listener {
 
     @EventHandler
     public void onPlayerDeath(CustomPlayerDeathEvent event) {
+        if (plugin.getCooldownManager().isOnCooldown(event.getVictim().getUniqueId())) {
+            event.setEmptyMessage();
+            return;
+        }
+
         ConfigManager config = plugin.getConfigManager();
         ItemStack weapon = null;
 
