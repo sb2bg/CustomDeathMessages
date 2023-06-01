@@ -10,6 +10,7 @@ import org.spartandevs.customdeathmessages.listeners.BukkitLoginListener;
 import org.spartandevs.customdeathmessages.listeners.BukkitPlayerDeathListener;
 import org.spartandevs.customdeathmessages.listeners.CustomPlayerDeathListener;
 import org.spartandevs.customdeathmessages.util.ConfigManager;
+import org.spartandevs.customdeathmessages.util.CooldownManager;
 import org.spartandevs.customdeathmessages.util.DeathCause;
 import org.spartandevs.customdeathmessages.util.MessagePropagator;
 
@@ -20,6 +21,7 @@ import java.util.stream.IntStream;
 public final class CustomDeathMessages extends JavaPlugin {
     private final ConfigManager configManager = new ConfigManager(this);
     private final MessagePropagator messagePropagator = new MessagePropagator(this);
+    private final CooldownManager cooldownManager = new CooldownManager();
     private Set<String> stringConfigPaths;
     private Set<String> boolConfigPaths;
     private Set<String> numConfigPaths;
@@ -118,9 +120,14 @@ public final class CustomDeathMessages extends JavaPlugin {
         return configManager;
     }
 
+    public CooldownManager getCooldownManager() {
+        return cooldownManager;
+    }
+
     public void reload() {
         configManager.reloadConfig();
         messagePropagator.clear();
+        cooldownManager.clearCooldowns();
     }
 
     public MessagePropagator getMessagePropagator() {
