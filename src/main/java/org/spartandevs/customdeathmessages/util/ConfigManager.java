@@ -23,6 +23,7 @@ public class ConfigManager {
     private boolean originalOnHoverEnabled;
     private boolean itemOnHoverEnabled;
     private boolean debugEnabled;
+    private double killMessageCooldown;
 
     public ConfigManager(CustomDeathMessages plugin) {
         this.plugin = plugin;
@@ -49,6 +50,7 @@ public class ConfigManager {
         meleeMessages = plugin.getConfig().getStringList("melee-death-messages");
         originalOnHoverEnabled = plugin.getConfig().getBoolean("original-hover-message");
         itemOnHoverEnabled = plugin.getConfig().getBoolean("enable-item-hover");
+        killMessageCooldown = plugin.getConfig().getDouble("kill-message-cooldown");
         debugEnabled = plugin.getConfig().getBoolean("developer-mode");
     }
 
@@ -113,6 +115,10 @@ public class ConfigManager {
 
     public boolean isItemOnHoverEnabled() {
         return itemOnHoverEnabled;
+    }
+
+    public double getCooldown() {
+        return killMessageCooldown;
     }
 
     public boolean isDebugEnabled() {
