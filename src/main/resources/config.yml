@@ -18,6 +18,9 @@ do-lightning: true
 # Number between 0 and 1 (0 = 0%, 0.5 = 50%, 1 = 100%)
 drop-head-percentage: 0.5
 
+# Kill message cooldown to prevent spam: in seconds (0 = no cooldown)
+kill-message-cooldown: 0
+
 # Enable Global Messages: enables global death messages
 enable-global-messages: true
 
