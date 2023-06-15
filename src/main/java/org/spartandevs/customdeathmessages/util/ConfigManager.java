@@ -2,6 +2,7 @@ package org.spartandevs.customdeathmessages.util;
 
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
+import dev.dejvokep.boostedyaml.route.Route;
 import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
@@ -14,10 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public class ConfigManager {
     private final CustomDeathMessages plugin;
@@ -47,6 +45,16 @@ public class ConfigManager {
             return null;
         }
 
+        UpdaterSettings updater = UpdaterSettings.builder()
+                .setAutoSave(true)
+                .setVersioning(new BasicVersioning("config-version"))
+                .addRelocations("2", new HashMap<Route, Route>() {{
+                    put(Route.fromString("original-hover-message"), Route.fromString("enable-original-on-hover"));
+                    put(Route.fromString("enable-item-hover"), Route.fromString("enable-item-on-hover"));
+                    put(Route.fromString("do-lightning"), Route.fromString("enable-lightning"));
+                }})
+                .build();
+
         try {
             return YamlDocument.create(
                     new File(plugin.getDataFolder(), "config.yml"),
@@ -54,7 +62,7 @@ public class ConfigManager {
                     GeneralSettings.DEFAULT,
                     LoaderSettings.builder().setAutoUpdate(true).build(),
                     DumperSettings.DEFAULT,
-                    UpdaterSettings.builder().setVersioning(new BasicVersioning("config-version")).build());
+                    updater);
         } catch (IOException e) {
             warnAndDisable();
             return null;
@@ -62,14 +70,7 @@ public class ConfigManager {
     }
 
     public boolean reloadConfig() {
-        try {
-            config.save();
-            config.reload();
-            return true;
-        } catch (IOException e) {
-            plugin.getLogger().warning("Unable to reload config.yml, changes will not take effect.");
-            return false;
-        }
+        return sneaky(config::reload) && sneaky(config::save);
     }
 
     private void warnAndDisable() {
@@ -88,7 +89,7 @@ public class ConfigManager {
     }
 
     public boolean doLightningStrike() {
-        return config.getBoolean("do-lightning");
+        return config.getBoolean("enable-lightning");
     }
 
     public boolean dropHead() {
@@ -130,11 +131,11 @@ public class ConfigManager {
     }
 
     public boolean isOriginalOnHoverEnabled() {
-        return config.getBoolean("original-hover-message");
+        return config.getBoolean("enable-original-on-hover");
     }
 
     public boolean isItemOnHoverEnabled() {
-        return config.getBoolean("enable-item-hover");
+        return config.getBoolean("enable-item-on-hover");
     }
 
     public double getCooldown() {
@@ -166,6 +167,7 @@ public class ConfigManager {
         List<String> configMessages = config.getStringList(cause.getPath());
         configMessages.add(message);
         config.set(cause.getPath(), configMessages);
+        sneaky(config::save);
 
     }
 
@@ -173,22 +175,36 @@ public class ConfigManager {
         List<String> configMessages = config.getStringList(cause.getPath());
         configMessages.remove(index);
         config.set(cause.getPath(), configMessages);
-    }
-
-    public List<String> listDeathMessages(DeathCause cause) {
-        return config.getStringList(cause.getPath());
+        sneaky(config::save);
     }
 
     public void setBoolean(String path, boolean value) {
         config.set(path, value);
+        sneaky(config::save);
     }
 
     public void setDouble(String path, double value) {
         config.set(path, value);
+        sneaky(config::save);
     }
 
     public void setString(String path, String value) {
         config.set(path, value);
+        sneaky(config::save);
+    }
+
+    interface ConfigAction {
+        void run() throws IOException;
+    }
+
+    private boolean sneaky(ConfigAction action) {
+        try {
+            action.run();
+            return true;
+        } catch (IOException e) {
+            plugin.getLogger().warning("Unable to save config.yml, changes will not take effect.");
+            return false;
+        }
     }
 
     public int getMessagesCount(DeathCause cause) {
@@ -229,6 +245,10 @@ public class ConfigManager {
         }
 
         return paths;
+    }
+
+    public List<String> listDeathMessages(DeathCause cause) {
+        return config.getStringList(cause.getPath());
     }
 
     private boolean invalidCollection(List<?> collection, String name) {
