@@ -36,6 +36,11 @@ public final class CustomDeathMessages extends JavaPlugin {
         registerCommands();
     }
 
+    @Override
+    public void onDisable() {
+        configManager.reloadConfig();
+    }
+
     private void registerEvents() {
         getServer().getPluginManager().registerEvents(new BukkitLoginListener(this), this);
         getServer().getPluginManager().registerEvents(new BukkitPlayerDeathListener(this), this);
@@ -43,6 +48,7 @@ public final class CustomDeathMessages extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new CustomPlayerDeathListener(this), this);
     }
 
+    @SuppressWarnings("deprecation") // Unstable API
     private void registerCommands() {
         BukkitCommandManager commandManager = new BukkitCommandManager(this);
         commandManager.enableUnstableAPI("help");
@@ -124,10 +130,10 @@ public final class CustomDeathMessages extends JavaPlugin {
         return cooldownManager;
     }
 
-    public void reload() {
-        configManager.reloadConfig();
+    public boolean reload() {
         messagePropagator.clear();
         cooldownManager.clearCooldowns();
+        return configManager.reloadConfig();
     }
 
     public MessagePropagator getMessagePropagator() {
