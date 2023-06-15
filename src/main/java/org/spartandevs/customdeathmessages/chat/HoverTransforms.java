@@ -40,34 +40,28 @@ enum HoverTransformers {
         setHoverEvent(component, new HoverEvent(HoverEvent.Action.SHOW_TEXT, createBaseComponent(original)));
         return component;
     }),
-    ITEM_ON_HOVER((message, original, item) -> {
+    ITEM_ON_HOVER((message, original, item) -> populateKillWeapon(message, null, item)),
+    ORIGINAL_AND_ITEM_ON_HOVER(HoverTransformers::populateKillWeapon);
+
+    @SuppressWarnings("deprecation") // Backwards compatibility with old BaseComponent API
+    private static BaseComponent[] populateKillWeapon(String message, String original, ItemStack item) {
         List<BaseComponent> component = new ArrayList<>();
-        BaseComponent[] hoverItem = ItemSerializer.serializeItemStack(item);
-        String[] split = message.split("%kill-weapon%");
-
-        for (int i = 0; i < split.length; i++) {
-            addExtra(component, createBaseComponent(split[i]));
-
-            if (i != split.length - 1) {
-                addExtra(component, hoverItem);
-            }
-        }
-
-        return createBaseComponent(component);
-    }),
-    @SuppressWarnings("deprecation")
-    ORIGINAL_AND_ITEM_ON_HOVER((message, original, item) -> {
-        List<BaseComponent> component = new ArrayList<>();
-        BaseComponent[] originalHover = createBaseComponent(original);
-        String[] split = message.split("%kill-weapon%");
         BaseComponent[] hoverItem = null;
+        BaseComponent[] originalHover = original == null ? null : createBaseComponent(original);
+        String[] split = message.split("%kill-weapon%");
+        boolean endWithItem = message.endsWith("%kill-weapon%");
+
 
         for (int i = 0; i < split.length; i++) {
-            BaseComponent[] hoverChunk = createBaseComponent(split[i]);
-            setHoverEvent(hoverChunk, new HoverEvent(HoverEvent.Action.SHOW_TEXT, originalHover));
-            addExtra(component, hoverChunk);
+            BaseComponent[] chunk = createBaseComponent(split[i]);
 
-            if (i != split.length - 1) {
+            if (originalHover != null) {
+                setHoverEvent(chunk, new HoverEvent(HoverEvent.Action.SHOW_TEXT, originalHover));
+            }
+
+            addExtra(component, chunk);
+
+            if (i != split.length - 1 || endWithItem) {
                 if (hoverItem == null) {
                     hoverItem = ItemSerializer.serializeItemStack(item);
                 }
@@ -77,7 +71,7 @@ enum HoverTransformers {
         }
 
         return createBaseComponent(component);
-    });
+    }
 
     private final Transform transform;
 
