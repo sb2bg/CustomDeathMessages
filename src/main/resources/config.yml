@@ -19,18 +19,19 @@ do-lightning: true
 drop-head-percentage: 0.5
 
 # Kill message cooldown to prevent spam: in seconds (0 = no cooldown)
-kill-message-cooldown: 0
+message-cooldown: 0
 
 # Enable Global Messages: enables global death messages
 enable-global-messages: true
 
-# Original Hover Message: Show the original death message when hovering over the custom message.
-original-hover-message: false
+# Original on Hover: Show the original death message when hovering over the custom message.
+enable-original-on-hover: false
+
+# Item on Hover: Show the item used to kill the player when hovering over the item name.
+enable-item-on-hover: true
 
 # You can add messages or remove any of these messages. Toggleable by boolean above.
 # Placeholders for melee messages: %kill-weapon%, %victim%, %victim-nick%, %killer%, %killer-nick%, %killer-x%, %killer-y%, %killer-z%, %victim-x%, %victim-y%, %victim-z%
-# Enable Item Hover: When hovering over the kill-weapons name, it will display the items enchantments, etc.
-enable-item-hover: false
 global-pvp-death-messages:
   - "&c%victim% &ehas been killed by &c%killer%"
   - "&c%victim% &ewas slain by &c%killer% &eusing &7[&b%kill-weapon%&7]"
@@ -294,7 +295,7 @@ hoglin-messages:
 zoglin-messages:
   - "&c%victim% &eate a Zoglins horn for dinner"
   - "&c%victim% &ewas rammed by a Zoglin"
-  -
+
 goat-messages:
   - "&c%victim% &ewas headbutted by a Goat"
   - "&c%victim% &ewas impaled by a Goat horn"
