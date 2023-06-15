@@ -17,12 +17,15 @@ public class CDMCommand extends CDMBaseCommand {
         help.showHelp();
     }
 
-    @Subcommand("reload")
+    @Subcommand("reload|rl")
     @CommandPermission("cdm.reload")
     @Description("Reloads the config file and other resources.")
     public void onReload(CommandSender sender) {
-        plugin.reload();
-        sendMessage(sender, "&aConfig reloaded.");
+        if (plugin.reload()) {
+            sendMessage(sender, "&aPlugin reloaded.");
+        } else {
+            sendMessage(sender, "&cFailed to reload plugin.");
+        }
     }
 
     @Subcommand("add")
@@ -58,6 +61,7 @@ public class CDMCommand extends CDMBaseCommand {
             builder.append(ChatColor.capitalize(o.toString().toLowerCase().replace("_", " ")));
             builder.append(", ");
         }
+        
         builder.delete(builder.length() - 2, builder.length());
         return builder.toString();
     }
