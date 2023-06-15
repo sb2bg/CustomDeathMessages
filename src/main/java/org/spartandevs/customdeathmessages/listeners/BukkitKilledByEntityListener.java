@@ -61,7 +61,8 @@ public class BukkitKilledByEntityListener implements Listener {
             deathCause = DeathCause.WITHER_BOSS;
         }
 
-        if (entity.getCustomName() != null) {
+        // Avoid ❤ in custom named entities (McMMO)
+        if (entity.getCustomName() != null && !entity.getCustomName().contains("❤")) {
             deathCause = DeathCause.CUSTOM_NAMED_ENTITY;
         }
 
