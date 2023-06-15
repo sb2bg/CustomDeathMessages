@@ -330,3 +330,6 @@ arrow-messages:
 
 # Only here to help me debug my plugin, not suggested you enable.
 developer-mode: false
+
+# Config version, do not change this.
+config-version: 2
