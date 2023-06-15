@@ -29,7 +29,7 @@ public class CustomPlayerDeathEvent extends Event {
     }
 
     public void setDeathMessage(DeathMessage deathMessage, HoverTransforms hoverTransforms) {
-        setDeathMessage.setDeathMessage(deathMessage, hoverTransforms);
+        setDeathMessage.setDeathMessage(victim, deathMessage, hoverTransforms);
     }
 
     public String getOriginalDeathMessage() {
@@ -54,6 +54,10 @@ public class CustomPlayerDeathEvent extends Event {
     }
 
     public interface DeathMessageSetter {
-        void setDeathMessage(DeathMessage deathMessage, HoverTransforms hoverTransforms);
+        void setDeathMessage(Player victim, DeathMessage deathMessage, HoverTransforms hoverTransforms);
+    }
+
+    public void setEmptyMessage() {
+        setDeathMessage.setDeathMessage(victim, null, null);
     }
 }

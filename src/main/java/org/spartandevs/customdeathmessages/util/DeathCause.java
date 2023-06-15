@@ -42,7 +42,7 @@ public enum DeathCause {
     HOT_FLOOR("magma-block-messages"),
     CRAMMING("cramming-messages"),
     FREEZE("freeze-messages"),
-    SONIC_BOOM("warden-messages"),
+    SONIC_BOOM("warden-sonic-boom-messages"),
     ELDER_GUARDIAN("elderguardian-messages"),
     WITHER_SKELETON("witherskeleton-messages"),
     STRAY("stray-messages"),
@@ -102,7 +102,8 @@ public enum DeathCause {
     ZOGLIN("zoglin-messages"),
     PIGLIN_BRUTE("piglin-messages"),
     GOAT("goat-messages"),
-    WARDEN("warden-messages");
+    WARDEN("warden-messages"),
+    MELEE_DEATH("melee-death-messages");
 
     private final String path;
     public static final Set<String> PATH_SET = Arrays.stream(DeathCause.values()).map(DeathCause::getPath).collect(Collectors.toSet());
@@ -123,6 +124,7 @@ public enum DeathCause {
             }
         }
 
+        plugin.getLogger().warning("Unknown damage cause '" + cause.name() + "'. If you would like this message to be added, please leave a message on the plugin discussion.");
         return DeathCause.UNKNOWN;
     }
 

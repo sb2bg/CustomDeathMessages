@@ -54,7 +54,13 @@ public class BukkitPlayerDeathListener implements Listener {
         plugin.getServer().getPluginManager().callEvent(customPlayerDeathEvent);
     }
 
-    private void setDeathMessage(DeathMessage deathMessage, HoverTransforms hoverTransforms) {
+    private void setDeathMessage(Player victim, DeathMessage deathMessage, HoverTransforms hoverTransforms) {
+        // message is on cooldown
+        if (deathMessage == null) {
+            deathMessageSetter.setDeathMessage("");
+            return;
+        }
+
         switch (deathMessage.getMessageType()) {
             case STRING:
                 deathMessageSetter.setDeathMessage(deathMessage.getStringMessage());
@@ -68,6 +74,8 @@ public class BukkitPlayerDeathListener implements Listener {
                 break;
             }
         }
+
+        plugin.getCooldownManager().setCooldown(victim.getUniqueId(), plugin.getConfigManager().getCooldown());
     }
 
     private static String baseComponentArrayToString(BaseComponent[] baseComponents) {

@@ -18,6 +18,9 @@ do-lightning: true
 # Number between 0 and 1 (0 = 0%, 0.5 = 50%, 1 = 100%)
 drop-head-percentage: 0.5
 
+# Kill message cooldown to prevent spam: in seconds (0 = no cooldown)
+kill-message-cooldown: 0
+
 # Enable Global Messages: enables global death messages
 enable-global-messages: true
 
@@ -306,8 +309,11 @@ fox-messages:
 
 warden-messages:
   - "&c%victim% &ewas killed by a Warden... I mean, what did you expect?"
-  - "&c%victim% &egot sonic boomed by a Warden"
   - "&eA Warden protected the Deep Dark from &c%victim%"
+
+warden-sonic-boom-messages:
+  - "&c%victim% &ewas sonic boomed by a Warden"
+  - "&c%victim% &egot his ears blown out by a Warden's sonic boom"
 
 # This is for any messages that haven't been added, so if you die to a cause which doesn't have any messages,
 # one of these messages will display instead. (Please report any missing messages in my spigot discussion)
