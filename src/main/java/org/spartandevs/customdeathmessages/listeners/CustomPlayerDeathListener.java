@@ -14,6 +14,7 @@ import org.spartandevs.customdeathmessages.chat.PlaceholderPopulator;
 import org.spartandevs.customdeathmessages.events.CustomPlayerDeathEvent;
 import org.spartandevs.customdeathmessages.util.ConfigManager;
 import org.spartandevs.customdeathmessages.util.DeathCause;
+import org.spartandevs.customdeathmessages.util.Version;
 
 public class CustomPlayerDeathListener implements Listener {
     private final CustomDeathMessages plugin;
@@ -94,6 +95,10 @@ public class CustomPlayerDeathListener implements Listener {
 
     @SuppressWarnings("deprecation") // 1.8 support
     private static ItemStack getKillWeapon(Player killer) {
-        return killer.getInventory().getItemInHand();
+        if (Version.SERVER_VERSION.isVersionOrHigher(Version.V19)) {
+            return killer.getInventory().getItemInMainHand();
+        } else {
+            return killer.getItemInHand();
+        }
     }
 }
