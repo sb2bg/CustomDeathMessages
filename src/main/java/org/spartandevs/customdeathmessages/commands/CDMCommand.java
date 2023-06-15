@@ -61,7 +61,7 @@ public class CDMCommand extends CDMBaseCommand {
             builder.append(ChatColor.capitalize(o.toString().toLowerCase().replace("_", " ")));
             builder.append(", ");
         }
-        
+
         builder.delete(builder.length() - 2, builder.length());
         return builder.toString();
     }
@@ -83,7 +83,7 @@ public class CDMCommand extends CDMBaseCommand {
     @CommandCompletion("@boolConfigPaths true|false")
     public void onSetBoolean(CommandSender sender, @Conditions("validBoolConfigPath") String configPath, boolean value) {
         plugin.getConfigManager().setBoolean(configPath, value);
-        sendMessage(sender, "&aSet config value. You may need to reload the plugin for this to take effect.");
+        sendMessage(sender, "&aSet config value.");
     }
 
     @Subcommand("set message")
@@ -93,7 +93,7 @@ public class CDMCommand extends CDMBaseCommand {
     @CommandCompletion("@stringConfigPaths @nothing")
     public void onSetString(CommandSender sender, @Conditions("validStringConfigPath") String configPath, String value) {
         plugin.getConfigManager().setString(configPath, value);
-        sendMessage(sender, "&aSet config value. You may need to reload the plugin for this to take effect.");
+        sendMessage(sender, "&aSet config value.");
     }
 
     @Subcommand("set number")
@@ -103,7 +103,7 @@ public class CDMCommand extends CDMBaseCommand {
     @CommandCompletion("@numConfigPaths @nothing")
     public void onSetNumber(CommandSender sender, @Conditions("validNumConfigPath") String configPath, double value) {
         plugin.getConfigManager().setDouble(configPath, value);
-        sendMessage(sender, "&aSet config value. You may need to reload the plugin for this to take effect.");
+        sendMessage(sender, "&aSet config value.");
     }
 
     @Subcommand("debug shoot")
