@@ -36,11 +36,6 @@ public final class CustomDeathMessages extends JavaPlugin {
         registerCommands();
     }
 
-    @Override
-    public void onDisable() {
-        configManager.reloadConfig();
-    }
-
     private void registerEvents() {
         getServer().getPluginManager().registerEvents(new BukkitLoginListener(this), this);
         getServer().getPluginManager().registerEvents(new BukkitPlayerDeathListener(this), this);
