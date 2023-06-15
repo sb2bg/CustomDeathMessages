@@ -21,7 +21,6 @@ public enum Version {
 
     private static Version getServerVersion() {
         String version = org.bukkit.Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-        System.out.println("Server version: " + version);
 
         switch (version) {
             case "v1_8_R1":
