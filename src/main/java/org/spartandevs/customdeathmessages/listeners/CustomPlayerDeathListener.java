@@ -68,7 +68,11 @@ public class CustomPlayerDeathListener implements Listener {
 
         if (config.isGlobalMessageEnabled()) {
             if (event.getDeathCause() == DeathCause.UNKNOWN) {
-                plugin.getLogger().warning("Unknown death cause for killer " + event.getKiller().getType());
+                if (event.getKiller() != null) {
+                    plugin.getLogger().warning("Unknown death cause for killer " + event.getKiller().getType());
+                } else {
+                    plugin.getLogger().warning("Unknown death cause with no killer");
+                }
             }
 
             DeathMessageResolver resolver = weapon != null && weapon.getType() == Material.AIR

@@ -1,6 +1,8 @@
 package org.spartandevs.customdeathmessages.listeners;
 
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -29,31 +31,16 @@ public class BukkitKilledByEntityListener implements Listener {
         }
 
         Entity entity = event.getDamager();
-        DeathCause deathCause = DeathCause.fromEntityType(entity.getType(), plugin);
 
         if (entity instanceof Projectile) {
             Projectile proj = (Projectile) entity;
 
-            if (proj.getShooter() != null) {
+            if (proj.getShooter() != null && proj.getShooter() instanceof Entity) {
                 entity = (Entity) proj.getShooter();
-
-                if (entity instanceof Player) {
-                    deathCause = DeathCause.PLAYER;
-                } else if (entity instanceof Skeleton) {
-                    deathCause = DeathCause.SKELETON;
-                } else if (entity instanceof Husk) {
-                    deathCause = DeathCause.HUSK;
-                } else if (entity instanceof Stray) {
-                    deathCause = DeathCause.STRAY;
-                } else if (entity instanceof WitherSkeleton) {
-                    deathCause = DeathCause.WITHER_SKELETON;
-                } else if (entity instanceof Pillager) {
-                    deathCause = DeathCause.PILLAGER;
-                } else if (entity instanceof Drowned) {
-                    deathCause = DeathCause.DROWNED;
-                }
             }
         }
+
+        DeathCause deathCause = DeathCause.from(entity.getType(), plugin);
 
         // WITHER is used as an effect and entity damage cause, so we need to differentiate
         // here, WITHER is the boss, so we use WITHER_BOSS
@@ -61,7 +48,10 @@ public class BukkitKilledByEntityListener implements Listener {
             deathCause = DeathCause.WITHER_BOSS;
         }
 
-        if (entity.getCustomName() != null) {
+        // Avoid ❤ in custom named entities (McMMO)
+        if (entity.getCustomName() != null && !entity.getCustomName().contains("❤")
+                && !entity.getCustomName().contains("♥") && !entity.getCustomName().contains("♡")
+                && plugin.getConfigManager().isCustomNamedEntityMessageEnabled()) {
             deathCause = DeathCause.CUSTOM_NAMED_ENTITY;
         }
 

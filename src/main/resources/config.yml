@@ -1,36 +1,35 @@
-# Enable Update Messages: Toggles update messages on or off.
+# Enable Update Messages: enables update messages
 enable-update-messages: true
 
 # To use hex colors: &#hex
-# PvP Messages only for when a player is killed by another player, enabled by default
+# PvP Messages: sends a message to the killer and victim when a player is killed by another player.
 # Placeholders for pvp messages: %victim%, %victim-nick%, %killer%, %killer-nick%, %killer-x%, %killer-y%, %killer-z%, %victim-x%, %victim-y%, %victim-z%
 enable-pvp-messages: true
 killer-message: '&e[&cDeathMessages&e] &eYou killed &c%victim%'
 victim-message: '&e[&cDeathMessages&e] &eYou were killed by &c%killer%'
 
-# Toggleable features: set true to enable, false to disable. All features except lightning-effect are false by default.
-# Drop Head Percentage: self-explanatory, chance of a player head to drop
-# Do Lightning: creates a lightning effect that will not harm or damage anything when the victim is killed. True by default.
-# Head Name: Sets the name of a head whenever dropped from a player.
-head-name: "&c%victim%'s Head"
-do-lightning: true
+# Lightning: lightning strike effect at the location of the death.
+enable-lightning: true
 
-# Number between 0 and 1 (0 = 0%, 0.5 = 50%, 1 = 100%)
+# Drop head percentage: chance to drop head, should be a number between 0 and 1: (0 = 0%, 0.5 = 50%, 1 = 100%)
+# Head name: name of the head whenever dropped from a player.
 drop-head-percentage: 0.5
+head-name: "&c%victim%'s Head"
 
-# Kill message cooldown to prevent spam: in seconds (0 = no cooldown)
-kill-message-cooldown: 0
+# Message cooldown: cooldown in seconds between death messages for a specific player. 0 to disable.
+message-cooldown: 0
 
 # Enable Global Messages: enables global death messages
 enable-global-messages: true
 
-# Original Hover Message: Show the original death message when hovering over the custom message.
-original-hover-message: false
+# Original on Hover: show the original death message when hovering over the custom message.
+enable-original-on-hover: false
 
-# You can add messages or remove any of these messages. Toggleable by boolean above.
+# Item on Hover: show the item used to kill the player when hovering over the item name.
+enable-item-on-hover: true
+
+# You can add, edit, or remove any of the messages below.
 # Placeholders for melee messages: %kill-weapon%, %victim%, %victim-nick%, %killer%, %killer-nick%, %killer-x%, %killer-y%, %killer-z%, %victim-x%, %victim-y%, %victim-z%
-# Enable Item Hover: When hovering over the kill-weapons name, it will display the items enchantments, etc.
-enable-item-hover: false
 global-pvp-death-messages:
   - "&c%victim% &ehas been killed by &c%killer%"
   - "&c%victim% &ewas slain by &c%killer% &eusing &7[&b%kill-weapon%&7]"
@@ -47,13 +46,13 @@ melee-death-messages:
   - "&c%victim% &ewas KO'd &c%killer%"
   - "&c%victim% &egot rocked by &c%killer%"
 
-# Messages for entities with custom names. Will override their mob group message and display these instead, if enabled.
+# Messages for entities with custom names: will override their mob group message and display these instead, if enabled.
 # Placeholders: %victim%, %victim-nick%, %entity-name%, %victim-x%, %victim-y%, %victim-z%
 enable-custom-name-entity-messages: true
 custom-name-entity-messages:
   - "&c%victim% &egot rocked by %entity-name%"
   - "&c%victim% &ewas put to sleep by %entity-name%"
-  - "%entity-name% &eate &c%victim%'s &esoul"
+  - "&c%entity-name% &eate &c%victim%'s &esoul"
   - "&c%victim% &ewishes they didn't fight %entity-name%"
 
 # Placeholders for ALL below messages: %victim%, %victim-nick%, %entity-name%, %victim-x%, %victim-y%, %victim-z%
@@ -130,6 +129,11 @@ falling-block-messages:
 freeze-messages:
   - "&c%victim% &efroze to death. &b&lBrrrrr!"
   - "&c%victim% &eforgot his winter jacket"
+
+firework-messages:
+  - "&c%victim% &elit the fuse on a firework too soon"
+  - "&c%victim% &ewent out with a bang"
+  - "&c%victim% &eblasted off into space"
 
 slime-messages:
   - "&c%victim% &ewas crushed by a &a&lGIANT SLIME"
@@ -294,7 +298,7 @@ hoglin-messages:
 zoglin-messages:
   - "&c%victim% &eate a Zoglins horn for dinner"
   - "&c%victim% &ewas rammed by a Zoglin"
-  -
+
 goat-messages:
   - "&c%victim% &ewas headbutted by a Goat"
   - "&c%victim% &ewas impaled by a Goat horn"
@@ -330,3 +334,6 @@ arrow-messages:
 
 # Only here to help me debug my plugin, not suggested you enable.
 developer-mode: false
+
+# Config version, do not change this.
+config-version: 2

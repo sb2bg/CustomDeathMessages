@@ -1,66 +1,85 @@
 package org.spartandevs.customdeathmessages.util;
 
+import dev.dejvokep.boostedyaml.YamlDocument;
+import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
+import dev.dejvokep.boostedyaml.route.Route;
+import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
+import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
+import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
+import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.*;
 
 public class ConfigManager {
     private final CustomDeathMessages plugin;
+    private final YamlDocument config;
     private Set<String> keys;
-    private final Map<DeathCause, List<String>> messages = new HashMap<>();
-    private boolean checkUpdatesEnabled;
-    private boolean globalMessagesEnabled;
-    private boolean doLightningStrike;
-    private double dropHeadChance;
-    private String headName;
-    private boolean doPvpMessages;
-    private String killerMessage;
-    private String victimMessage;
-    private List<String> meleeMessages;
-    private boolean originalOnHoverEnabled;
-    private boolean itemOnHoverEnabled;
-    private boolean debugEnabled;
-    private double killMessageCooldown;
 
     public ConfigManager(CustomDeathMessages plugin) {
         this.plugin = plugin;
+        this.config = getConfig();
     }
 
     public void loadConfig() {
-        plugin.saveDefaultConfig();
         registerStatistics();
 
         keys = plugin.getConfig().getValues(true).keySet();
 
-        for (DeathCause cause : DeathCause.values()) {
-            messages.put(cause, plugin.getConfig().getStringList(cause.getPath()));
+        if (config.getDouble("drop-head-percentage") > 1) {
+            plugin.getLogger().warning("Config misconfiguration: drop-head-chance should be a decimal between 0 and 1");
         }
-
-        checkUpdatesEnabled = plugin.getConfig().getBoolean("enable-update-messages");
-        globalMessagesEnabled = plugin.getConfig().getBoolean("enable-global-messages");
-        doLightningStrike = plugin.getConfig().getBoolean("do-lightning");
-        dropHeadChance = plugin.getConfig().getDouble("drop-head-chance");
-        headName = plugin.getConfig().getString("head-name");
-        doPvpMessages = plugin.getConfig().getBoolean("enable-pvp-messages");
-        killerMessage = plugin.getConfig().getString("killer-message");
-        victimMessage = plugin.getConfig().getString("victim-message");
-        meleeMessages = plugin.getConfig().getStringList("melee-death-messages");
-        originalOnHoverEnabled = plugin.getConfig().getBoolean("original-hover-message");
-        itemOnHoverEnabled = plugin.getConfig().getBoolean("enable-item-hover");
-        killMessageCooldown = plugin.getConfig().getDouble("kill-message-cooldown");
-        debugEnabled = plugin.getConfig().getBoolean("developer-mode");
     }
 
-    public void reloadConfig() {
-        plugin.reloadConfig();
-        loadConfig();
+    private YamlDocument getConfig() {
+        InputStream resource = plugin.getResource("config.yml");
+
+        if (resource == null) {
+            warnAndDisable();
+            return null;
+        }
+
+        UpdaterSettings updater = UpdaterSettings.builder()
+                .setAutoSave(true)
+                .setVersioning(new BasicVersioning("config-version"))
+                .addRelocations("2", new HashMap<Route, Route>() {{
+                    put(Route.fromString("original-hover-message"), Route.fromString("enable-original-on-hover"));
+                    put(Route.fromString("enable-item-hover"), Route.fromString("enable-item-on-hover"));
+                    put(Route.fromString("do-lightning"), Route.fromString("enable-lightning"));
+                }})
+                .build();
+
+        try {
+            return YamlDocument.create(
+                    new File(plugin.getDataFolder(), "config.yml"),
+                    resource,
+                    GeneralSettings.DEFAULT,
+                    LoaderSettings.builder().setAutoUpdate(true).build(),
+                    DumperSettings.DEFAULT,
+                    updater);
+        } catch (IOException e) {
+            warnAndDisable();
+            return null;
+        }
+    }
+
+    public boolean reloadConfig() {
+        return sneaky(config::reload) && sneaky(config::save);
+    }
+
+    private void warnAndDisable() {
+        plugin.getLogger().warning("Unable to load config.yml from jar, disabling plugin.");
+        plugin.getServer().getPluginManager().disablePlugin(plugin);
     }
 
     public String getMessage(DeathCause cause) {
-        List<String> messages = this.messages.get(cause);
+        List<String> messages = config.getStringList(cause.getPath());
 
         if (invalidCollection(messages, cause.getPath())) {
             return null;
@@ -70,38 +89,40 @@ public class ConfigManager {
     }
 
     public boolean doLightningStrike() {
-        return doLightningStrike;
+        return config.getBoolean("enable-lightning");
     }
 
     public boolean dropHead() {
-        return new Random().nextDouble() <= dropHeadChance;
+        return new Random().nextDouble() <= config.getDouble("drop-head-chance");
     }
 
     public String getHeadName() {
-        return headName;
+        return config.getString("head-name");
     }
 
     public boolean doPvpMessages() {
-        return doPvpMessages;
+        return config.getBoolean("enable-pvp-messages");
     }
 
     public String getKillerMessage() {
-        return killerMessage;
+        return config.getString("killer-message");
     }
 
     public String getVictimMessage() {
-        return victimMessage;
+        return config.getString("victim-message");
     }
 
     public boolean isCheckUpdatesEnabled() {
-        return checkUpdatesEnabled;
+        return config.getBoolean("enable-update-messages");
     }
 
     public boolean isGlobalMessageEnabled() {
-        return globalMessagesEnabled;
+        return config.getBoolean("enable-global-messages");
     }
 
     public String getMeleeMessage() {
+        List<String> meleeMessages = config.getStringList("melee-death-messages");
+
         if (invalidCollection(meleeMessages, "melee-death-messages")) {
             return null;
         }
@@ -110,32 +131,36 @@ public class ConfigManager {
     }
 
     public boolean isOriginalOnHoverEnabled() {
-        return originalOnHoverEnabled;
+        return config.getBoolean("enable-original-on-hover");
     }
 
     public boolean isItemOnHoverEnabled() {
-        return itemOnHoverEnabled;
+        return config.getBoolean("enable-item-on-hover");
     }
 
     public double getCooldown() {
-        return killMessageCooldown;
+        return config.getDouble("message-cooldown");
+    }
+
+    public boolean isCustomNamedEntityMessageEnabled() {
+        return config.getBoolean("enable-custom-name-entity-messages");
     }
 
     public boolean isDebugEnabled() {
-        return debugEnabled;
+        return config.getBoolean("developer-mode");
     }
 
     private void registerStatistics() {
         Metrics metrics = new Metrics(plugin, 7287);
-        metrics.addCustomChart(new SimplePie("head_drop_percentage", () -> String.valueOf(dropHeadChance)));
-        metrics.addCustomChart(new SimplePie("give_killer_speed", () -> getBooleanString(plugin.getConfig().getBoolean("give-killer-speed")))); // legacy
-        metrics.addCustomChart(new SimplePie("heart_sucker", () -> getBooleanString(plugin.getConfig().getBoolean("heart-sucker")))); // legacy
-        metrics.addCustomChart(new SimplePie("do_lightning", () -> getBooleanString(doLightningStrike)));
-        metrics.addCustomChart(new SimplePie("enable_global_messages", () -> getBooleanString(globalMessagesEnabled)));
-        metrics.addCustomChart(new SimplePie("enable_pvp_messages", () -> getBooleanString(doPvpMessages)));
-        metrics.addCustomChart(new SimplePie("enable_entity_name_messages", () -> getBooleanString(plugin.getConfig().getBoolean("enable-entity-name-messages"))));
-        metrics.addCustomChart(new SimplePie("enable_original_hover_message", () -> getBooleanString(originalOnHoverEnabled)));
-        metrics.addCustomChart(new SimplePie("enable_item_tooltip_message", () -> getBooleanString(itemOnHoverEnabled)));
+        metrics.addCustomChart(new SimplePie("head_drop_percentage", () -> String.valueOf(config.getDouble("drop-head-chance"))));
+        metrics.addCustomChart(new SimplePie("give_killer_speed", () -> getBooleanString(config.getBoolean("give-killer-speed")))); // legacy
+        metrics.addCustomChart(new SimplePie("heart_sucker", () -> getBooleanString(config.getBoolean("heart-sucker")))); // legacy
+        metrics.addCustomChart(new SimplePie("enable_lightning", () -> getBooleanString(config.getBoolean("enable-lightning"))));
+        metrics.addCustomChart(new SimplePie("enable_global_messages", () -> getBooleanString(config.getBoolean("enable-global-messages"))));
+        metrics.addCustomChart(new SimplePie("enable_pvp_messages", () -> getBooleanString(config.getBoolean("enable-pvp-messages"))));
+        metrics.addCustomChart(new SimplePie("enable_entity_name_messages", () -> getBooleanString(config.getBoolean("enable-entity-name-messages"))));
+        metrics.addCustomChart(new SimplePie("enable_original_hover_message", () -> getBooleanString(config.getBoolean("enable-original-on-hover"))));
+        metrics.addCustomChart(new SimplePie("enable_item_tooltip_message", () -> getBooleanString(config.getBoolean("enable-item-on-hover"))));
     }
 
     private static String getBooleanString(boolean value) {
@@ -143,57 +168,58 @@ public class ConfigManager {
     }
 
     public void addCustomMessage(DeathCause cause, String message) {
-        Set<DeathCause> causes = DeathCause.deathCauseWithPath(cause);
+        List<String> configMessages = config.getStringList(cause.getPath());
+        configMessages.add(message);
+        config.set(cause.getPath(), configMessages);
+        sneaky(config::save);
 
-        for (DeathCause deathCause : causes) {
-            List<String> configMessages = messages.get(deathCause);
-            configMessages.add(message);
-            plugin.getConfig().set(deathCause.getPath(), configMessages);
-        }
-
-        plugin.saveConfig();
     }
 
     public void removeCustomMessage(DeathCause cause, int index) {
-        Set<DeathCause> causes = DeathCause.deathCauseWithPath(cause);
-
-        for (DeathCause deathCause : causes) {
-            List<String> configMessages = messages.get(deathCause);
-            configMessages.remove(index);
-            plugin.getConfig().set(deathCause.getPath(), configMessages);
-        }
-
-        plugin.saveConfig();
-    }
-
-    public List<String> listDeathMessages(DeathCause cause) {
-        return messages.get(cause);
+        List<String> configMessages = config.getStringList(cause.getPath());
+        configMessages.remove(index);
+        config.set(cause.getPath(), configMessages);
+        sneaky(config::save);
     }
 
     public void setBoolean(String path, boolean value) {
-        plugin.getConfig().set(path, value);
-        plugin.saveConfig();
+        config.set(path, value);
+        sneaky(config::save);
     }
 
     public void setDouble(String path, double value) {
-        plugin.getConfig().set(path, value);
-        plugin.saveConfig();
+        config.set(path, value);
+        sneaky(config::save);
     }
 
     public void setString(String path, String value) {
-        plugin.getConfig().set(path, value);
-        plugin.saveConfig();
+        config.set(path, value);
+        sneaky(config::save);
+    }
+
+    interface ConfigAction {
+        void run() throws IOException;
+    }
+
+    private boolean sneaky(ConfigAction action) {
+        try {
+            action.run();
+            return true;
+        } catch (IOException e) {
+            plugin.getLogger().warning("Unable to save config.yml, changes will not take effect.");
+            return false;
+        }
     }
 
     public int getMessagesCount(DeathCause cause) {
-        return messages.get(cause).size();
+        return config.getStringList(cause.getPath()).size();
     }
 
     public Set<String> getStringConfigPaths() {
         Set<String> paths = new HashSet<>();
 
         for (String path : keys) {
-            if (plugin.getConfig().get(path) instanceof String) {
+            if (config.get(path) instanceof String) {
                 paths.add(path);
             }
         }
@@ -205,7 +231,7 @@ public class ConfigManager {
         Set<String> paths = new HashSet<>();
 
         for (String path : keys) {
-            if (plugin.getConfig().get(path) instanceof Boolean) {
+            if (config.get(path) instanceof Boolean) {
                 paths.add(path);
             }
         }
@@ -217,12 +243,16 @@ public class ConfigManager {
         Set<String> paths = new HashSet<>();
 
         for (String path : keys) {
-            if (plugin.getConfig().get(path) instanceof Double || plugin.getConfig().get(path) instanceof Integer) {
+            if (config.get(path) instanceof Double || config.get(path) instanceof Integer) {
                 paths.add(path);
             }
         }
 
         return paths;
+    }
+
+    public List<String> listDeathMessages(DeathCause cause) {
+        return config.getStringList(cause.getPath());
     }
 
     private boolean invalidCollection(List<?> collection, String name) {

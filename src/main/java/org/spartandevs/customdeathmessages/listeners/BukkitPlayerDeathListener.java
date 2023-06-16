@@ -35,15 +35,15 @@ public class BukkitPlayerDeathListener implements Listener {
             return;
         }
 
-        DeathCause deathCause = DeathCause.fromDamageCause(victim.getLastDamageCause().getCause(), plugin);
+        DeathCause deathCause = DeathCause.from(victim.getLastDamageCause().getCause(), plugin);
         MessageInfo propagated = plugin.getMessagePropagator().getDeathMessage(victim.getUniqueId());
 
-        if (propagated != null && killer == null) {
-            killer = propagated.getKiller();
-        }
-
-        if (propagated != null && (deathCause == DeathCause.UNKNOWN || deathCause == DeathCause.ENTITY_ATTACK)) {
+        if (propagated != null) {
             deathCause = propagated.getDeathCause();
+
+            if (killer == null) {
+                killer = propagated.getKiller();
+            }
         }
 
         deathMessageSetter = event::setDeathMessage;

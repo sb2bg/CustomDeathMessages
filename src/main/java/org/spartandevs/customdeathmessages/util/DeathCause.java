@@ -1,7 +1,5 @@
 package org.spartandevs.customdeathmessages.util;
 
-import org.bukkit.entity.EntityType;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
 
 import java.util.Arrays;
@@ -14,6 +12,7 @@ public enum DeathCause {
     CUSTOM("unknown-messages"),
     ENTITY_ATTACK("unknown-messages"),
     CUSTOM_NAMED_ENTITY("custom-name-entity-messages"),
+    PROJECTILE("arrow-messages"),
     PLAYER("global-pvp-death-messages"),
     BLOCK("falling-block-messages"),
     VOID("void-messages"),
@@ -116,26 +115,14 @@ public enum DeathCause {
         return path;
     }
 
-
-    public static DeathCause fromDamageCause(EntityDamageEvent.DamageCause cause, CustomDeathMessages plugin) {
+    public static <E extends Enum<E>> DeathCause from(Enum<E> namedEnum, CustomDeathMessages plugin) {
         for (DeathCause deathCause : values()) {
-            if (deathCause.name().equalsIgnoreCase(cause.name())) {
+            if (deathCause.name().equalsIgnoreCase(namedEnum.name())) {
                 return deathCause;
             }
         }
 
-        plugin.getLogger().warning("Unknown damage cause '" + cause.name() + "'. If you would like this message to be added, please leave a message on the plugin discussion.");
-        return DeathCause.UNKNOWN;
-    }
-
-    public static DeathCause fromEntityType(EntityType entity, CustomDeathMessages plugin) {
-        for (DeathCause deathCause : values()) {
-            if (deathCause.name().equalsIgnoreCase(entity.name())) {
-                return deathCause;
-            }
-        }
-
-        plugin.getLogger().warning("Unknown entity '" + entity.name() + "'. If you would like this message to be added, please leave a message on the plugin discussion.");
+        plugin.getLogger().warning("Unknown entity or damage cause '" + namedEnum.name() + "'. If you would like this message to be added, please leave a message on the plugin discussion.");
         return DeathCause.UNKNOWN;
     }
 
