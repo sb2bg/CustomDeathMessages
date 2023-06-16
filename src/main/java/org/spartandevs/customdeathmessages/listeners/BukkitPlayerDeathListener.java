@@ -42,7 +42,7 @@ public class BukkitPlayerDeathListener implements Listener {
             killer = propagated.getKiller();
         }
 
-        if (propagated != null && (deathCause == DeathCause.UNKNOWN || deathCause == DeathCause.ENTITY_ATTACK)) {
+        if (propagated != null && (deathCause == DeathCause.UNKNOWN || deathCause == DeathCause.ENTITY_ATTACK || deathCause == DeathCause.ENTITY_EXPLOSION)) {
             deathCause = propagated.getDeathCause();
         }
 
