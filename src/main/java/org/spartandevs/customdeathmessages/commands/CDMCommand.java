@@ -121,6 +121,23 @@ public class CDMCommand extends CDMBaseCommand {
         sendMessage(sender, "&aShot " + target.getName() + " with an instant-kill arrow.");
     }
 
+    @Subcommand("debug prime")
+    @Syntax("<player>")
+    @CommandCompletion("@players")
+    @CommandPermission("cdm.debug")
+    @Description("Sets the player's health to 1. Used for debugging.")
+    @Conditions("debugEnabled")
+    public void onDebugPrime(Player sender, @Optional Player target) {
+        if (target == null) {
+            target = sender;
+        }
+
+        target.setHealth(1);
+        target.setSaturation(0);
+        target.setFoodLevel(14);
+        sendMessage(sender, "&aPrimed " + target.getName() + ".");
+    }
+
     @CatchUnknown
     public void onUnknown(CommandSender sender) {
         sendMessage(sender, "&cUnknown command. Type /cdm help for help.");
