@@ -17,7 +17,7 @@ import java.util.Scanner;
 import java.util.function.Consumer;
 
 public class BukkitLoginListener implements Listener {
-    public CustomDeathMessages plugin;
+    private final CustomDeathMessages plugin;
 
     public BukkitLoginListener(CustomDeathMessages plugin) {
         this.plugin = plugin;
