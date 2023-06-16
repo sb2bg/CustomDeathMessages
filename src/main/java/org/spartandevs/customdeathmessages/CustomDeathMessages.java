@@ -28,7 +28,6 @@ public final class CustomDeathMessages extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        configManager.loadConfig();
         stringConfigPaths = configManager.getStringConfigPaths();
         boolConfigPaths = configManager.getBoolConfigPaths();
         numConfigPaths = configManager.getNumConfigPaths();
