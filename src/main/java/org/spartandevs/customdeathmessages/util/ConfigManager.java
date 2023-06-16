@@ -142,6 +142,10 @@ public class ConfigManager {
         return config.getDouble("message-cooldown");
     }
 
+    public boolean isCustomNamedEntityMessageEnabled() {
+        return config.getBoolean("enable-custom-name-entity-messages");
+    }
+
     public boolean isDebugEnabled() {
         return config.getBoolean("developer-mode");
     }
