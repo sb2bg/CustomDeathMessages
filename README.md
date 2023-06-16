@@ -185,6 +185,11 @@ freeze-messages:
   - "&c%victim% &efroze to death. &b&lBrrrrr!"
   - "&c%victim% &eforgot his winter jacket"
 
+firework-messages:
+  - "&c%victim% &elit the fuse on a firework too soon"
+  - "&c%victim% &ewent out with a bang"
+  - "&c%victim% &eblasted off into space"
+
 slime-messages:
   - "&c%victim% &ewas crushed by a &a&lGIANT SLIME"
   - "&c%victim% &ewas slimed to death while collecting slime balls"
