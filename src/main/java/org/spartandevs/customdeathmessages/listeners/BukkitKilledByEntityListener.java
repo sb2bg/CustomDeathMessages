@@ -35,7 +35,9 @@ public class BukkitKilledByEntityListener implements Listener {
             Projectile proj = (Projectile) entity;
 
             if (proj.getShooter() != null) {
-                entity = (Entity) proj.getShooter();
+                if (proj.getShooter() instanceof Entity) {
+                    entity = (Entity) proj.getShooter();
+                }
 
                 if (entity instanceof Player) {
                     deathCause = DeathCause.PLAYER;
@@ -51,6 +53,10 @@ public class BukkitKilledByEntityListener implements Listener {
                     deathCause = DeathCause.PILLAGER;
                 } else if (entity instanceof Drowned) {
                     deathCause = DeathCause.DROWNED;
+                }
+
+                if (proj instanceof Firework) {
+                    deathCause = DeathCause.FIREWORK;
                 }
             }
         }
