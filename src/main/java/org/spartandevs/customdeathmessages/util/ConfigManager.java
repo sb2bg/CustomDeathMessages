@@ -151,12 +151,12 @@ public class ConfigManager {
         metrics.addCustomChart(new SimplePie("head_drop_percentage", () -> String.valueOf(config.getDouble("drop-head-chance"))));
         metrics.addCustomChart(new SimplePie("give_killer_speed", () -> getBooleanString(config.getBoolean("give-killer-speed")))); // legacy
         metrics.addCustomChart(new SimplePie("heart_sucker", () -> getBooleanString(config.getBoolean("heart-sucker")))); // legacy
-        metrics.addCustomChart(new SimplePie("do_lightning", () -> getBooleanString(config.getBoolean("do-lightning"))));
+        metrics.addCustomChart(new SimplePie("enable_lightning", () -> getBooleanString(config.getBoolean("enable-lightning"))));
         metrics.addCustomChart(new SimplePie("enable_global_messages", () -> getBooleanString(config.getBoolean("enable-global-messages"))));
         metrics.addCustomChart(new SimplePie("enable_pvp_messages", () -> getBooleanString(config.getBoolean("enable-pvp-messages"))));
         metrics.addCustomChart(new SimplePie("enable_entity_name_messages", () -> getBooleanString(config.getBoolean("enable-entity-name-messages"))));
-        metrics.addCustomChart(new SimplePie("enable_original_hover_message", () -> getBooleanString(config.getBoolean("original-hover-message"))));
-        metrics.addCustomChart(new SimplePie("enable_item_tooltip_message", () -> getBooleanString(config.getBoolean("enable-item-hover"))));
+        metrics.addCustomChart(new SimplePie("enable_original_hover_message", () -> getBooleanString(config.getBoolean("enable-original-on-hover"))));
+        metrics.addCustomChart(new SimplePie("enable_item_tooltip_message", () -> getBooleanString(config.getBoolean("enable-item-on-hover"))));
     }
 
     private static String getBooleanString(boolean value) {
