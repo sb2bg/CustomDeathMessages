@@ -107,7 +107,7 @@ enable-custom-name-entity-messages: true
 custom-name-entity-messages:
   - "&c%victim% &egot rocked by %entity-name%"
   - "&c%victim% &ewas put to sleep by %entity-name%"
-  - "%entity-name% &eate &c%victim%'s &esoul"
+  - "&c%entity-name% &eate &c%victim%'s &esoul"
   - "&c%victim% &ewishes they didn't fight %entity-name%"
 
 # Placeholders for ALL below messages: %victim%, %victim-nick%, %entity-name%, %victim-x%, %victim-y%, %victim-z%
