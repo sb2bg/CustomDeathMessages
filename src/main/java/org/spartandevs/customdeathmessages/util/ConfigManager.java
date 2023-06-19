@@ -37,7 +37,7 @@ public class ConfigManager extends BaseDocumentManager {
 
     @Override
     protected YamlDocument getDocument() {
-        InputStream resource = plugin.getResource("document.yml");
+        InputStream resource = plugin.getResource("config.yml");
 
         if (resource == null) {
             warnAndDisable();
@@ -56,7 +56,7 @@ public class ConfigManager extends BaseDocumentManager {
 
         try {
             return YamlDocument.create(
-                    new File(plugin.getDataFolder(), "document.yml"),
+                    new File(plugin.getDataFolder(), "config.yml"),
                     resource,
                     GeneralSettings.DEFAULT,
                     LoaderSettings.builder().setAutoUpdate(true).build(),
@@ -73,7 +73,7 @@ public class ConfigManager extends BaseDocumentManager {
     }
 
     private void warnAndDisable() {
-        plugin.getLogger().warning("Unable to load document.yml from jar, disabling plugin.");
+        plugin.getLogger().warning("Unable to load config.yml from jar, disabling plugin.");
         plugin.getServer().getPluginManager().disablePlugin(plugin);
     }
 
