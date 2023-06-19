@@ -124,10 +124,10 @@ public final class CustomDeathMessages extends JavaPlugin {
         return cooldownManager;
     }
 
-    public boolean reload() {
+    public void reload() {
         messagePropagator.clear();
         cooldownManager.clearCooldowns();
-        return configManager.reloadConfig();
+        configManager.reload();
     }
 
     public MessagePropagator getMessagePropagator() {
