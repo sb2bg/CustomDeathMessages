@@ -1,19 +1,12 @@
 package org.spartandevs.customdeathmessages.util;
 
-import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
 import dev.dejvokep.boostedyaml.route.Route;
-import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
-import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
-import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -21,7 +14,7 @@ public class ConfigManager extends BaseDocumentManager {
     private Set<String> keys;
 
     public ConfigManager(CustomDeathMessages plugin) {
-        super(plugin);
+        super(plugin, "config.yml");
         loadConfig();
     }
 
@@ -36,15 +29,8 @@ public class ConfigManager extends BaseDocumentManager {
     }
 
     @Override
-    protected YamlDocument getDocument() {
-        InputStream resource = plugin.getResource("config.yml");
-
-        if (resource == null) {
-            warnAndDisable();
-            return null;
-        }
-
-        UpdaterSettings updater = UpdaterSettings.builder()
+    protected UpdaterSettings updater() {
+        return UpdaterSettings.builder()
                 .setAutoSave(true)
                 .setVersioning(new BasicVersioning("config-version"))
                 .addRelocations("2", new HashMap<Route, Route>() {{
@@ -53,23 +39,6 @@ public class ConfigManager extends BaseDocumentManager {
                     put(Route.fromString("do-lightning"), Route.fromString("enable-lightning"));
                 }})
                 .build();
-
-        try {
-            return YamlDocument.create(
-                    new File(plugin.getDataFolder(), "config.yml"),
-                    resource,
-                    GeneralSettings.DEFAULT,
-                    LoaderSettings.builder().setAutoUpdate(true).build(),
-                    DumperSettings.DEFAULT,
-                    updater);
-        } catch (IOException e) {
-            warnAndDisable();
-            return null;
-        }
-    }
-
-    public boolean reloadConfig() {
-        return sneaky(document::reload) && sneaky(document::save);
     }
 
     private void warnAndDisable() {
@@ -170,7 +139,7 @@ public class ConfigManager extends BaseDocumentManager {
         List<String> configMessages = document.getStringList(cause.getPath());
         configMessages.add(message);
         document.set(cause.getPath(), configMessages);
-        sneaky(document::save);
+        save();
 
     }
 
@@ -178,22 +147,22 @@ public class ConfigManager extends BaseDocumentManager {
         List<String> configMessages = document.getStringList(cause.getPath());
         configMessages.remove(index);
         document.set(cause.getPath(), configMessages);
-        sneaky(document::save);
+        save();
     }
 
     public void setBoolean(String path, boolean value) {
         document.set(path, value);
-        sneaky(document::save);
+        save();
     }
 
     public void setDouble(String path, double value) {
         document.set(path, value);
-        sneaky(document::save);
+        save();
     }
 
     public void setString(String path, String value) {
         document.set(path, value);
-        sneaky(document::save);
+        save();
     }
 
     public int getMessagesCount(DeathCause cause) {
