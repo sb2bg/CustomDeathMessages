@@ -121,8 +121,6 @@ public class ConfigManager extends BaseDocumentManager {
     private void registerStatistics() {
         Metrics metrics = new Metrics(plugin, 7287);
         metrics.addCustomChart(new SimplePie("head_drop_percentage", () -> String.valueOf(document.getDouble("drop-head-chance"))));
-        metrics.addCustomChart(new SimplePie("give_killer_speed", () -> getBooleanString(document.getBoolean("give-killer-speed")))); // legacy
-        metrics.addCustomChart(new SimplePie("heart_sucker", () -> getBooleanString(document.getBoolean("heart-sucker")))); // legacy
         metrics.addCustomChart(new SimplePie("enable_lightning", () -> getBooleanString(document.getBoolean("enable-lightning"))));
         metrics.addCustomChart(new SimplePie("enable_global_messages", () -> getBooleanString(document.getBoolean("enable-global-messages"))));
         metrics.addCustomChart(new SimplePie("enable_pvp_messages", () -> getBooleanString(document.getBoolean("enable-pvp-messages"))));
