@@ -25,11 +25,6 @@ public class CustomPlayerDeathListener implements Listener {
 
     @EventHandler
     public void onPlayerDeath(CustomPlayerDeathEvent event) {
-        if (plugin.getCooldownManager().isOnCooldown(event.getVictim().getUniqueId())) {
-            event.setEmptyMessage();
-            return;
-        }
-
         ConfigManager config = plugin.getConfigManager();
         ItemStack weapon = null;
 
@@ -66,31 +61,44 @@ public class CustomPlayerDeathListener implements Listener {
             event.getVictim().sendMessage(populator.replace(config.getVictimMessage()));
         }
 
-        if (config.isGlobalMessageEnabled()) {
-            if (event.getDeathCause() == DeathCause.UNKNOWN) {
-                if (event.getKiller() != null) {
-                    plugin.getLogger().warning("Unknown death cause for killer " + event.getKiller().getType());
-                } else {
-                    plugin.getLogger().warning("Unknown death cause with no killer");
-                }
-            }
-
-            DeathMessageResolver resolver = weapon != null && weapon.getType() == Material.AIR
-                    ? config::getMeleeMessage
-                    : () -> config.getMessage(event.getDeathCause());
-
-            String message = resolver.getMessage();
-
-            if (message == null) {
-                return;
-            }
-
-            DeathMessage.MessageType type = config.isItemOnHoverEnabled() || config.isOriginalOnHoverEnabled()
-                    ? DeathMessage.MessageType.JSON
-                    : DeathMessage.MessageType.STRING;
-
-            event.setDeathMessage(new DeathMessage(message, populator, type), hoverTransforms);
+        if (!config.isGlobalMessageEnabled()) {
+            return;
         }
+
+        if (plugin.getCooldownManager().isOnCooldown(event.getVictim().getUniqueId())) {
+            event.setEmptyMessage();
+            return;
+        }
+
+        // Game rule showDeathMessages is set to false
+        if (!event.showGlobalDeathMessages()) {
+            event.setEmptyMessage();
+            return;
+        }
+
+        if (event.getDeathCause() == DeathCause.UNKNOWN) {
+            if (event.getKiller() != null) {
+                plugin.getLogger().warning("Unknown death cause for killer " + event.getKiller().getType());
+            } else {
+                plugin.getLogger().warning("Unknown death cause with no killer");
+            }
+        }
+
+        DeathMessageResolver resolver = weapon != null && weapon.getType() == Material.AIR
+                ? config::getMeleeMessage
+                : () -> config.getMessage(event.getDeathCause());
+
+        String message = resolver.getMessage();
+
+        if (message == null) {
+            return;
+        }
+
+        DeathMessage.MessageType type = config.isItemOnHoverEnabled() || config.isOriginalOnHoverEnabled()
+                ? DeathMessage.MessageType.JSON
+                : DeathMessage.MessageType.STRING;
+
+        event.setDeathMessage(new DeathMessage(plugin, message, populator, hoverTransforms, type));
     }
 
     interface DeathMessageResolver {
@@ -99,7 +107,7 @@ public class CustomPlayerDeathListener implements Listener {
 
     @SuppressWarnings("deprecation") // 1.8 support
     private static ItemStack getKillWeapon(Player killer) {
-        if (Version.SERVER_VERSION.isVersionOrHigher(Version.V19)) {
+        if (Version.SERVER_VERSION.isVersionOrHigherThan(Version.V19)) {
             return killer.getInventory().getItemInMainHand();
         } else {
             return killer.getItemInHand();

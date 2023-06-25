@@ -1,6 +1,7 @@
 package org.spartandevs.customdeathmessages.listeners;
 
 import net.md_5.bungee.api.chat.BaseComponent;
+import org.bukkit.GameRule;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -8,10 +9,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
 import org.spartandevs.customdeathmessages.chat.DeathMessage;
-import org.spartandevs.customdeathmessages.chat.HoverTransforms;
 import org.spartandevs.customdeathmessages.events.CustomPlayerDeathEvent;
 import org.spartandevs.customdeathmessages.util.DeathCause;
 import org.spartandevs.customdeathmessages.util.MessageInfo;
+import org.spartandevs.customdeathmessages.util.Version;
 
 public class BukkitPlayerDeathListener implements Listener {
     public interface OriginalDeathMessageSetter {
@@ -19,7 +20,6 @@ public class BukkitPlayerDeathListener implements Listener {
     }
 
     private final CustomDeathMessages plugin;
-
     private OriginalDeathMessageSetter deathMessageSetter;
 
     public BukkitPlayerDeathListener(CustomDeathMessages plugin) {
@@ -49,13 +49,13 @@ public class BukkitPlayerDeathListener implements Listener {
         deathMessageSetter = event::setDeathMessage;
 
         CustomPlayerDeathEvent customPlayerDeathEvent = new CustomPlayerDeathEvent(
-                deathCause, event.getDeathMessage(), killer, victim, this::setDeathMessage);
+                deathCause, event.getDeathMessage(), killer, victim, this::setDeathMessage, showDeathMessageGameRule(event));
 
         plugin.getServer().getPluginManager().callEvent(customPlayerDeathEvent);
     }
 
-    private void setDeathMessage(Player victim, DeathMessage deathMessage, HoverTransforms hoverTransforms) {
-        // message is on cooldown
+    private void setDeathMessage(Player victim, DeathMessage deathMessage) {
+        // Message is on cooldown
         if (deathMessage == null) {
             deathMessageSetter.setDeathMessage("");
             return;
@@ -67,7 +67,7 @@ public class BukkitPlayerDeathListener implements Listener {
                 break;
             case JSON: {
                 deathMessageSetter.setDeathMessage("");
-                BaseComponent[] textComponent = deathMessage.getTextComponent(hoverTransforms);
+                BaseComponent[] textComponent = deathMessage.getTextComponent();
                 plugin.getServer().spigot().broadcast(textComponent);
                 // Console doesn't receive spigot broadcasts, so we have to send it manually
                 plugin.getServer().getConsoleSender().sendMessage(baseComponentArrayToString(textComponent));
@@ -86,5 +86,12 @@ public class BukkitPlayerDeathListener implements Listener {
         }
 
         return stringBuilder.toString();
+    }
+
+    @SuppressWarnings("deprecation") // GameRules changed in 1.13
+    private static boolean showDeathMessageGameRule(PlayerDeathEvent event) {
+        return Version.SERVER_VERSION.isHigherThan(Version.V12)
+                ? Boolean.TRUE.equals(event.getEntity().getWorld().getGameRuleValue(GameRule.SHOW_DEATH_MESSAGES))
+                : event.getEntity().getWorld().isGameRule("showDeathMessages") && event.getEntity().getWorld().getGameRuleValue("showDeathMessages").equals("true");
     }
 }

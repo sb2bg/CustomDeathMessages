@@ -64,7 +64,11 @@ public enum Version {
         }
     }
 
-    public boolean isVersionOrHigher(Version version) {
+    public boolean isVersionOrHigherThan(Version version) {
         return this.ordinal() >= version.ordinal();
+    }
+
+    public boolean isHigherThan(Version version) {
+        return this.ordinal() > version.ordinal();
     }
 }
