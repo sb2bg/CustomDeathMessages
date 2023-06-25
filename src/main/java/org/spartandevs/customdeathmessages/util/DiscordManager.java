@@ -5,12 +5,9 @@ import net.essentialsx.api.v2.services.discord.MessageType;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
 
 public class DiscordManager {
-    private final CustomDeathMessages plugin;
     private DiscordInterface discord;
 
     public DiscordManager(CustomDeathMessages plugin) {
-        this.plugin = plugin;
-
         if (plugin.getServer().getPluginManager().isPluginEnabled("EssentialsDiscord")) {
             DiscordService essDiscord = plugin.getServer().getServicesManager().load(DiscordService.class);
 
