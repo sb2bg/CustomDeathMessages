@@ -5,6 +5,7 @@ authors: [ Sullivan, JP ]
 description: Create highly customizable death messages
 website: spartandevs.org
 api-version: 1.13
+softdepend: [ EssentialsDiscord ]
 
 commands:
   cdm:
