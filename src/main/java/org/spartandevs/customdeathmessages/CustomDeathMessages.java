@@ -9,10 +9,7 @@ import org.spartandevs.customdeathmessages.listeners.BukkitKilledByEntityListene
 import org.spartandevs.customdeathmessages.listeners.BukkitLoginListener;
 import org.spartandevs.customdeathmessages.listeners.BukkitPlayerDeathListener;
 import org.spartandevs.customdeathmessages.listeners.CustomPlayerDeathListener;
-import org.spartandevs.customdeathmessages.util.ConfigManager;
-import org.spartandevs.customdeathmessages.util.CooldownManager;
-import org.spartandevs.customdeathmessages.util.DeathCause;
-import org.spartandevs.customdeathmessages.util.MessagePropagator;
+import org.spartandevs.customdeathmessages.util.*;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,6 +19,7 @@ public final class CustomDeathMessages extends JavaPlugin {
     private final ConfigManager configManager = new ConfigManager(this);
     private final MessagePropagator messagePropagator = new MessagePropagator(this);
     private final CooldownManager cooldownManager = new CooldownManager();
+    private final DiscordManager discordManager = new DiscordManager(this);
     private Set<String> stringConfigPaths;
     private Set<String> boolConfigPaths;
     private Set<String> numConfigPaths;
