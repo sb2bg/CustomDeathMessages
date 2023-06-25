@@ -1,46 +1,36 @@
-package org.spartandevs.customdeathmessages.util;
+package org.spartandevs.customdeathmessages.util
 
-import net.essentialsx.api.v2.services.discord.DiscordService;
-import net.essentialsx.api.v2.services.discord.MessageType;
-import org.spartandevs.customdeathmessages.CustomDeathMessages;
+import github.scarsz.discordsrv.DiscordSRV
+import net.essentialsx.api.v2.services.discord.DiscordService
+import net.essentialsx.api.v2.services.discord.MessageType
+import org.spartandevs.customdeathmessages.CustomDeathMessages
 
-public class DiscordManager {
-    private DiscordInterface discord;
+class DiscordManager(plugin: CustomDeathMessages) {
+    private var discord: (message: String) -> Unit = {}
 
-    public DiscordManager(CustomDeathMessages plugin) {
-        if (plugin.getServer().getPluginManager().isPluginEnabled("EssentialsDiscord")) {
-            DiscordService essDiscord = plugin.getServer().getServicesManager().load(DiscordService.class);
+    init {
+        if (plugin.server.pluginManager.isPluginEnabled("EssentialsDiscord")) {
+            val essDiscord = plugin.server.servicesManager.load(DiscordService::class.java)
 
-            if (essDiscord == null) {
-                plugin.getLogger().warning("Failed to load EssentialsDiscord integration.");
-                return;
-            }
-
-            discord = message -> {
-                try {
-                    essDiscord.sendMessage(MessageType.DefaultTypes.DEATH, ":skull: " + message, false);
-                } catch (Exception e) {
-                    plugin.getLogger().warning("Failed to send message to Discord.");
+            essDiscord?.let {
+                discord = { message ->
+                    it.sendMessage(MessageType.DefaultTypes.DEATH, ":skull: $message", false)
                 }
-            };
 
-            plugin.getLogger().info("Successfully loaded EssentialsDiscord support.");
-        } else if (plugin.getServer().getPluginManager().isPluginEnabled("DiscordSRV")) {
-            plugin.getLogger().warning("DiscordSRV support is not yet implemented.");
+                plugin.logger.info("Successfully loaded EssentialsDiscord support.")
+            }
+        } else if (plugin.server.pluginManager.isPluginEnabled("DiscordSRV")) {
+            val srv = DiscordSRV.getPlugin()
+            val channelName = srv.getOptionalChannel("deaths")
+            val messageFormat = srv.getMessageFromConfiguration("MinecraftPlayerDeathMessage")
+            
+            if (messageFormat == null) {
+                return
+            }
         }
     }
 
-    public void sendDeathMessage(String message) {
-        if (discord != null) {
-            discord.sendDeathMessage(message);
-        }
+    fun sendDeathMessage(message: String) {
+        discord(message)
     }
-
-    public boolean isDiscordEnabled() {
-        return discord != null;
-    }
-}
-
-interface DiscordInterface {
-    void sendDeathMessage(String message);
 }
