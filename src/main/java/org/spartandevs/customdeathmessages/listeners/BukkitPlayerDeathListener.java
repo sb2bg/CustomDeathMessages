@@ -66,11 +66,17 @@ public class BukkitPlayerDeathListener implements Listener {
                 deathMessageSetter.setDeathMessage(deathMessage.getStringMessage());
                 break;
             case JSON: {
+                // Disable the default death message, so we can send a TextComponent
                 deathMessageSetter.setDeathMessage("");
+
                 BaseComponent[] textComponent = deathMessage.getTextComponent(hoverTransforms);
                 plugin.getServer().spigot().broadcast(textComponent);
-                // Console doesn't receive spigot broadcasts, so we have to send it manually
-                plugin.getServer().getConsoleSender().sendMessage(baseComponentArrayToString(textComponent));
+
+                // Console & Discord don't receive spigot broadcasts, so we have to send it manually
+                String stringMessage = baseComponentArrayToString(textComponent);
+                plugin.getServer().getConsoleSender().sendMessage(stringMessage);
+                plugin.getDiscordManager().sendDeathMessage(stringMessage);
+
                 break;
             }
         }
