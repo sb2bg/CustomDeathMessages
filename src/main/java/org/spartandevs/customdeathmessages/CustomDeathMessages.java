@@ -16,19 +16,26 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public final class CustomDeathMessages extends JavaPlugin {
-    private final ConfigManager configManager = new ConfigManager(this);
-    private final MessagePropagator messagePropagator = new MessagePropagator(this);
-    private final CooldownManager cooldownManager = new CooldownManager();
-    private final DiscordManager discordManager = new DiscordManager(this);
+    private ConfigManager configManager;
+    private MessagePropagator messagePropagator;
+    private CooldownManager cooldownManager;
+    private DiscordManager discordManager;
     private Set<String> stringConfigPaths;
     private Set<String> boolConfigPaths;
     private Set<String> numConfigPaths;
 
     @Override
     public void onEnable() {
+        // register bukkit related managers in onEnable to maintain softdepend
+        configManager = new ConfigManager(this);
+        discordManager = new DiscordManager(this);
+        messagePropagator = new MessagePropagator(this);
+        cooldownManager = new CooldownManager();
+
         stringConfigPaths = configManager.getStringConfigPaths();
         boolConfigPaths = configManager.getBoolConfigPaths();
         numConfigPaths = configManager.getNumConfigPaths();
+
         registerEvents();
         registerCommands();
     }
