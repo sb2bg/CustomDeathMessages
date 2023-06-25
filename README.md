@@ -6,18 +6,19 @@ all set to go! Plugin works on all versions 1.8+.
 
 ### Features
 
-Edit every death message in the game!
-Toggleable and configurable global death messages.
-Toggleable hover event that displays the original message.
-Toggleable hover event that displays an item tooltip.
-Toggleable lightning effect when a player is killed.
-Built-in placeholders.
-Customizable chance for a player to drop their head on death. Head name is customizable.
-In-game command to change any config values with ease.
-Hex colors for all messages by using &#hex
-Toggleable and configurable messages sent to the victim and the killer for PvP deaths.
-Update checker sends a message when the plugin has an update
-Extensive and very customizable config, see the example below.
+* Edit every death message in the game!
+* Toggleable and configurable global death messages.
+* Toggleable hover event that displays the original message.
+* Toggleable hover event that displays an item tooltip.
+* Toggleable lightning effect when a player is killed.
+* DiscordSRV and EssentialsChat support.
+* Built-in placeholders.
+* Customizable chance for a player to drop their head on death. Head name is customizable.
+* In-game command to change any config values with ease.
+* Hex colors for all messages by using &#hex
+* Toggleable and configurable messages sent to the victim and the killer for PvP deaths.
+* Update checker sends a message when the plugin has an update
+* Extensive and very customizable config, see the example below.
 
 ### Commands and Permissions
 
