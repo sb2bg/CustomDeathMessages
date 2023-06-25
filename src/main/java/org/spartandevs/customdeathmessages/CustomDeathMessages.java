@@ -114,6 +114,12 @@ public final class CustomDeathMessages extends JavaPlugin {
         }));
     }
 
+    public void reload() {
+        messagePropagator.clear();
+        cooldownManager.clearCooldowns();
+        configManager.reload();
+    }
+
     public ConfigManager getConfigManager() {
         return configManager;
     }
@@ -122,13 +128,11 @@ public final class CustomDeathMessages extends JavaPlugin {
         return cooldownManager;
     }
 
-    public void reload() {
-        messagePropagator.clear();
-        cooldownManager.clearCooldowns();
-        configManager.reload();
-    }
-
     public MessagePropagator getMessagePropagator() {
         return messagePropagator;
+    }
+
+    public DiscordManager getDiscordManager() {
+        return discordManager;
     }
 }
