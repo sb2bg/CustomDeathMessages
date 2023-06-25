@@ -18,7 +18,7 @@ public class DiscordManager {
 
             discord = message -> {
                 try {
-                    essDiscord.sendMessage(MessageType.DefaultTypes.DEATH, message, true);
+                    essDiscord.sendMessage(MessageType.DefaultTypes.DEATH, ":skull: " + message, false);
                 } catch (Exception e) {
                     plugin.getLogger().warning("Failed to send message to Discord.");
                 }
