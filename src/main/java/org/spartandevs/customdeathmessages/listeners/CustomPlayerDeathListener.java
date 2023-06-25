@@ -89,7 +89,7 @@ public class CustomPlayerDeathListener implements Listener {
                     ? DeathMessage.MessageType.JSON
                     : DeathMessage.MessageType.STRING;
 
-            event.setDeathMessage(new DeathMessage(message, populator, type), hoverTransforms);
+            event.setDeathMessage(new DeathMessage(plugin, message, populator, hoverTransforms, type));
         }
     }
 
@@ -99,7 +99,7 @@ public class CustomPlayerDeathListener implements Listener {
 
     @SuppressWarnings("deprecation") // 1.8 support
     private static ItemStack getKillWeapon(Player killer) {
-        if (Version.SERVER_VERSION.isVersionOrHigher(Version.V19)) {
+        if (Version.SERVER_VERSION.isVersionOrHigherThan(Version.V19)) {
             return killer.getInventory().getItemInMainHand();
         } else {
             return killer.getItemInHand();
