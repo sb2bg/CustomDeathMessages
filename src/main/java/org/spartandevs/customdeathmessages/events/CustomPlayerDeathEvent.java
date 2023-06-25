@@ -4,8 +4,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 import org.spartandevs.customdeathmessages.chat.DeathMessage;
-import org.spartandevs.customdeathmessages.chat.HoverTransforms;
 import org.spartandevs.customdeathmessages.util.DeathCause;
 
 public class CustomPlayerDeathEvent extends Event {
@@ -28,8 +28,8 @@ public class CustomPlayerDeathEvent extends Event {
         return deathCause;
     }
 
-    public void setDeathMessage(DeathMessage deathMessage, HoverTransforms hoverTransforms) {
-        setDeathMessage.setDeathMessage(victim, deathMessage, hoverTransforms);
+    public void setDeathMessage(DeathMessage deathMessage) {
+        setDeathMessage.setDeathMessage(victim, deathMessage);
     }
 
     public String getOriginalDeathMessage() {
@@ -44,20 +44,22 @@ public class CustomPlayerDeathEvent extends Event {
         return victim;
     }
 
+    @SuppressWarnings("unused") // used by Bukkit
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
+    @NotNull
     @Override
     public HandlerList getHandlers() {
         return handlers;
     }
 
     public interface DeathMessageSetter {
-        void setDeathMessage(Player victim, DeathMessage deathMessage, HoverTransforms hoverTransforms);
+        void setDeathMessage(Player victim, DeathMessage deathMessage);
     }
 
     public void setEmptyMessage() {
-        setDeathMessage.setDeathMessage(victim, null, null);
+        setDeathMessage.setDeathMessage(victim, null);
     }
 }
