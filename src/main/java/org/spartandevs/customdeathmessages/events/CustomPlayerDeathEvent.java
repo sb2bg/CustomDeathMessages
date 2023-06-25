@@ -15,13 +15,15 @@ public class CustomPlayerDeathEvent extends Event {
     private final String originalDeathMessage;
     private final Entity killer;
     private final Player victim;
+    private final boolean showGlobalDeathMessages;
 
-    public CustomPlayerDeathEvent(DeathCause deathCause, String originalDeathMessage, Entity killer, Player victim, DeathMessageSetter setDeathMessage) {
+    public CustomPlayerDeathEvent(DeathCause deathCause, String originalDeathMessage, Entity killer, Player victim, DeathMessageSetter setDeathMessage, boolean showGlobalDeathMessages) {
         this.deathCause = deathCause;
         this.originalDeathMessage = originalDeathMessage;
         this.setDeathMessage = setDeathMessage;
         this.killer = killer;
         this.victim = victim;
+        this.showGlobalDeathMessages = showGlobalDeathMessages;
     }
 
     public DeathCause getDeathCause() {
@@ -57,6 +59,10 @@ public class CustomPlayerDeathEvent extends Event {
 
     public interface DeathMessageSetter {
         void setDeathMessage(Player victim, DeathMessage deathMessage);
+    }
+
+    public boolean showGlobalDeathMessages() {
+        return showGlobalDeathMessages;
     }
 
     public void setEmptyMessage() {
