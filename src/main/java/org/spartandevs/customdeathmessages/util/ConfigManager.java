@@ -120,6 +120,7 @@ public class ConfigManager extends BaseDocumentManager {
 
     private void registerStatistics() {
         Metrics metrics = new Metrics(plugin, 7287);
+        metrics.addCustomChart(new SimplePie("message_cooldown", () -> String.valueOf(document.getDouble("message-cooldown"))));
         metrics.addCustomChart(new SimplePie("head_drop_percentage", () -> String.valueOf(document.getDouble("drop-head-chance"))));
         metrics.addCustomChart(new SimplePie("enable_lightning", () -> getBooleanString(document.getBoolean("enable-lightning"))));
         metrics.addCustomChart(new SimplePie("enable_global_messages", () -> getBooleanString(document.getBoolean("enable-global-messages"))));
