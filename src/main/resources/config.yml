@@ -319,6 +319,12 @@ warden-sonic-boom-messages:
   - "&c%victim% &ewas sonic boomed by a Warden"
   - "&c%victim% &egot his ears blown out by a Warden's sonic boom"
 
+world-border-messages:
+  - "&c%victim% &ewandered too far from home and was killed by the world border"
+  - "&c%victim% &ediscovered the edge of the world"
+  - "&c%victim% &ereached the world's limit and perished"
+  - "&c%victim% &eexceeded the world's limits and was lost forever"
+
 # This is for any messages that haven't been added, so if you die to a cause which doesn't have any messages,
 # one of these messages will display instead. (Please report any missing messages in my spigot discussion)
 unknown-messages:
@@ -336,4 +342,4 @@ arrow-messages:
 developer-mode: false
 
 # Config version, do not change this.
-config-version: 2
+config-version: 3

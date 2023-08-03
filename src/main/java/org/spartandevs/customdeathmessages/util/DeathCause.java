@@ -102,6 +102,7 @@ public enum DeathCause {
     PIGLIN_BRUTE("piglin-messages"),
     GOAT("goat-messages"),
     WARDEN("warden-messages"),
+    WORLD_BORDER("world-border-messages"),
     MELEE_DEATH("melee-death-messages");
 
     private final String path;
