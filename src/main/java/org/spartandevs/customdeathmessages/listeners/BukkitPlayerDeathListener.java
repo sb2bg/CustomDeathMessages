@@ -57,7 +57,7 @@ public class BukkitPlayerDeathListener implements Listener {
     private void setDeathMessage(Player victim, DeathMessage deathMessage) {
         // Message is on cooldown
         if (deathMessage == null) {
-            deathMessageSetter.setDeathMessage("");
+            deathMessageSetter.setDeathMessage(null);
             return;
         }
 
@@ -66,7 +66,7 @@ public class BukkitPlayerDeathListener implements Listener {
                 deathMessageSetter.setDeathMessage(deathMessage.getStringMessage());
                 break;
             case JSON: {
-                deathMessageSetter.setDeathMessage("");
+                deathMessageSetter.setDeathMessage(null);
                 BaseComponent[] textComponent = deathMessage.getTextComponent();
                 plugin.getServer().spigot().broadcast(textComponent);
                 // Console doesn't receive spigot broadcasts, so we have to send it manually
@@ -82,7 +82,7 @@ public class BukkitPlayerDeathListener implements Listener {
         StringBuilder stringBuilder = new StringBuilder();
 
         for (BaseComponent baseComponent : baseComponents) {
-            stringBuilder.append(baseComponent.toLegacyText());
+            stringBuilder.append(baseComponent.toPlainText());
         }
 
         return stringBuilder.toString();
