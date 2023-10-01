@@ -37,7 +37,7 @@ enum HoverTransformers {
     @SuppressWarnings("deprecation")
     ORIGINAL_ON_HOVER((message, original, item) -> {
         BaseComponent[] component = createBaseComponent(message);
-        setHoverEvent(component, new HoverEvent(HoverEvent.Action.SHOW_TEXT, createBaseComponent(original)));
+        setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, createBaseComponent(original)), component);
         return component;
     }),
     ITEM_ON_HOVER((message, original, item) -> populateKillWeapon(message, null, item)),
@@ -46,7 +46,7 @@ enum HoverTransformers {
     @SuppressWarnings("deprecation") // Backwards compatibility with old BaseComponent API
     private static BaseComponent[] populateKillWeapon(String message, String original, ItemStack item) {
         List<BaseComponent> component = new ArrayList<>();
-        BaseComponent[] hoverItem = null;
+        BaseComponent hoverItem = null;
         BaseComponent[] originalHover = original == null ? null : createBaseComponent(original);
         String[] split = message.split("%kill-weapon%");
         boolean endWithItem = message.endsWith("%kill-weapon%");
@@ -56,7 +56,7 @@ enum HoverTransformers {
             BaseComponent[] chunk = createBaseComponent(split[i]);
 
             if (originalHover != null) {
-                setHoverEvent(chunk, new HoverEvent(HoverEvent.Action.SHOW_TEXT, originalHover));
+                setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, originalHover), chunk);
             }
 
             addExtra(component, chunk);
@@ -103,7 +103,7 @@ enum HoverTransformers {
         return TextComponent.fromLegacyText(message);
     }
 
-    public static void setHoverEvent(BaseComponent[] component, HoverEvent hoverEvent) {
+    public static void setHoverEvent(HoverEvent hoverEvent, BaseComponent... component) {
         for (BaseComponent baseComponent : component) {
             baseComponent.setHoverEvent(hoverEvent);
         }
@@ -113,7 +113,7 @@ enum HoverTransformers {
         return component.toArray(new BaseComponent[0]);
     }
 
-    private static void addExtra(List<BaseComponent> component, BaseComponent[] extra) {
+    private static void addExtra(List<BaseComponent> component, BaseComponent... extra) {
         component.addAll(Arrays.asList(extra));
     }
 }
