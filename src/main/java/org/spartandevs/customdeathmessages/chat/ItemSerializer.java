@@ -54,7 +54,7 @@ public class ItemSerializer {
             return (material.isBlock() ? "block" : "item") + ".minecraft." + material.getKey().getKey();
         }
 
-        // fallback to old method
-        return LOCALE.queryItemStack(item);
+        // fallback to old method (as of now, not used or tested)
+        return (material.isBlock() ? "tile" : "item") + "." + material.name().toLowerCase().replace("_", ".");
     }
 }
