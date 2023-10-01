@@ -51,7 +51,7 @@ public class PlaceholderPopulator {
     private static final Map<String, ItemPropertyGetter> ITEM = new HashMap<>();
 
     static {
-        ITEM.put("kill-weapon", ItemSerializer::getItemName);
+        ITEM.put("kill-weapon", item -> ItemSerializer.getItemName(item).toPlainText());
     }
 
     private final Set<Map.Entry<String, String>> populatedPlaceholders = new HashSet<>();
