@@ -1,7 +1,6 @@
 package org.spartandevs.customdeathmessages.chat;
 
 import io.github.bananapuncher714.nbteditor.NBTEditor;
-import me.pikamug.localelib.LocaleManager;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -12,8 +11,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.spartandevs.customdeathmessages.util.Version;
 
 public class ItemSerializer {
-    private static final LocaleManager LOCALE = new LocaleManager();
-
     @SuppressWarnings("deprecation")
     public static BaseComponent serializeItemStack(ItemStack itemStack) {
         String nbt = NBTEditor.getNBTCompound(itemStack).toString();
