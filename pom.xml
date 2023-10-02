@@ -73,7 +73,7 @@
                 <executions>
                     <execution>
                         <id>compile</id>
-                        <phase>compile</phase>
+                        <phase>process-sources</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>
@@ -132,7 +132,7 @@
     <repositories>
         <repository>
             <id>spigotmc-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
         <repository>
             <id>sonatype</id>
@@ -159,8 +159,13 @@
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
         <repository>
-            <id>scarsz</id>
+            <id>Scarsz-Nexus</id>
             <url>https://nexus.scarsz.me/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>dv8tion</id>
+            <name>m2-dv8tion</name>
+            <url>https://m2.dv8tion.net/releases</url>
         </repository>
     </repositories>
 
@@ -198,17 +203,23 @@
             <artifactId>boosted-yaml</artifactId>
             <version>1.3</version>
         </dependency>
-        <!-- Needed for EssentialsXDiscord, not sure why I have to include -->
-        <dependency>
-            <groupId>net.dv8tion</groupId>
-            <artifactId>JDA</artifactId>
-            <version>5.0.0-beta.11</version>
-        </dependency>
         <!--suppress VulnerableLibrariesLocal, EssentialsXDiscord issue -->
         <dependency>
             <groupId>net.essentialsx</groupId>
             <artifactId>EssentialsXDiscord</artifactId>
-            <version>2.20.0</version>
+            <version>2.20.1</version>
+            <exclusions>
+                <!-- we get our own version of JDA -->
+                <exclusion>
+                    <groupId>net.dv8tion</groupId>
+                    <artifactId>JDA</artifactId>
+                </exclusion>
+                <!-- maven doesn't build if we don't exclude this? no idea why -->
+                <exclusion>
+                    <groupId>com.github.MinnDevelopment</groupId>
+                    <artifactId>emoji-java</artifactId>
+                </exclusion>
+            </exclusions>
             <scope>provided</scope>
         </dependency>
         <!--suppress VulnerableLibrariesLocal, DiscordSRV issue -->
@@ -222,12 +233,6 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-jdk8</artifactId>
             <version>${kotlin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-test</artifactId>
-            <version>${kotlin.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
