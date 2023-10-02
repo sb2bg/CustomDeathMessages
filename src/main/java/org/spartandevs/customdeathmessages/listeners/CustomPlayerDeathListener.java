@@ -89,7 +89,7 @@ public class CustomPlayerDeathListener implements Listener {
                     ? DeathMessage.MessageType.JSON
                     : DeathMessage.MessageType.STRING;
 
-            event.setDeathMessage(new DeathMessage(message, populator, type), hoverTransforms);
+            event.setDeathMessage(new DeathMessage(message, populator, type), hoverTransforms, event.getEvent());
         }
     }
 

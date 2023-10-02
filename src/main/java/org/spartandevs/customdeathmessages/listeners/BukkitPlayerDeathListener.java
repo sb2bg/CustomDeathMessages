@@ -49,12 +49,12 @@ public class BukkitPlayerDeathListener implements Listener {
         deathMessageSetter = event::setDeathMessage;
 
         CustomPlayerDeathEvent customPlayerDeathEvent = new CustomPlayerDeathEvent(
-                deathCause, event.getDeathMessage(), killer, victim, this::setDeathMessage);
+                deathCause, event.getDeathMessage(), event, killer, victim, this::setDeathMessage);
 
         plugin.getServer().getPluginManager().callEvent(customPlayerDeathEvent);
     }
 
-    private void setDeathMessage(Player victim, DeathMessage deathMessage, HoverTransforms hoverTransforms) {
+    private void setDeathMessage(Player victim, DeathMessage deathMessage, HoverTransforms hoverTransforms, PlayerDeathEvent event) {
         // message is on cooldown
         if (deathMessage == null) {
             deathMessageSetter.setDeathMessage("");
@@ -75,7 +75,7 @@ public class BukkitPlayerDeathListener implements Listener {
                 // Console & Discord don't receive spigot broadcasts, so we have to send it manually
                 String stringMessage = baseComponentArrayToString(textComponent);
                 plugin.getServer().getConsoleSender().sendMessage(stringMessage);
-                plugin.getDiscordManager().sendDeathMessage(stringMessage);
+                plugin.getDiscordManager().sendDeathMessage(stringMessage, victim, event);
 
                 break;
             }
