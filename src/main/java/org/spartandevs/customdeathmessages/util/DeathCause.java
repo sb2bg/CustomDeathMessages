@@ -3,6 +3,8 @@ package org.spartandevs.customdeathmessages.util;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
 
 import java.util.Arrays;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -105,6 +107,12 @@ public enum DeathCause {
     MELEE_DEATH("melee-death-messages");
 
     private final String path;
+    private static final Map<String, DeathCause> BY_NAME = Arrays.stream(values())
+            .collect(Collectors.toMap(deathCause -> deathCause.name().toUpperCase(Locale.ROOT), deathCause -> deathCause));
+    private static final Map<String, DeathCause> BY_PATH = Arrays.stream(values())
+            .collect(Collectors.toMap(deathCause -> deathCause.getPath().toLowerCase(Locale.ROOT), deathCause -> deathCause, (first, second) -> first));
+    private static final Map<String, Set<DeathCause>> BY_PATH_SET = Arrays.stream(values())
+            .collect(Collectors.groupingBy(deathCause -> deathCause.getPath().toLowerCase(Locale.ROOT), Collectors.toSet()));
     public static final Set<String> PATH_SET = Arrays.stream(DeathCause.values()).map(DeathCause::getPath).collect(Collectors.toSet());
 
     DeathCause(String path) {
@@ -116,10 +124,10 @@ public enum DeathCause {
     }
 
     public static <E extends Enum<E>> DeathCause from(Enum<E> namedEnum, CustomDeathMessages plugin) {
-        for (DeathCause deathCause : values()) {
-            if (deathCause.name().equalsIgnoreCase(namedEnum.name())) {
-                return deathCause;
-            }
+        DeathCause deathCause = BY_NAME.get(namedEnum.name().toUpperCase(Locale.ROOT));
+
+        if (deathCause != null) {
+            return deathCause;
         }
 
         plugin.getLogger().warning("Unknown entity or damage cause '" + namedEnum.name() + "'. If you would like this message to be added, please leave a message on the plugin discussion.");
@@ -127,17 +135,10 @@ public enum DeathCause {
     }
 
     public static Set<DeathCause> deathCauseWithPath(DeathCause cause) {
-        return Arrays.stream(DeathCause.values()).filter(deathCause ->
-                deathCause.getPath().equalsIgnoreCase(cause.getPath())).collect(Collectors.toSet());
+        return BY_PATH_SET.get(cause.getPath().toLowerCase(Locale.ROOT));
     }
 
     public static DeathCause fromPathSingle(String path) {
-        for (DeathCause deathCause : values()) {
-            if (deathCause.getPath().equalsIgnoreCase(path)) {
-                return deathCause;
-            }
-        }
-
-        return null;
+        return BY_PATH.get(path.toLowerCase(Locale.ROOT));
     }
 }
