@@ -29,8 +29,7 @@ public class DiscordManager {
         }
 
         if (!loaded && plugin.getServer().getPluginManager().isPluginEnabled("DiscordSRV")) {
-            sender = (message, player, event) -> plugin.getServer().getScheduler().runTaskAsynchronously(plugin,
-                    () -> SRVSender.send(message, player, event));
+            sender = SRVSender::send;
 
             plugin.getLogger().info("Successfully loaded DiscordSRV support.");
         }
