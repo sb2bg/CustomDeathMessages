@@ -23,11 +23,10 @@ public class DiscordManager {
                 plugin.getLogger().info("Successfully loaded EssentialsDiscord support.");
             }
         } else if (plugin.getServer().getPluginManager().isPluginEnabled("DiscordSRV")) {
-            plugin.getLogger().info("DiscordSRV support is not yet implemented. EssentialsDiscord is currently the only supported Discord plugin. This will be fixed in a future update.");
-            // sender = (message, player, event) -> {
-            //     SRVSender.send(message, player, event);
-            //     plugin.getLogger().info("Successfully loaded DiscordSRV support.");
-            // };
+            sender = (message, player, event) -> plugin.getServer().getScheduler().runTaskAsynchronously(plugin,
+                    () -> SRVSender.send(message, player, event));
+
+            plugin.getLogger().info("Successfully loaded DiscordSRV support.");
         }
 
         this.discord = sender;

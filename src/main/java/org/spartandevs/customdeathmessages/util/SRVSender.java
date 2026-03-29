@@ -16,6 +16,10 @@ import java.util.function.BiFunction;
 
 public class SRVSender {
     public static void send(String deathMessage, Player player, PlayerDeathEvent event) {
+        if (PlayerUtil.isVanished(player)) {
+            return;
+        }
+
         if (StringUtils.isBlank(deathMessage)) {
             DiscordSRV.debug("Not sending death message for " + player.getName() + ", the death message is null");
             return;
