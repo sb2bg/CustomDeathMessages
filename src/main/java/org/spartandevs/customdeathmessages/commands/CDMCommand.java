@@ -23,9 +23,10 @@ public class CDMCommand extends CDMBaseCommand {
     public void onReload(CommandSender sender) {
         if (plugin.reload()) {
             sendMessage(sender, "&aPlugin reloaded.");
-        } else {
-            sendMessage(sender, "&cFailed to reload plugin.");
+            return;
         }
+
+        sendMessage(sender, "&cPlugin reload failed. Check the console for more information.");
     }
 
     @Subcommand("add")

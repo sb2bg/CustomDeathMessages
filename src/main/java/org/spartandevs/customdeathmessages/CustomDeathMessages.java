@@ -9,28 +9,33 @@ import org.spartandevs.customdeathmessages.listeners.BukkitKilledByEntityListene
 import org.spartandevs.customdeathmessages.listeners.BukkitLoginListener;
 import org.spartandevs.customdeathmessages.listeners.BukkitPlayerDeathListener;
 import org.spartandevs.customdeathmessages.listeners.CustomPlayerDeathListener;
-import org.spartandevs.customdeathmessages.util.ConfigManager;
-import org.spartandevs.customdeathmessages.util.CooldownManager;
-import org.spartandevs.customdeathmessages.util.DeathCause;
-import org.spartandevs.customdeathmessages.util.MessagePropagator;
+import org.spartandevs.customdeathmessages.util.*;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public final class CustomDeathMessages extends JavaPlugin {
-    private final ConfigManager configManager = new ConfigManager(this);
-    private final MessagePropagator messagePropagator = new MessagePropagator(this);
-    private final CooldownManager cooldownManager = new CooldownManager();
+    private ConfigManager configManager;
+    private MessagePropagator messagePropagator;
+    private CooldownManager cooldownManager;
+    private DiscordManager discordManager;
     private Set<String> stringConfigPaths;
     private Set<String> boolConfigPaths;
     private Set<String> numConfigPaths;
 
     @Override
     public void onEnable() {
+        // register bukkit related managers in onEnable to maintain softdepend
+        configManager = new ConfigManager(this);
+        discordManager = new DiscordManager(this);
+        messagePropagator = new MessagePropagator(this);
+        cooldownManager = new CooldownManager();
+
         stringConfigPaths = configManager.getStringConfigPaths();
         boolConfigPaths = configManager.getBoolConfigPaths();
         numConfigPaths = configManager.getNumConfigPaths();
+
         registerEvents();
         registerCommands();
     }
@@ -116,6 +121,18 @@ public final class CustomDeathMessages extends JavaPlugin {
         }));
     }
 
+    public boolean reload() {
+        boolean reloaded = configManager.reload();
+
+        if (!reloaded) {
+            return false;
+        }
+
+        messagePropagator.clear();
+        cooldownManager.clearCooldowns();
+        return true;
+    }
+
     public ConfigManager getConfigManager() {
         return configManager;
     }
@@ -124,13 +141,11 @@ public final class CustomDeathMessages extends JavaPlugin {
         return cooldownManager;
     }
 
-    public boolean reload() {
-        messagePropagator.clear();
-        cooldownManager.clearCooldowns();
-        return configManager.reloadConfig();
-    }
-
     public MessagePropagator getMessagePropagator() {
         return messagePropagator;
+    }
+
+    public DiscordManager getDiscordManager() {
+        return discordManager;
     }
 }

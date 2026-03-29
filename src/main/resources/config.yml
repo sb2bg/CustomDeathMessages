@@ -48,7 +48,7 @@ melee-death-messages:
 
 # Messages for entities with custom names: will override their mob group message and display these instead, if enabled.
 # Placeholders: %victim%, %victim-nick%, %entity-name%, %victim-x%, %victim-y%, %victim-z%
-enable-custom-name-entity-messages: true
+enable-custom-name-entity-messages: false
 custom-name-entity-messages:
   - "&c%victim% &egot rocked by %entity-name%"
   - "&c%victim% &ewas put to sleep by %entity-name%"
