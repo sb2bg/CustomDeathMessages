@@ -10,7 +10,7 @@ softdepend: [ EssentialsDiscord, DiscordSRV ]
 commands:
   cdm:
     description: Add, remove, edit, disable, or list death messages.
-    aliases: [ customdeathmessages, customdeathmessage, deathmessage, cdm ]
+    aliases: [ customdeathmessages, customdeathmessage, deathmessage, deathmessages, cdm ]
 
 permissions:
   cdm.reload:
