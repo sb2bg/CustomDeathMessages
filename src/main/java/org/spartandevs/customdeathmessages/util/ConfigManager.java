@@ -23,8 +23,8 @@ public class ConfigManager extends BaseDocumentManager {
 
         keys = plugin.getConfig().getValues(true).keySet();
 
-        if (document.getDouble("drop-head-percentage") > 1) {
-            plugin.getLogger().warning("Config misconfiguration: drop-head-chance should be a decimal between 0 and 1");
+        if (getHeadDropChance() > 1) {
+            plugin.getLogger().warning("Config misconfiguration: drop-head-percentage should be a decimal between 0 and 1");
         }
     }
 
@@ -61,7 +61,7 @@ public class ConfigManager extends BaseDocumentManager {
     }
 
     public boolean dropHead() {
-        return new Random().nextDouble() <= document.getDouble("drop-head-chance");
+        return new Random().nextDouble() <= getHeadDropChance();
     }
 
     public String getHeadName() {
@@ -120,13 +120,21 @@ public class ConfigManager extends BaseDocumentManager {
 
     private void registerStatistics() {
         Metrics metrics = new Metrics(plugin, 7287);
-        metrics.addCustomChart(new SimplePie("head_drop_percentage", () -> String.valueOf(document.getDouble("drop-head-chance"))));
+        metrics.addCustomChart(new SimplePie("head_drop_percentage", () -> String.valueOf(getHeadDropChance())));
         metrics.addCustomChart(new SimplePie("enable_lightning", () -> getBooleanString(document.getBoolean("enable-lightning"))));
         metrics.addCustomChart(new SimplePie("enable_global_messages", () -> getBooleanString(document.getBoolean("enable-global-messages"))));
         metrics.addCustomChart(new SimplePie("enable_pvp_messages", () -> getBooleanString(document.getBoolean("enable-pvp-messages"))));
-        metrics.addCustomChart(new SimplePie("enable_entity_name_messages", () -> getBooleanString(document.getBoolean("enable-entity-name-messages"))));
+        metrics.addCustomChart(new SimplePie("enable_entity_name_messages", () -> getBooleanString(document.getBoolean("enable-custom-name-entity-messages"))));
         metrics.addCustomChart(new SimplePie("enable_original_hover_message", () -> getBooleanString(document.getBoolean("enable-original-on-hover"))));
         metrics.addCustomChart(new SimplePie("enable_item_tooltip_message", () -> getBooleanString(document.getBoolean("enable-item-on-hover"))));
+    }
+
+    private double getHeadDropChance() {
+        if (document.get("drop-head-percentage") != null) {
+            return document.getDouble("drop-head-percentage");
+        }
+
+        return document.getDouble("drop-head-chance");
     }
 
     private static String getBooleanString(boolean value) {
