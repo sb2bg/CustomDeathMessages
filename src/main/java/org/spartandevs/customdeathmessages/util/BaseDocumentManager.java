@@ -66,12 +66,13 @@ public abstract class BaseDocumentManager {
         plugin.getLogger().severe("Could not save " + resource);
     }
 
-    public void reload() {
+    public boolean reload() {
         if (sneaky(document::reload)) {
-            return;
+            return true;
         }
 
         plugin.getLogger().severe("Could not reload " + resource);
+        return false;
     }
 
     protected void errorAndDisable(String message) {
@@ -79,4 +80,3 @@ public abstract class BaseDocumentManager {
         plugin.getServer().getPluginManager().disablePlugin(plugin);
     }
 }
-

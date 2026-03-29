@@ -21,8 +21,12 @@ public class CDMCommand extends CDMBaseCommand {
     @CommandPermission("cdm.reload")
     @Description("Reloads the config file and other resources.")
     public void onReload(CommandSender sender) {
-        plugin.reload();
-        sendMessage(sender, "&aPlugin reloaded.");
+        if (plugin.reload()) {
+            sendMessage(sender, "&aPlugin reloaded.");
+            return;
+        }
+
+        sendMessage(sender, "&cPlugin reload failed. Check the console for more information.");
     }
 
     @Subcommand("add")

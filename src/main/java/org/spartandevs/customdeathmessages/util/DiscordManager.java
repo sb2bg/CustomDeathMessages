@@ -12,6 +12,7 @@ public class DiscordManager {
     public DiscordManager(CustomDeathMessages plugin) {
         DiscordSender sender = (message, player, event) -> {
         };
+        boolean loaded = false;
 
         if (plugin.getServer().getPluginManager().isPluginEnabled("EssentialsDiscord")) {
             DiscordService essentialsDiscord = plugin.getServer().getServicesManager().load(DiscordService.class);
@@ -21,8 +22,13 @@ public class DiscordManager {
                         essentialsDiscord.sendMessage(MessageType.DefaultTypes.DEATH, ":skull: " + message, false);
 
                 plugin.getLogger().info("Successfully loaded EssentialsDiscord support.");
+                loaded = true;
+            } else {
+                plugin.getLogger().warning("EssentialsDiscord is enabled but no DiscordService is available. Falling back to other Discord integrations if present.");
             }
-        } else if (plugin.getServer().getPluginManager().isPluginEnabled("DiscordSRV")) {
+        }
+
+        if (!loaded && plugin.getServer().getPluginManager().isPluginEnabled("DiscordSRV")) {
             sender = (message, player, event) -> plugin.getServer().getScheduler().runTaskAsynchronously(plugin,
                     () -> SRVSender.send(message, player, event));
 
