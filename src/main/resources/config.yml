@@ -5,8 +5,8 @@ enable-update-messages: true
 # PvP Messages: sends a message to the killer and victim when a player is killed by another player.
 # Placeholders for pvp messages: %victim%, %victim-nick%, %killer%, %killer-nick%, %killer-x%, %killer-y%, %killer-z%, %victim-x%, %victim-y%, %victim-z%
 enable-pvp-messages: true
-killer-message: '&e[&cDeathMessages&e] &eYou killed &c%victim%'
-victim-message: '&e[&cDeathMessages&e] &eYou were killed by &c%killer%'
+killer-message: "&e[&cDeathMessages&e] &eYou killed &c%victim%"
+victim-message: "&e[&cDeathMessages&e] &eYou were killed by &c%killer%"
 
 # Lightning: lightning strike effect at the location of the death.
 enable-lightning: true
@@ -32,19 +32,19 @@ enable-item-on-hover: true
 # Placeholders for melee messages: %kill-weapon%, %victim%, %victim-nick%, %killer%, %killer-nick%, %killer-x%, %killer-y%, %killer-z%, %victim-x%, %victim-y%, %victim-z%
 global-pvp-death-messages:
   - "&c%victim% &ehas been killed by &c%killer%"
-  - "&c%victim% &ewas slain by &c%killer% &eusing &7[&b%kill-weapon%&7]"
-  - "&c%victim% &ehas been put down by &c%killer%"
-  - "&c%victim% &ewas slaughtered by &c%killer% &eusing &7[&b%kill-weapon%&7]"
-  - "&c%killer% &epulverized &c%victim% &eusing &7[&b%kill-weapon%&7]"
-  - "&c%victim% &ewas destroyed by &c%killer%&e"
-  - "&c%killer% &egave &c%victim% &ethe L"
-  - "&c%victim% &ewas EZ clapped by &c%killer% &eusing &7[&b%kill-weapon%&7]"
+  - "&c%victim% &ewas defeated by &c%killer% &eusing &7[&b%kill-weapon%&7]"
+  - "&c%victim% &ewas bested by &c%killer%"
+  - "&c%victim% &ewas outmatched by &c%killer% &eusing &7[&b%kill-weapon%&7]"
+  - "&c%killer% &eovercame &c%victim% &eusing &7[&b%kill-weapon%&7]"
+  - "&c%victim% &ewas taken out by &c%killer%&e"
+  - "&c%killer% &eoutplayed &c%victim%"
+  - "&c%victim% &ewas outplayed by &c%killer% &eusing &7[&b%kill-weapon%&7]"
 
 # Placeholders for melee messages: %victim%, %victim-nick%, %killer%, %killer-nick%, %killer-x%, %killer-y%, %killer-z%, %victim-x%, %victim-y%, %victim-z%
 melee-death-messages:
-  - "&c%victim% &ewas slapped by &c%killer%"
-  - "&c%victim% &ewas KO'd &c%killer%"
-  - "&c%victim% &egot rocked by &c%killer%"
+  - "&c%victim% &ewas tagged by &c%killer%"
+  - "&c%victim% &ewas knocked out by &c%killer%"
+  - "&c%victim% &ewas outplayed by &c%killer%"
 
 # Messages for entities with custom names: will override their mob group message and display these instead, if enabled.
 # Placeholders: %victim%, %victim-nick%, %entity-name%, %victim-x%, %victim-y%, %victim-z%
@@ -52,7 +52,7 @@ enable-custom-name-entity-messages: false
 custom-name-entity-messages:
   - "&c%victim% &egot rocked by %entity-name%"
   - "&c%victim% &ewas put to sleep by %entity-name%"
-  - "&c%entity-name% &eate &c%victim%'s &esoul"
+  - "&c%entity-name% &ewas too much for &c%victim%"
   - "&c%victim% &ewishes they didn't fight %entity-name%"
 
 # Placeholders for ALL below messages: %victim%, %victim-nick%, %entity-name%, %victim-x%, %victim-y%, %victim-z%
@@ -93,8 +93,8 @@ wither-messages:
   - "&c%victim% &ewithered away to the 4th dimension"
 
 suicide-messages:
-  - "&c%victim% &ekilled themself"
-  - "&c%victim% &ehad a mental breakdown and died"
+  - "&c%victim% &edidn't make it"
+  - "&c%victim% &ehad an unfortunate accident"
 
 fire-messages:
   - "&c%victim% &estood in the fireplace"
@@ -102,6 +102,7 @@ fire-messages:
 
 fire-tick-messages:
   - "&c%victim% &eforgot to stop, drop, and roll"
+  - "&c%victim% &ekept cooking for a little too long"
 
 starvation-messages:
   - "&c%victim% &eforgot to eat"
@@ -110,14 +111,15 @@ starvation-messages:
 cactus-messages:
   - "&c%victim% &ewas pricked to death"
   - "&c%victim% &etried acupuncture, but died"
-  - "&c%victim% &e"
+  - "&c%victim% &efound out the cactus was not for hugging"
 
 potion-messages:
   - "&c%victim% &edied of black magic"
-  - "&c%victim% &edied of coronavirus"
+  - "&c%victim% &econsumed the wrong potion"
 
 void-messages:
   - "&c%victim% &ethought it would be fun to take a trip in the void"
+  - "&c%victim% &efound out the void has no bottom"
 
 lightning-messages:
   - "&c%victim% &ewas smitten by the gods"
@@ -125,6 +127,7 @@ lightning-messages:
 
 falling-block-messages:
   - "&c%victim% &ewas crushed by a falling block"
+  - "&c%victim% &epicked the wrong spot to stand under"
 
 freeze-messages:
   - "&c%victim% &efroze to death. &b&lBrrrrr!"
@@ -133,7 +136,7 @@ freeze-messages:
 firework-messages:
   - "&c%victim% &elit the fuse on a firework too soon"
   - "&c%victim% &ewent out with a bang"
-  - "&c%victim% &eblasted off into space"
+  - "&c%victim% &elaunched a little too high"
 
 slime-messages:
   - "&c%victim% &ewas crushed by a &a&lGIANT SLIME"
@@ -144,7 +147,8 @@ zombie-messages:
   - "&c%victim% &ethought a &a&lZombie &ewas friendly"
 
 pigman-messages:
-  - "&c%victim% &eaggroed the &d&lPigmen &eand got eaten alive"
+  - "&c%victim% &eangered the &d&lPigmen &eand got eaten"
+  - "&c%victim% &eforgot Pigmen travel in packs"
 
 skeleton-messages:
   - "&c%victim% &egot sniped by a bony &f&lSkeleton"
@@ -152,27 +156,30 @@ skeleton-messages:
 
 magmacube-messages:
   - "&c%victim% &egot crushed by a &c&lGIANT MAGMA CUBE"
+  - "&c%victim% &ebounced into trouble with a &c&lMagma Cube"
 
 husk-messages:
-  - "&c%victim% &egot eaten by a dessert dweller AKA a Husk"
+  - "&c%victim% &ewas taken down by a Husk"
+  - "&c%victim% &elost a fight to a very dry Zombie"
 
 spider-messages:
   - "&c%victim% &etried his luck against his worst fear... &c&lA SPIDER!"
+  - "&c%victim% &epanicked when the Spider got a little too close"
 
 cavespider-messages:
   - "&c%victim% &egot bitten to death by a &c&lCave Spider"
+  - "&c%victim% &efound out cave spiders play dirty"
 
 witherskeleton-messages:
-  - "&c%victim% &egot destroyed by a &f&lWither Skeleton &ewith a stone sword"
+  - "&c%victim% &ewas taken down by a &f&lWither Skeleton &ewith a stone sword"
 
 witherboss-messages:
-  - "&c%victim% &egot his head blown off by the Wither"
+  - "&c%victim% &ewas blasted away by the Wither"
   - "&c%victim% &egot a Wither skull to the face"
 
-
 dragon-messages:
-  - "&c%victim% &egot his guts ripped out by the &d&lEnder Dragon"
-  - "&c%victim% &egot his head blown off by the &d&lEnder Dragon"
+  - "&c%victim% &ewas sent flying by the &d&lEnder Dragon"
+  - "&c%victim% &ewas blasted away by the &d&lEnder Dragon"
   - "&cc%victim% &efound a respawn screen, not the end portal"
 
 dragon-breath-messages:
@@ -181,9 +188,10 @@ dragon-breath-messages:
 
 elderguardian-messages:
   - "&c%victim% &etried to clear a ocean monument but the &7&lElder Guardian &esaid no"
+  - "&c%victim% &egot sent back by an &7&lElder Guardian"
 
 tnt-messages:
-  - "&c%victim% &egot his head blown off by &c&lTNT"
+  - "&c%victim% &ewas launched by &c&lTNT"
   - "&c%victim% &egot blown up by &c&lTNT"
   - "&e&lBOOM! &c%victim% &efound out about explosives the hard way"
 
@@ -193,47 +201,58 @@ end-crystal-messages:
 
 creeper-messages:
   - "&c%victim% &egot blown up by a &a&lCreeper Ahhhh Man"
+  - "&c%victim% &eshould have noticed the hissing behind them"
 
 ghast-messages:
   - "&c%victim% &egot fireballed by a &f&lGhast"
+  - "&c%victim% &ehad a bad time in the Nether skies"
 
 enderman-messages:
   - "&c%victim% &elooked an &d&lEnderman &ein the eyes"
+  - "&c%victim% &efound out eye contact was a mistake"
 
 silverfish-messages:
-  - "&c%victim% &egot eaten by a &7&lSilverfish"
+  - "&c%victim% &ewas swarmed by a &7&lSilverfish"
 
 witch-messages:
   - "&c%victim% &edied to a &d&lWitch named Scarlett"
+  - "&c%victim% &eshould have skipped the Witch's mystery brew"
 
 shulker-messages:
   - "&c%victim% &edied trying to get some &d&lshulker &eshells"
   - "&c%victim% &egot shot by a &d&lShulker"
-  - "&eLeviooosa! &c%victim% &egot ruined by a &d&lShulker"
+  - "&eLeviooosa! &c%victim% &egot launched by a &d&lShulker"
 
 guardian-messages:
   - "&c%victim% &egot killed by a &7&lGuardian... &esomehow?"
+  - "&c%victim% &etook a laser to the face from a &7&lGuardian"
 
 golem-messages:
   - "&c%victim% &emade an &7&lIron Golem &emad"
 
 zombievillager-messages:
-  - "&c%victim% &ewas made dinner of by a &a&lZombie Villager"
+  - "&c%victim% &ewas overwhelmed by a &a&lZombie Villager"
+  - "&c%victim% &efound out the villager wasn't here to trade"
 
 endermite-messages:
-  - "&c%victim% &egot eaten by the &d&lEndermans &ehater, an &d&lEndermite"
+  - "&c%victim% &ewas taken down by the &d&lEnderman's &ehater"
+  - "&c%victim% &egot swarmed by a tiny purple problem"
 
 phantom-messages:
-  - "&c%victim% &ewas kidnapped by a &3&lPhantom"
+  - "&c%victim% &ewas carried away by a &3&lPhantom"
+  - "&c%victim% &estayed up too long and paid for it"
 
 drowned-messages:
   - "&c%victim% &ewent for a late night swim and got eaten by a &b&lDrowned Zombie"
+  - "&c%victim% &efound out the water was not safe tonight"
 
 pillager-messages:
   - "&c%victim% &egot shot by a &7&lPillager"
+  - "&c%victim% &estumbled into the Pillager's line of sight"
 
 ravager-messages:
   - "&c%victim% &egot rammed by a &7&lRavager"
+  - "&c%victim% &ecould not outmuscle a &7&lRavager"
 
 illusioner-messages:
   - "&c%victim% &ewas sent to the illusion world by an Illusioner"
@@ -242,6 +261,7 @@ illusioner-messages:
 
 bee-messages:
   - "&c%victim% &ewas stung by a &lBEE"
+  - "&c%victim% &emessed with the wrong hive"
 
 wolf-messages:
   - "&c%victim% &ewas ripped apart by a &f&lWolf"
@@ -252,14 +272,15 @@ llama-messages:
   - "&c%victim% &ecould not handle being spat on by a Llama"
 
 blaze-messages:
-  - "&c%victim% &ewas charred by a &6&lBlaze"
-  - "&c%victim% &ewas turned into charcoal by a &6&lBlaze"
+  - "&c%victim% &ewas scorched by a &6&lBlaze"
+  - "&c%victim% &ewas singed by a &6&lBlaze"
 
 stray-messages:
-  - "&c%victim% &ewas domed by a Stray"
+  - "&c%victim% &ewas picked off by a Stray"
+  - "&c%victim% &ecaught a freezing arrow from a Stray"
 
 vex-messages:
-  - "&c%victim% &ewas eaten by a tiny flying (and annoying) &f&lVex"
+  - "&c%victim% &ewas taken down by a &f&lVex"
   - "&c%victim% &egot vexed by a &f&lVex"
 
 vindicator-messages:
@@ -273,9 +294,10 @@ evoker-messages:
 
 pufferfish-messages:
   - "&c%victim% &edied to a Pufferfish..."
+  - "&c%victim% &eshould not have bothered the angry balloon fish"
 
 polar-bear-messages:
-  - "&c%victim% &ewas murdered by a nice Polar Bear... &ewhich means they hit it! (someone kill them)"
+  - "&c%victim% &eupset a nice Polar Bear... &ewhich means they hit it!"
   - "&c%victim% &egot turned to snow by a &f&lPolar Bear"
 
 dolphin-messages:
@@ -283,7 +305,7 @@ dolphin-messages:
   - "&c%victim% &ehit a Dolphin and they retaliated"
 
 panda-messages:
-  - "&c%victim% &ewas made into a Pandas dinner"
+  - "&c%victim% &ewas no match for a Panda"
   - "&c%victim% &etried stealing a Pandas bamboo"
 
 piglin-messages:
@@ -304,12 +326,12 @@ goat-messages:
   - "&c%victim% &ewas impaled by a Goat horn"
 
 zombified-piglin-messages:
-  - "&c%victim% &etook a Piglin to the overworld and was murdered by their new, not so friendly pet"
+  - "&c%victim% &etook a Piglin to the overworld and was taken down by their new, not so friendly pet"
   - "&c%victim% &edied to a Piglin... I mean, Pigman... I mean, Zombified Piglin"
 
 fox-messages:
   - "&c%victim% &efoxed around and found out"
-  - "&c%victim% &ewas chewed up by a Fox"
+  - "&c%victim% &ewas outsmarted by a Fox"
 
 warden-messages:
   - "&c%victim% &ewas killed by a Warden... I mean, what did you expect?"
@@ -317,7 +339,7 @@ warden-messages:
 
 warden-sonic-boom-messages:
   - "&c%victim% &ewas sonic boomed by a Warden"
-  - "&c%victim% &egot his ears blown out by a Warden's sonic boom"
+  - "&c%victim% &ehad their ears rung by a Warden's sonic boom"
 
 # This is for any messages that haven't been added, so if you die to a cause which doesn't have any messages,
 # one of these messages will display instead. (Please report any missing messages in my spigot discussion)
@@ -328,9 +350,11 @@ unknown-messages:
 
 fireball-messages:
   - "&c%victim% &ewas fireballed until they burnt to death"
+  - "&c%victim% &ecouldn't dodge the incoming fireball"
 
 arrow-messages:
   - "&c%victim% &elooked like a porcupine after getting shot to death"
+  - "&c%victim% &efound the pointy end of an arrow"
 
 # Only here to help me debug my plugin, not suggested you enable.
 developer-mode: false
