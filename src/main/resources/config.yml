@@ -356,8 +356,12 @@ arrow-messages:
   - "&c%victim% &elooked like a porcupine after getting shot to death"
   - "&c%victim% &efound the pointy end of an arrow"
 
+breeze-messages:
+  - "&c%victim% &egot launched around by a Breeze"
+  - "&c%victim% &ecould not keep up with the Breeze"
+
 # Only here to help me debug my plugin, not suggested you enable.
 developer-mode: false
 
 # Config version, do not change this.
-config-version: 2
+config-version: 3

@@ -18,14 +18,17 @@ public enum DeathCause {
     PLAYER("global-pvp-death-messages"),
     BLOCK("falling-block-messages"),
     VOID("void-messages"),
+    WORLD_BORDER("void-messages"),
     FALL("fall-damage-messages"),
     FIRE("fire-messages"),
+    CAMPFIRE("fire-messages"),
     FIRE_TICK("fire-tick-messages"),
     SUICIDE("suicide-messages"),
+    KILL("suicide-messages"),
     LAVA("lava-messages"),
     DROWNING("drowning-messages"),
     STARVATION("starvation-messages"),
-    //    POISON("potion-messages"),
+    POISON("potion-messages"),
     MAGIC("potion-messages"),
     WITHER("wither-messages"),
     WITHER_BOSS("witherboss-messages"),
@@ -42,8 +45,11 @@ public enum DeathCause {
     FLY_INTO_WALL("elytra-messages"),
     HOT_FLOOR("magma-block-messages"),
     CRAMMING("cramming-messages"),
+    DRYOUT("drowning-messages"),
     FREEZE("freeze-messages"),
+    MELTING("fire-messages"),
     SONIC_BOOM("warden-sonic-boom-messages"),
+    ENTITY_SWEEP_ATTACK("unknown-messages"),
     ELDER_GUARDIAN("elderguardian-messages"),
     WITHER_SKELETON("witherskeleton-messages"),
     STRAY("stray-messages"),
@@ -103,12 +109,22 @@ public enum DeathCause {
     ZOGLIN("zoglin-messages"),
     PIGLIN_BRUTE("piglin-messages"),
     GOAT("goat-messages"),
+    BOGGED("skeleton-messages"),
+    BREEZE("breeze-messages"),
     WARDEN("warden-messages"),
     MELEE_DEATH("melee-death-messages");
 
     private final String path;
     private static final Map<String, DeathCause> BY_NAME = Arrays.stream(values())
             .collect(Collectors.toMap(deathCause -> deathCause.name().toUpperCase(Locale.ROOT), deathCause -> deathCause));
+    private static final Map<String, DeathCause> BY_ALIAS = Map.ofEntries(
+            Map.entry("TNT", PRIMED_TNT),
+            Map.entry("TNT_MINECART", PRIMED_TNT),
+            Map.entry("MINECART_TNT", PRIMED_TNT),
+            Map.entry("FIREWORK_ROCKET", FIREWORK),
+            Map.entry("END_CRYSTAL", ENDER_CRYSTAL),
+            Map.entry("LIGHTNING_BOLT", LIGHTNING)
+    );
     private static final Map<String, DeathCause> BY_PATH = Arrays.stream(values())
             .collect(Collectors.toMap(deathCause -> deathCause.getPath().toLowerCase(Locale.ROOT), deathCause -> deathCause, (first, second) -> first));
     private static final Map<String, Set<DeathCause>> BY_PATH_SET = Arrays.stream(values())
@@ -124,7 +140,12 @@ public enum DeathCause {
     }
 
     public static <E extends Enum<E>> DeathCause from(Enum<E> namedEnum, CustomDeathMessages plugin) {
-        DeathCause deathCause = BY_NAME.get(namedEnum.name().toUpperCase(Locale.ROOT));
+        String name = namedEnum.name().toUpperCase(Locale.ROOT);
+        DeathCause deathCause = BY_NAME.get(name);
+
+        if (deathCause == null) {
+            deathCause = BY_ALIAS.get(name);
+        }
 
         if (deathCause != null) {
             return deathCause;
