@@ -1,5 +1,7 @@
 # CustomDeathMessages
 
+![CustomDeathMessages demo screenshot](assets/image.png)
+
 CustomDeathMessages replaces vanilla death messages with configurable templates for PvP, mobs, projectiles, environmental causes, and unknown fallback deaths. It supports legacy and modern Spigot/Paper servers from 1.8 through 1.21.x, includes in-game editing commands, and can forward custom death messages to Discord when a supported bridge is installed.
 
 ## Features
