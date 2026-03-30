@@ -35,6 +35,7 @@ Primary command aliases: `/cdm`, `/customdeathmessages`, `/customdeathmessage`, 
 | `/cdm set number <path> <value>` | `cdm.modify` | Sets a numeric config value. |
 | `/cdm debug prime [player]` | `cdm.debug` | Sets a player to 1 health for testing. Requires `developer-mode: true`. |
 | `/cdm debug shoot [player]` | `cdm.debug` | Instantly kills a player for testing. Requires `developer-mode: true`. |
+| `/cdm debug hover [player]` | `cdm.debug` | Sends a test hover-item death message using the item in your hand. Requires `developer-mode: true`. |
 
 `/cdm` config path arguments are tab-completed. Death-message-path arguments are also tab-completed from the supported `*-messages` sections in `config.yml`.
 
