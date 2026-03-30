@@ -20,48 +20,65 @@ public enum Version {
     public static final Version SERVER_VERSION = getServerVersion();
 
     private static Version getServerVersion() {
-        String version = org.bukkit.Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+        String version = org.bukkit.Bukkit.getBukkitVersion().split("-")[0];
 
-        switch (version) {
-            case "v1_8_R1":
-            case "v1_8_R2":
-            case "v1_8_R3":
-                return V8;
-            case "v1_9_R1":
-            case "v1_9_R2":
-                return V9;
-            case "v1_10_R1":
-                return V10;
-            case "v1_11_R1":
-                return V11;
-            case "v1_12_R1":
-                return V12;
-            case "v1_13_R1":
-            case "v1_13_R2":
-                return V13;
-            case "v1_14_R1":
-                return V14;
-            case "v1_15_R1":
-                return V15;
-            case "v1_16_R1":
-            case "v1_16_R2":
-            case "v1_16_R3":
-                return V16;
-            case "v1_17_R1":
-                return V17;
-            case "v1_18_R1":
-            case "v1_18_R2":
-                return V18;
-            case "v1_19_R1":
-            case "v1_19_R2":
-                return V19;
-            case "v1_20_R1":
-                return V20;
-            case "v1_21_R1":
-                return V21;
-            default:
-                return UNKNOWN;
+        if (version.startsWith("1.8")) {
+            return V8;
         }
+
+        if (version.startsWith("1.9")) {
+            return V9;
+        }
+
+        if (version.startsWith("1.10")) {
+            return V10;
+        }
+
+        if (version.startsWith("1.11")) {
+            return V11;
+        }
+
+        if (version.startsWith("1.12")) {
+            return V12;
+        }
+
+        if (version.startsWith("1.13")) {
+            return V13;
+        }
+
+        if (version.startsWith("1.14")) {
+            return V14;
+        }
+
+        if (version.startsWith("1.15")) {
+            return V15;
+        }
+
+        if (version.startsWith("1.16")) {
+            return V16;
+        }
+
+        if (version.startsWith("1.17")) {
+            return V17;
+        }
+
+        if (version.startsWith("1.18")) {
+            return V18;
+        }
+
+        if (version.startsWith("1.19")) {
+            return V19;
+        }
+
+        if (version.startsWith("1.20")) {
+            return V20;
+        }
+
+        if (version.startsWith("1.21")) {
+            return V21;
+        }
+
+        return UNKNOWN;
     }
 
     public boolean isVersionOrHigher(Version version) {
