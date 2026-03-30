@@ -3,8 +3,15 @@ package org.spartandevs.customdeathmessages.commands;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import org.bukkit.command.CommandSender;
+import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.spartandevs.customdeathmessages.chat.ChatColor;
+import org.spartandevs.customdeathmessages.chat.DeathMessage;
+import org.spartandevs.customdeathmessages.chat.HoverTransforms;
+import org.spartandevs.customdeathmessages.chat.PlaceholderPopulator;
+import org.spartandevs.customdeathmessages.util.ConfigManager;
 import org.spartandevs.customdeathmessages.util.DeathCause;
 
 import java.util.List;
@@ -139,8 +146,56 @@ public class CDMCommand extends CDMBaseCommand {
         sendMessage(sender, "&aPrimed " + target.getName() + ".");
     }
 
+    @Subcommand("debug hover")
+    @Syntax("<player>")
+    @CommandCompletion("@players")
+    @CommandPermission("cdm.debug")
+    @Description("Sends a test death message with your held item so you can verify hover rendering.")
+    @Conditions("debugEnabled")
+    public void onDebugHover(Player sender, @Optional Player target) {
+        if (target == null) {
+            target = sender;
+        }
+
+        ItemStack weapon = getHeldItem(sender);
+
+        if (weapon == null || weapon.getType() == Material.AIR) {
+            sendMessage(sender, "&cHold the item you want to test first.");
+            return;
+        }
+
+        ConfigManager config = plugin.getConfigManager();
+        boolean useHover = config.isItemOnHoverEnabled() || config.isOriginalOnHoverEnabled();
+        ItemStack placeholderItem = config.isItemOnHoverEnabled() ? null : weapon;
+        Entity killer = sender;
+
+        PlaceholderPopulator populator = new PlaceholderPopulator(target, killer, placeholderItem);
+        String originalMessage = new PlaceholderPopulator(target, killer, null).replace("%victim% was slain by %killer%");
+        HoverTransforms hoverTransforms = new HoverTransforms(plugin, originalMessage, weapon);
+        DeathMessage deathMessage = new DeathMessage(
+                "&c%victim% &ewas debugged by &c%killer% &eusing &7[&b%kill-weapon%&7]",
+                populator,
+                useHover ? DeathMessage.MessageType.JSON : DeathMessage.MessageType.STRING
+        );
+
+        if (deathMessage.getMessageType() == DeathMessage.MessageType.JSON) {
+            sender.spigot().sendMessage(deathMessage.getTextComponent(hoverTransforms));
+        } else {
+            sendMessage(sender, deathMessage.getStringMessage());
+        }
+    }
+
     @CatchUnknown
     public void onUnknown(CommandSender sender) {
         sendMessage(sender, "&cUnknown command. Type /cdm help for help.");
+    }
+
+    @SuppressWarnings("deprecation")
+    private static ItemStack getHeldItem(Player player) {
+        try {
+            return player.getInventory().getItemInMainHand();
+        } catch (NoSuchMethodError ignored) {
+            return player.getItemInHand();
+        }
     }
 }
