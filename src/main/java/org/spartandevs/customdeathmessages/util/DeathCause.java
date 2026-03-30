@@ -3,6 +3,7 @@ package org.spartandevs.customdeathmessages.util;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -117,14 +118,7 @@ public enum DeathCause {
     private final String path;
     private static final Map<String, DeathCause> BY_NAME = Arrays.stream(values())
             .collect(Collectors.toMap(deathCause -> deathCause.name().toUpperCase(Locale.ROOT), deathCause -> deathCause));
-    private static final Map<String, DeathCause> BY_ALIAS = Map.ofEntries(
-            Map.entry("TNT", PRIMED_TNT),
-            Map.entry("TNT_MINECART", PRIMED_TNT),
-            Map.entry("MINECART_TNT", PRIMED_TNT),
-            Map.entry("FIREWORK_ROCKET", FIREWORK),
-            Map.entry("END_CRYSTAL", ENDER_CRYSTAL),
-            Map.entry("LIGHTNING_BOLT", LIGHTNING)
-    );
+    private static final Map<String, DeathCause> BY_ALIAS = createAliasMap();
     private static final Map<String, DeathCause> BY_PATH = Arrays.stream(values())
             .collect(Collectors.toMap(deathCause -> deathCause.getPath().toLowerCase(Locale.ROOT), deathCause -> deathCause, (first, second) -> first));
     private static final Map<String, Set<DeathCause>> BY_PATH_SET = Arrays.stream(values())
@@ -137,6 +131,17 @@ public enum DeathCause {
 
     public String getPath() {
         return path;
+    }
+
+    private static Map<String, DeathCause> createAliasMap() {
+        Map<String, DeathCause> aliases = new HashMap<String, DeathCause>();
+        aliases.put("TNT", PRIMED_TNT);
+        aliases.put("TNT_MINECART", PRIMED_TNT);
+        aliases.put("MINECART_TNT", PRIMED_TNT);
+        aliases.put("FIREWORK_ROCKET", FIREWORK);
+        aliases.put("END_CRYSTAL", ENDER_CRYSTAL);
+        aliases.put("LIGHTNING_BOLT", LIGHTNING);
+        return aliases;
     }
 
     public static <E extends Enum<E>> DeathCause from(Enum<E> namedEnum, CustomDeathMessages plugin) {
