@@ -11,7 +11,6 @@ import org.spartandevs.customdeathmessages.listeners.BukkitPlayerDeathListener;
 import org.spartandevs.customdeathmessages.listeners.CustomPlayerDeathListener;
 import org.spartandevs.customdeathmessages.util.*;
 
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -21,9 +20,6 @@ public final class CustomDeathMessages extends JavaPlugin {
     private CooldownManager cooldownManager;
     private DiscordManager discordManager;
     private PlaceholderApiManager placeholderApiManager;
-    private Set<String> stringConfigPaths;
-    private Set<String> boolConfigPaths;
-    private Set<String> numConfigPaths;
 
     @Override
     public void onEnable() {
@@ -33,10 +29,6 @@ public final class CustomDeathMessages extends JavaPlugin {
         placeholderApiManager = new PlaceholderApiManager(this);
         messagePropagator = new MessagePropagator(this);
         cooldownManager = new CooldownManager();
-
-        stringConfigPaths = configManager.getStringConfigPaths();
-        boolConfigPaths = configManager.getBoolConfigPaths();
-        numConfigPaths = configManager.getNumConfigPaths();
 
         registerEvents();
         registerCommands();
@@ -70,9 +62,9 @@ public final class CustomDeathMessages extends JavaPlugin {
             return IntStream.range(0, configManager.getMessagesCount(path)).mapToObj(String::valueOf).collect(Collectors.toList());
         });
 
-        commandManager.getCommandCompletions().registerStaticCompletion("stringConfigPaths", stringConfigPaths);
-        commandManager.getCommandCompletions().registerStaticCompletion("boolConfigPaths", boolConfigPaths);
-        commandManager.getCommandCompletions().registerStaticCompletion("numConfigPaths", numConfigPaths);
+        commandManager.getCommandCompletions().registerStaticCompletion("stringConfigPaths", configManager::getStringConfigPaths);
+        commandManager.getCommandCompletions().registerStaticCompletion("boolConfigPaths", configManager::getBoolConfigPaths);
+        commandManager.getCommandCompletions().registerStaticCompletion("numConfigPaths", configManager::getNumConfigPaths);
         commandManager.getCommandCompletions().registerStaticCompletion("deathMessagePaths", DeathCause.PATH_SET);
 
         commandManager.getCommandConditions().addCondition(int.class, "indexInBounds", (c, exec, value) -> {
@@ -99,19 +91,19 @@ public final class CustomDeathMessages extends JavaPlugin {
         });
 
         commandManager.getCommandConditions().addCondition(String.class, "validStringConfigPath", (c, exec, value) -> {
-            if (!stringConfigPaths.contains(value)) {
+            if (!configManager.getStringConfigPaths().contains(value)) {
                 throw new InvalidCommandArgument("Invalid config path.");
             }
         });
 
         commandManager.getCommandConditions().addCondition(String.class, "validBoolConfigPath", (c, exec, value) -> {
-            if (!boolConfigPaths.contains(value)) {
+            if (!configManager.getBoolConfigPaths().contains(value)) {
                 throw new InvalidCommandArgument("Invalid config path.");
             }
         });
 
         commandManager.getCommandConditions().addCondition(String.class, "validNumConfigPath", (c, exec, value) -> {
-            if (!numConfigPaths.contains(value)) {
+            if (!configManager.getNumConfigPaths().contains(value)) {
                 throw new InvalidCommandArgument("Invalid config path.");
             }
         });

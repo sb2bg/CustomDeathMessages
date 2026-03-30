@@ -11,8 +11,6 @@ import java.text.MessageFormat;
 import java.util.*;
 
 public class ConfigManager extends BaseDocumentManager {
-    private Set<String> keys;
-
     public ConfigManager(CustomDeathMessages plugin) {
         super(plugin, "config.yml");
         loadConfig();
@@ -20,8 +18,6 @@ public class ConfigManager extends BaseDocumentManager {
 
     private void loadConfig() {
         registerStatistics();
-
-        keys = plugin.getConfig().getValues(true).keySet();
 
         if (getHeadDropChance() > 1) {
             plugin.getLogger().warning("Config misconfiguration: drop-head-percentage should be a decimal between 0 and 1");
@@ -176,34 +172,20 @@ public class ConfigManager extends BaseDocumentManager {
     }
 
     public Set<String> getStringConfigPaths() {
-        Set<String> paths = new HashSet<>();
-
-        for (String path : keys) {
-            if (document.get(path) instanceof String) {
-                paths.add(path);
-            }
-        }
-
-        return paths;
+        return getConfigPathsOfType(String.class);
     }
 
     public Set<String> getBoolConfigPaths() {
-        Set<String> paths = new HashSet<>();
-
-        for (String path : keys) {
-            if (document.get(path) instanceof Boolean) {
-                paths.add(path);
-            }
-        }
-
-        return paths;
+        return getConfigPathsOfType(Boolean.class);
     }
 
     public Set<String> getNumConfigPaths() {
-        Set<String> paths = new HashSet<>();
+        Set<String> paths = new LinkedHashSet<>();
 
-        for (String path : keys) {
-            if (document.get(path) instanceof Double || document.get(path) instanceof Integer) {
+        for (String path : document.getRoutesAsStrings(false)) {
+            Object value = document.get(path);
+
+            if (value instanceof Double || value instanceof Integer) {
                 paths.add(path);
             }
         }
@@ -222,5 +204,17 @@ public class ConfigManager extends BaseDocumentManager {
         }
 
         return false;
+    }
+
+    private Set<String> getConfigPathsOfType(Class<?> type) {
+        Set<String> paths = new LinkedHashSet<>();
+
+        for (String path : document.getRoutesAsStrings(false)) {
+            if (type.isInstance(document.get(path))) {
+                paths.add(path);
+            }
+        }
+
+        return paths;
     }
 }
