@@ -15,6 +15,7 @@ CustomDeathMessages replaces vanilla death messages with configurable templates 
 - Optional player head drops with configurable drop chance and display name.
 - Per-player death message cooldown to reduce spam.
 - Custom named entity messages that can override the normal mob-group message.
+- Optional PlaceholderAPI support for extra placeholders in death-message templates.
 - Hex color support using `&#RRGGBB`.
 - Discord forwarding through `EssentialsDiscord` or `DiscordSRV` when either plugin is installed.
 - Update notifications for staff with `cdm.updates`.
@@ -107,6 +108,26 @@ Weapon placeholder for PvP/weapon-based messages:
 - `%kill-weapon%`
 
 When item hover is enabled, `%kill-weapon%` can render as a hoverable item component. When item hover is disabled, it resolves to the weapon name when available.
+
+If PlaceholderAPI is installed, its placeholders are also parsed in death-message templates, direct PvP messages, and related config strings using the relevant player context.
+
+Plain PlaceholderAPI placeholders still work as before. Those use the message's default player context, which is usually the victim for global death messages, the killer for killer-only messages, and the victim for victim-only messages.
+
+For dual-context PlaceholderAPI usage, CustomDeathMessages also supports these scoped forms:
+
+- `%papi_victim_<placeholder>%`
+- `%papi_killer_<placeholder>%`
+
+Examples:
+
+- `%papi_victim_player_name%`
+- `%papi_victim_luckperms_prefix%`
+- `%papi_killer_player_name%`
+- `%papi_killer_vault_prefix%`
+
+These scoped forms are a CustomDeathMessages feature, not native PlaceholderAPI syntax.
+
+The victim-scoped form always uses the dead player as context. The killer-scoped form only resolves when the killer is a player.
 
 ## Notes
 

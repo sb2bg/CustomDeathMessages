@@ -169,8 +169,8 @@ public class CDMCommand extends CDMBaseCommand {
         ItemStack placeholderItem = config.isItemOnHoverEnabled() ? null : weapon;
         Entity killer = sender;
 
-        PlaceholderPopulator populator = new PlaceholderPopulator(target, killer, placeholderItem);
-        String originalMessage = new PlaceholderPopulator(target, killer, null).replace("%victim% was slain by %killer%");
+        PlaceholderPopulator populator = new PlaceholderPopulator(plugin, target, killer, placeholderItem);
+        String originalMessage = new PlaceholderPopulator(plugin, target, killer, null).replace(target, "%victim% was slain by %killer%");
         HoverTransforms hoverTransforms = new HoverTransforms(plugin, originalMessage, weapon);
         DeathMessage deathMessage = new DeathMessage(
                 "&c%victim% &ewas debugged by &c%killer% &eusing &7[&b%kill-weapon%&7]",

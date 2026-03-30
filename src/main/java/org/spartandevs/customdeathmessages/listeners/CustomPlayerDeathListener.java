@@ -37,7 +37,7 @@ public class CustomPlayerDeathListener implements Listener {
             weapon = getKillWeapon(killer);
         }
 
-        PlaceholderPopulator populator = new PlaceholderPopulator(event.getVictim(),
+        PlaceholderPopulator populator = new PlaceholderPopulator(plugin, event.getVictim(),
                 event.getKiller(), config.isItemOnHoverEnabled() ? null : weapon);
         HoverTransforms hoverTransforms = new HoverTransforms(plugin, event.getOriginalDeathMessage(), weapon);
 
@@ -53,7 +53,7 @@ public class CustomPlayerDeathListener implements Listener {
                 return;
             }
 
-            meta.setDisplayName(populator.replace(config.getHeadName()));
+            meta.setDisplayName(populator.replace(event.getVictim(), config.getHeadName()));
             item.setItemMeta(meta);
 
             event.getVictim().getWorld().dropItemNaturally(event.getVictim().getLocation(), item);
@@ -61,8 +61,8 @@ public class CustomPlayerDeathListener implements Listener {
 
         if (config.doPvpMessages() && event.getKiller() instanceof Player) {
             Player killer = (Player) event.getKiller();
-            killer.sendMessage(populator.replace(config.getKillerMessage()));
-            event.getVictim().sendMessage(populator.replace(config.getVictimMessage()));
+            killer.sendMessage(populator.replace(killer, config.getKillerMessage()));
+            event.getVictim().sendMessage(populator.replace(event.getVictim(), config.getVictimMessage()));
         }
 
         if (config.isGlobalMessageEnabled()) {

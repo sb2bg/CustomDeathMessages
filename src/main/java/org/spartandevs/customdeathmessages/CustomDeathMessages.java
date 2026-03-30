@@ -20,6 +20,7 @@ public final class CustomDeathMessages extends JavaPlugin {
     private MessagePropagator messagePropagator;
     private CooldownManager cooldownManager;
     private DiscordManager discordManager;
+    private PlaceholderApiManager placeholderApiManager;
     private Set<String> stringConfigPaths;
     private Set<String> boolConfigPaths;
     private Set<String> numConfigPaths;
@@ -29,6 +30,7 @@ public final class CustomDeathMessages extends JavaPlugin {
         // register bukkit related managers in onEnable to maintain softdepend
         configManager = new ConfigManager(this);
         discordManager = new DiscordManager(this);
+        placeholderApiManager = new PlaceholderApiManager(this);
         messagePropagator = new MessagePropagator(this);
         cooldownManager = new CooldownManager();
 
@@ -147,5 +149,9 @@ public final class CustomDeathMessages extends JavaPlugin {
 
     public DiscordManager getDiscordManager() {
         return discordManager;
+    }
+
+    public PlaceholderApiManager getPlaceholderApiManager() {
+        return placeholderApiManager;
     }
 }
