@@ -20,8 +20,6 @@ public class BukkitPlayerDeathListener implements Listener {
 
     private final CustomDeathMessages plugin;
 
-    private OriginalDeathMessageSetter deathMessageSetter;
-
     public BukkitPlayerDeathListener(CustomDeathMessages plugin) {
         this.plugin = plugin;
     }
@@ -46,15 +44,16 @@ public class BukkitPlayerDeathListener implements Listener {
             }
         }
 
-        deathMessageSetter = event::setDeathMessage;
-
         CustomPlayerDeathEvent customPlayerDeathEvent = new CustomPlayerDeathEvent(
-                deathCause, event.getDeathMessage(), event, killer, victim, this::setDeathMessage);
+                deathCause, event.getDeathMessage(), event, killer, victim,
+                (player, deathMessage, hoverTransforms, originalEvent) ->
+                        setDeathMessage(event::setDeathMessage, player, deathMessage, hoverTransforms, originalEvent));
 
         plugin.getServer().getPluginManager().callEvent(customPlayerDeathEvent);
     }
 
-    private void setDeathMessage(Player victim, DeathMessage deathMessage, HoverTransforms hoverTransforms, PlayerDeathEvent event) {
+    private void setDeathMessage(OriginalDeathMessageSetter deathMessageSetter, Player victim, DeathMessage deathMessage,
+                                 HoverTransforms hoverTransforms, PlayerDeathEvent event) {
         // message is on cooldown
         if (deathMessage == null) {
             deathMessageSetter.setDeathMessage("");
