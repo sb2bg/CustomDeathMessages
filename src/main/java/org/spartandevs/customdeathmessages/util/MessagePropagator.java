@@ -1,47 +1,83 @@
 package org.spartandevs.customdeathmessages.util;
 
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.UUID;
 
 public class MessagePropagator {
+    private static final long PROPAGATION_TIMEOUT_MS = 60_000L;
+
     private final CustomDeathMessages plugin;
+    private final HashMap<UUID, PropagatedMessage> propagator = new HashMap<>();
 
     public MessagePropagator(CustomDeathMessages plugin) {
         this.plugin = plugin;
     }
 
-    private final HashMap<UUID, MessageInfo> propagator = new HashMap<>();
-    private final HashMap<UUID, BukkitTask> cancellers = new HashMap<>();
-
     public MessageInfo getDeathMessage(UUID uuid) {
-        if (cancellers.containsKey(uuid)) {
-            cancellers.remove(uuid).cancel();
+        cleanupExpiredEntries();
+
+        PropagatedMessage propagatedMessage = propagator.remove(uuid);
+
+        if (propagatedMessage == null) {
+            return null;
         }
 
-        return propagator.remove(uuid);
+        if (propagatedMessage.isExpired(System.currentTimeMillis())) {
+            logExpiry(uuid);
+            return null;
+        }
+
+        return propagatedMessage.getMessageInfo();
     }
 
     public void setDeathMessage(UUID uuid, MessageInfo messageInfo) {
-        propagator.put(uuid, messageInfo);
-
-        BukkitTask task = new BukkitRunnable() {
-            @Override
-            public void run() {
-                propagator.remove(uuid);
-                plugin.getLogger().warning(MessageFormat.format("Death message for {0} was not propagated in time", uuid));
-            }
-        }.runTaskLaterAsynchronously(plugin, 20 * 5);
-
-        cancellers.put(uuid, task);
+        cleanupExpiredEntries();
+        propagator.put(uuid, new PropagatedMessage(messageInfo, System.currentTimeMillis() + PROPAGATION_TIMEOUT_MS));
     }
 
     public void clear() {
         propagator.clear();
-        cancellers.clear();
+    }
+
+    private void cleanupExpiredEntries() {
+        long now = System.currentTimeMillis();
+        Iterator<Map.Entry<UUID, PropagatedMessage>> iterator = propagator.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            Map.Entry<UUID, PropagatedMessage> entry = iterator.next();
+
+            if (!entry.getValue().isExpired(now)) {
+                continue;
+            }
+
+            iterator.remove();
+            logExpiry(entry.getKey());
+        }
+    }
+
+    private void logExpiry(UUID uuid) {
+        plugin.getLogger().warning("Death message for " + uuid + " expired before a death event consumed it");
+    }
+
+    private static final class PropagatedMessage {
+        private final MessageInfo messageInfo;
+        private final long expiresAtMillis;
+
+        private PropagatedMessage(MessageInfo messageInfo, long expiresAtMillis) {
+            this.messageInfo = messageInfo;
+            this.expiresAtMillis = expiresAtMillis;
+        }
+
+        private MessageInfo getMessageInfo() {
+            return messageInfo;
+        }
+
+        private boolean isExpired(long now) {
+            return now > expiresAtMillis;
+        }
     }
 }
