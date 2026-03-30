@@ -1,0 +1,142 @@
+[B][SIZE=6]CustomDeathMessages[/SIZE][/B]
+
+[SIZE=4]Highly customizable death messages for Spigot and Paper[/SIZE]
+
+CustomDeathMessages lets you replace vanilla death messages with your own fully configurable messages for PvP, mobs, projectiles, environmental damage, etc.
+
+It ships with editable defaults out of the box, supports modern and legacy servers, and gives you in-game tools to manage messages without digging through the config every time.
+
+[B]Supported Versions:[/B] 1.8 through 1.21.x
+
+[B]Features[/B]
+[LIST]
+[*]Edit death messages for PvP, mobs, projectiles, environmental causes, and etc.
+[*]Toggle global death messages on or off.
+[*]Send separate PvP messages to the killer and victim.
+[*]Show the original vanilla death message on hover.
+[*]Show the killer's weapon as a hoverable item tooltip.
+[*]Strike lightning at the death location.
+[*]Drop a player's head on death with configurable chance and custom display name.
+[*]Use built-in placeholders for victim, killer, coordinates, worlds, and weapon name.
+[*]Use hex colors with [ICODE]&#RRGGBB[/ICODE].
+[*]Set a per-player death message cooldown to reduce spam.
+[*]Override mob-group messages when the killer has a custom entity name.
+[*]Forward custom death messages to Discord with [ICODE]EssentialsDiscord[/ICODE] or [ICODE]DiscordSRV[/ICODE].
+[*]Receive update notifications with permission-based update checks.
+[/LIST]
+
+[B]Commands and Permissions[/B]
+[LIST]
+[*][ICODE]/cdm reload[/ICODE]
+Permission: [ICODE]cdm.reload[/ICODE]
+Reloads the plugin config and clears cached death-message state.
+
+[*][ICODE]/cdm add <path> <message>[/ICODE]
+Permission: [ICODE]cdm.modify[/ICODE]
+Adds a message to a death-message list.
+
+[*][ICODE]/cdm list <path>[/ICODE]
+Permission: [ICODE]cdm.modify[/ICODE]
+Lists the messages for a death-message path with indices.
+
+[*][ICODE]/cdm remove <path> <index>[/ICODE]
+Permission: [ICODE]cdm.modify[/ICODE]
+Removes a message by index.
+
+[*][ICODE]/cdm set flag <path> <true|false>[/ICODE]
+Permission: [ICODE]cdm.modify[/ICODE]
+Sets a boolean config value.
+
+[*][ICODE]/cdm set message <path> <message>[/ICODE]
+Permission: [ICODE]cdm.modify[/ICODE]
+Sets a string config value.
+
+[*][ICODE]/cdm set number <path> <value>[/ICODE]
+Permission: [ICODE]cdm.modify[/ICODE]
+Sets a numeric config value.
+
+[*][ICODE]/cdm debug prime [player][/ICODE]
+Permission: [ICODE]cdm.debug[/ICODE]
+Sets a player to 1 health for testing. Requires [ICODE]developer-mode: true[/ICODE].
+
+[*][ICODE]/cdm debug shoot [player][/ICODE]
+Permission: [ICODE]cdm.debug[/ICODE]
+Instantly kills a player for testing. Requires [ICODE]developer-mode: true[/ICODE].
+[/LIST]
+
+[B]Command Aliases:[/B] [ICODE]/cdm[/ICODE], [ICODE]/customdeathmessages[/ICODE], [ICODE]/customdeathmessage[/ICODE], [ICODE]/deathmessage[/ICODE], [ICODE]/deathmessages[/ICODE]
+
+[B]Note:[/B] Path arguments autocomplete in-game, so you usually do not need to search through the config manually.
+
+[B]Update Checker[/B]
+[LIST]
+[*]Permission: [ICODE]cdm.updates[/ICODE]
+[*]Players with this permission receive an update notification on login when update messages are enabled.
+[/LIST]
+
+[B]Discord Support[/B]
+[LIST]
+[*]Supports [ICODE]EssentialsDiscord[/ICODE]
+[*]Supports [ICODE]DiscordSRV[/ICODE]
+[*]Automatically uses the available Discord integration when present
+[/LIST]
+
+[B]Built-In Placeholders[/B]
+[LIST]
+[*][ICODE]%victim%[/ICODE], [ICODE]%victim-nick%[/ICODE], [ICODE]%victim-x%[/ICODE], [ICODE]%victim-y%[/ICODE], [ICODE]%victim-z%[/ICODE], [ICODE]%victim-world%[/ICODE]
+[*][ICODE]%killer%[/ICODE], [ICODE]%killer-nick%[/ICODE], [ICODE]%killer-x%[/ICODE], [ICODE]%killer-y%[/ICODE], [ICODE]%killer-z%[/ICODE], [ICODE]%killer-world%[/ICODE]
+[*][ICODE]%entity-name%[/ICODE]
+[*][ICODE]%kill-weapon%[/ICODE]
+[/LIST]
+
+[B]Config Highlights[/B]
+[SPOILER="config.yml example"]
+[CODE=YAML]# Enable update notifications for staff with cdm.updates
+enable-update-messages: true
+
+# Send PvP messages to killer and victim
+enable-pvp-messages: true
+killer-message: "&e[&cDeathMessages&e] &eYou killed &c%victim%"
+victim-message: "&e[&cDeathMessages&e] &eYou were killed by &c%killer%"
+
+# Effects and extras
+enable-lightning: true
+drop-head-percentage: 0.5
+head-name: "&c%victim%'s Head"
+message-cooldown: 0
+
+# Global and hover settings
+enable-global-messages: true
+enable-original-on-hover: false
+enable-item-on-hover: true
+
+# Custom named mobs
+enable-custom-name-entity-messages: false
+
+# Example message lists
+global-pvp-death-messages:
+  - "&c%victim% &ehas been killed by &c%killer%"
+  - "&c%victim% &ewas defeated by &c%killer% &eusing &7[&b%kill-weapon%&7]"
+
+melee-death-messages:
+  - "&c%victim% &ewas tagged by &c%killer%"
+  - "&c%victim% &ewas knocked out by &c%killer%"
+
+fall-damage-messages:
+  - "&c%victim% &emade themself a pancake on the ground"
+  - "&c%victim% &efell from a high spot"
+
+breeze-messages:
+  - "&c%victim% &egot launched around by a Breeze"
+  - "&c%victim% &ecould not keep up with the Breeze"
+
+developer-mode: false[/CODE]
+[/SPOILER]
+
+[B]Why Use It?[/B]
+[LIST]
+[*]Works immediately after install with bundled defaults.
+[*]Easy to customize in-game or through [ICODE]config.yml[/ICODE].
+[*]Covers both legacy and modern Minecraft versions.
+[*]Useful for survival, PvP, minigames, RPG, and network servers.
+[/LIST]
