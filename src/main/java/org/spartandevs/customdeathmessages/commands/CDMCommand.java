@@ -3,14 +3,14 @@ package org.spartandevs.customdeathmessages.commands;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import org.bukkit.command.CommandSender;
-import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.spartandevs.customdeathmessages.chat.ChatColor;
-import org.spartandevs.customdeathmessages.chat.DeathMessage;
-import org.spartandevs.customdeathmessages.chat.HoverTransforms;
+import org.spartandevs.customdeathmessages.chat.BungeeRenderer;
+import org.spartandevs.customdeathmessages.chat.PaperRenderer;
 import org.spartandevs.customdeathmessages.chat.Placeholders;
+import org.spartandevs.customdeathmessages.chat.Platform;
+import org.spartandevs.customdeathmessages.chat.RichMessage;
 import org.spartandevs.customdeathmessages.util.ConfigManager;
 import org.spartandevs.customdeathmessages.util.Items;
 
@@ -162,21 +162,23 @@ public class CDMCommand extends CDMBaseCommand {
             return;
         }
 
+        // goes through the same rendering as real death messages
         ConfigManager config = plugin.getConfigManager();
-        boolean useHover = config.isItemOnHoverEnabled() || config.isOriginalOnHoverEnabled();
         Placeholders placeholders = new Placeholders(plugin.getPlaceholderApi(), target, sender, weapon);
-        String originalMessage = placeholders.apply(target, "%victim% was slain by %killer%");
-        HoverTransforms hoverTransforms = new HoverTransforms(plugin, originalMessage, weapon);
-        DeathMessage deathMessage = new DeathMessage(
-                "&c%victim% &ewas debugged by &c%killer% &eusing &7[&b%kill-weapon%&7]",
-                placeholders,
-                useHover ? DeathMessage.MessageType.JSON : DeathMessage.MessageType.STRING
-        );
+        String template = "&c%victim% &ewas debugged by &c%killer% &eusing &7[&b%kill-weapon%&7]";
+        String original = config.isOriginalOnHoverEnabled() ? placeholders.apply(target, "%victim% was slain by %killer%") : null;
 
-        if (deathMessage.getMessageType() == DeathMessage.MessageType.JSON) {
-            sender.spigot().sendMessage(deathMessage.getTextComponent(hoverTransforms));
+        if (!config.isItemOnHoverEnabled() && original == null) {
+            sender.sendMessage(placeholders.apply(target, template));
+            return;
+        }
+
+        RichMessage message = RichMessage.create(placeholders, template, weapon, config.isItemOnHoverEnabled());
+
+        if (Platform.ADVENTURE_DEATH_MESSAGES) {
+            PaperRenderer.send(sender, message, original);
         } else {
-            sendMessage(sender, deathMessage.getStringMessage());
+            sender.spigot().sendMessage(BungeeRenderer.render(message, original));
         }
     }
 

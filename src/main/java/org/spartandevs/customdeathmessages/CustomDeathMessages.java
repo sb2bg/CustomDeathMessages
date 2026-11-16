@@ -8,8 +8,7 @@ import org.bstats.charts.SimplePie;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spartandevs.customdeathmessages.commands.CDMCommand;
 import org.spartandevs.customdeathmessages.listeners.UpdateNotifyListener;
-import org.spartandevs.customdeathmessages.listeners.BukkitPlayerDeathListener;
-import org.spartandevs.customdeathmessages.listeners.CustomPlayerDeathListener;
+import org.spartandevs.customdeathmessages.listeners.DeathListener;
 import org.spartandevs.customdeathmessages.util.*;
 
 import java.io.IOException;
@@ -23,7 +22,6 @@ public final class CustomDeathMessages extends JavaPlugin {
 
     private ConfigManager configManager;
     private CooldownManager cooldownManager;
-    private DiscordManager discordManager;
     private PlaceholderApiHook placeholderApi;
 
     @Override
@@ -40,7 +38,6 @@ public final class CustomDeathMessages extends JavaPlugin {
 
         registerMetrics();
         // register bukkit related managers in onEnable to maintain softdepend
-        discordManager = new DiscordManager(this);
         placeholderApi = new PlaceholderApiHook(this);
         cooldownManager = new CooldownManager();
 
@@ -63,8 +60,7 @@ public final class CustomDeathMessages extends JavaPlugin {
                 getLogger().info("Failed to check for updates: " + e.getMessage());
             }
         }, 0L, UPDATE_CHECK_INTERVAL_TICKS);
-        getServer().getPluginManager().registerEvents(new BukkitPlayerDeathListener(this), this);
-        getServer().getPluginManager().registerEvents(new CustomPlayerDeathListener(this), this);
+        getServer().getPluginManager().registerEvents(new DeathListener(this), this);
     }
 
     @SuppressWarnings("deprecation") // Unstable API
@@ -177,10 +173,6 @@ public final class CustomDeathMessages extends JavaPlugin {
 
     public CooldownManager getCooldownManager() {
         return cooldownManager;
-    }
-
-    public DiscordManager getDiscordManager() {
-        return discordManager;
     }
 
     public PlaceholderApiHook getPlaceholderApi() {
