@@ -3,6 +3,8 @@ package org.spartandevs.customdeathmessages;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.InvalidCommandArgument;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spartandevs.customdeathmessages.commands.CDMCommand;
 import org.spartandevs.customdeathmessages.listeners.BukkitLoginListener;
@@ -21,8 +23,18 @@ public final class CustomDeathMessages extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // register bukkit related managers in onEnable to maintain softdepend
         configManager = new ConfigManager(this);
+        String error = configManager.load();
+
+        if (error != null) {
+            getLogger().severe("Could not load config.yml, so CustomDeathMessages is disabled. Fix the file and restart:");
+            getLogger().severe(error);
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        registerMetrics();
+        // register bukkit related managers in onEnable to maintain softdepend
         discordManager = new DiscordManager(this);
         placeholderApiManager = new PlaceholderApiManager(this);
         cooldownManager = new CooldownManager();
@@ -112,15 +124,34 @@ public final class CustomDeathMessages extends JavaPlugin {
         }));
     }
 
-    public boolean reload() {
-        boolean reloaded = configManager.reload();
+    private void registerMetrics() {
+        Metrics metrics = new Metrics(this, 7287);
+        metrics.addCustomChart(new SimplePie("head_drop_percentage", () -> String.valueOf(configManager.getHeadDropChance())));
+        metrics.addCustomChart(new SimplePie("enable_lightning", () -> enabled(configManager.doLightningStrike())));
+        metrics.addCustomChart(new SimplePie("enable_global_messages", () -> enabled(configManager.isGlobalMessageEnabled())));
+        metrics.addCustomChart(new SimplePie("enable_pvp_messages", () -> enabled(configManager.doPvpMessages())));
+        metrics.addCustomChart(new SimplePie("enable_entity_name_messages", () -> enabled(configManager.isCustomNamedEntityMessageEnabled())));
+        metrics.addCustomChart(new SimplePie("enable_original_hover_message", () -> enabled(configManager.isOriginalOnHoverEnabled())));
+        metrics.addCustomChart(new SimplePie("enable_item_tooltip_message", () -> enabled(configManager.isItemOnHoverEnabled())));
+    }
 
-        if (!reloaded) {
-            return false;
+    private static String enabled(boolean value) {
+        return value ? "Enabled" : "Disabled";
+    }
+
+    /**
+     * Reloads config.yml. If it cannot be loaded the previous configuration stays active.
+     *
+     * @return {@code null} on success, otherwise a description of the problem
+     */
+    public String reload() {
+        String error = configManager.load();
+
+        if (error == null) {
+            cooldownManager.clearCooldowns();
         }
 
-        cooldownManager.clearCooldowns();
-        return true;
+        return error;
     }
 
     public ConfigManager getConfigManager() {

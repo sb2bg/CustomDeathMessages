@@ -26,12 +26,15 @@ public class CDMCommand extends CDMBaseCommand {
     @CommandPermission("cdm.reload")
     @Description("Reloads the config file and other resources.")
     public void onReload(CommandSender sender) {
-        if (plugin.reload()) {
+        String error = plugin.reload();
+
+        if (error == null) {
             sendMessage(sender, "&aPlugin reloaded.");
             return;
         }
 
-        sendMessage(sender, "&cPlugin reload failed. Check the console for more information.");
+        sendMessage(sender, "&cReload failed, the previous configuration is still active:");
+        sendRaw(sender, error);
     }
 
     @Subcommand("add")
@@ -40,8 +43,7 @@ public class CDMCommand extends CDMBaseCommand {
     @Description("Adds a custom death message.")
     @CommandCompletion("@messagePaths @nothing")
     public void onAdd(CommandSender sender, @Conditions("newMessagePath") String path, String deathMessage) {
-        plugin.getConfigManager().addCustomMessage(path, deathMessage);
-        sendMessage(sender, "&aAdded custom death message.");
+        report(sender, plugin.getConfigManager().addCustomMessage(path, deathMessage), "&aAdded custom death message.");
     }
 
     @Subcommand("list")
@@ -64,8 +66,7 @@ public class CDMCommand extends CDMBaseCommand {
     @Description("Removes a custom death message.")
     @CommandCompletion("@messagePaths @deathMessageIndices")
     public void onRemove(CommandSender sender, @Conditions("messagePath") String path, @Conditions("indexInBounds") int index) {
-        plugin.getConfigManager().removeCustomMessage(path, index);
-        sendMessage(sender, "&aRemoved death message.");
+        report(sender, plugin.getConfigManager().removeCustomMessage(path, index), "&aRemoved death message.");
     }
 
     @Subcommand("set flag")
@@ -74,8 +75,7 @@ public class CDMCommand extends CDMBaseCommand {
     @Description("Sets a config flag.")
     @CommandCompletion("@boolConfigPaths true|false")
     public void onSetBoolean(CommandSender sender, @Conditions("validBoolConfigPath") String configPath, boolean value) {
-        plugin.getConfigManager().setBoolean(configPath, value);
-        sendMessage(sender, "&aSet config value.");
+        report(sender, plugin.getConfigManager().set(configPath, value), "&aSet config value.");
     }
 
     @Subcommand("set message")
@@ -84,8 +84,7 @@ public class CDMCommand extends CDMBaseCommand {
     @Description("Sets a config message.")
     @CommandCompletion("@stringConfigPaths @nothing")
     public void onSetString(CommandSender sender, @Conditions("validStringConfigPath") String configPath, String value) {
-        plugin.getConfigManager().setString(configPath, value);
-        sendMessage(sender, "&aSet config value.");
+        report(sender, plugin.getConfigManager().set(configPath, value), "&aSet config value.");
     }
 
     @Subcommand("set number")
@@ -94,8 +93,7 @@ public class CDMCommand extends CDMBaseCommand {
     @Description("Sets a config number.")
     @CommandCompletion("@numConfigPaths @nothing")
     public void onSetNumber(CommandSender sender, @Conditions("validNumConfigPath") String configPath, double value) {
-        plugin.getConfigManager().setDouble(configPath, value);
-        sendMessage(sender, "&aSet config value.");
+        report(sender, plugin.getConfigManager().set(configPath, value), "&aSet config value.");
     }
 
     @Subcommand("debug shoot")

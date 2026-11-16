@@ -1,47 +1,118 @@
 package org.spartandevs.customdeathmessages.util;
 
+import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
 import dev.dejvokep.boostedyaml.route.Route;
+import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
+import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
+import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
-import org.bstats.bukkit.Metrics;
-import org.bstats.charts.SimplePie;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
 
-import java.text.MessageFormat;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Consumer;
 
-public class ConfigManager extends BaseDocumentManager {
+/**
+ * Owns config.yml.
+ * <p>
+ * The live document is only ever replaced by a document that parsed successfully, so a broken file never
+ * leaves the plugin running on defaults, and edits made through commands re-read the file first so they
+ * never overwrite changes made by hand (or save defaults over a file that failed to parse).
+ */
+public class ConfigManager {
+    private static final String FILE_NAME = "config.yml";
+
+    private final CustomDeathMessages plugin;
+    private final File file;
+    private volatile YamlDocument document;
+
     public ConfigManager(CustomDeathMessages plugin) {
-        super(plugin, "config.yml");
-        loadConfig();
+        this.plugin = plugin;
+        this.file = new File(plugin.getDataFolder(), FILE_NAME);
     }
 
-    private void loadConfig() {
-        registerStatistics();
-
-        if (getHeadDropChance() > 1) {
-            plugin.getLogger().warning("Config misconfiguration: drop-head-percentage should be a decimal between 0 and 1");
+    /**
+     * Loads (or reloads) config.yml from disk. On failure the previously loaded config stays active.
+     *
+     * @return {@code null} on success, otherwise a description of the problem
+     */
+    public synchronized String load() {
+        try {
+            document = open();
+            validate();
+            return null;
+        } catch (IOException | RuntimeException e) {
+            return describe(e);
         }
     }
 
-    @Override
-    protected UpdaterSettings updater() {
+    /**
+     * Re-reads config.yml from disk, applies {@code change} and saves it.
+     *
+     * @return {@code null} on success, otherwise a description of the problem (nothing is saved)
+     */
+    public synchronized String modify(Consumer<YamlDocument> change) {
+        try {
+            YamlDocument fresh = open();
+            change.accept(fresh);
+            fresh.save();
+            document = fresh;
+            return null;
+        } catch (IOException | RuntimeException e) {
+            return describe(e);
+        }
+    }
+
+    private YamlDocument open() throws IOException {
+        InputStream defaults = plugin.getResource(FILE_NAME);
+
+        if (defaults == null) {
+            throw new IOException("The plugin jar does not contain " + FILE_NAME);
+        }
+
+        return YamlDocument.create(file, defaults, GeneralSettings.DEFAULT,
+                LoaderSettings.builder().setAutoUpdate(true).build(), DumperSettings.DEFAULT, updater());
+    }
+
+    private static UpdaterSettings updater() {
+        Map<Route, Route> v2 = new HashMap<>();
+        v2.put(Route.fromString("original-hover-message"), Route.fromString("enable-original-on-hover"));
+        v2.put(Route.fromString("enable-item-hover"), Route.fromString("enable-item-on-hover"));
+        v2.put(Route.fromString("do-lightning"), Route.fromString("enable-lightning"));
+
         return UpdaterSettings.builder()
                 .setAutoSave(true)
                 .setVersioning(new BasicVersioning("config-version"))
-                .addRelocations("2", new HashMap<Route, Route>() {{
-                    put(Route.fromString("original-hover-message"), Route.fromString("enable-original-on-hover"));
-                    put(Route.fromString("enable-item-hover"), Route.fromString("enable-item-on-hover"));
-                    put(Route.fromString("do-lightning"), Route.fromString("enable-lightning"));
-                }})
+                .addRelocations("2", v2)
                 .build();
+    }
+
+    private void validate() {
+        double chance = getHeadDropChance();
+
+        if (chance < 0 || chance > 1) {
+            plugin.getLogger().warning("drop-head-percentage should be a decimal between 0 and 1 (0.25 = 25%), but is " + chance);
+        }
+    }
+
+    /**
+     * Turns a load failure into a short, readable message. YAML syntax errors already describe the line and
+     * column, so no stack trace is needed.
+     */
+    private static String describe(Exception e) {
+        String message = e.getMessage();
+        return message == null || message.trim().isEmpty() ? e.toString() : FILE_NAME + ": " + message.trim();
     }
 
     public String getMessage(String path) {
         List<String> messages = document.getStringList(path);
 
-        if (invalidCollection(messages, path)) {
+        if (messages == null || messages.isEmpty()) {
+            plugin.getLogger().warning("No messages found for " + path + "! Check your " + FILE_NAME + ".");
             return null;
         }
 
@@ -67,6 +138,18 @@ public class ConfigManager extends BaseDocumentManager {
         return paths;
     }
 
+    public List<String> listDeathMessages(String path) {
+        return document.getStringList(path);
+    }
+
+    public int getMessagesCount(String path) {
+        return document.getStringList(path).size();
+    }
+
+    public String getMeleeMessage() {
+        return getMessage(MessagePaths.MELEE);
+    }
+
     public boolean doLightningStrike() {
         return document.getBoolean("enable-lightning");
     }
@@ -74,6 +157,10 @@ public class ConfigManager extends BaseDocumentManager {
     public boolean dropHead() {
         // strictly less than, so a chance of 0 can never drop a head
         return ThreadLocalRandom.current().nextDouble() < getHeadDropChance();
+    }
+
+    public double getHeadDropChance() {
+        return document.getDouble("drop-head-percentage");
     }
 
     public String getHeadName() {
@@ -100,16 +187,6 @@ public class ConfigManager extends BaseDocumentManager {
         return document.getBoolean("enable-global-messages");
     }
 
-    public String getMeleeMessage() {
-        List<String> meleeMessages = document.getStringList("melee-death-messages");
-
-        if (invalidCollection(meleeMessages, "melee-death-messages")) {
-            return null;
-        }
-
-        return meleeMessages.get(ThreadLocalRandom.current().nextInt(meleeMessages.size()));
-    }
-
     public boolean isOriginalOnHoverEnabled() {
         return document.getBoolean("enable-original-on-hover");
     }
@@ -130,60 +207,29 @@ public class ConfigManager extends BaseDocumentManager {
         return document.getBoolean("developer-mode");
     }
 
-    private void registerStatistics() {
-        Metrics metrics = new Metrics(plugin, 7287);
-        metrics.addCustomChart(new SimplePie("head_drop_percentage", () -> String.valueOf(getHeadDropChance())));
-        metrics.addCustomChart(new SimplePie("enable_lightning", () -> getBooleanString(document.getBoolean("enable-lightning"))));
-        metrics.addCustomChart(new SimplePie("enable_global_messages", () -> getBooleanString(document.getBoolean("enable-global-messages"))));
-        metrics.addCustomChart(new SimplePie("enable_pvp_messages", () -> getBooleanString(document.getBoolean("enable-pvp-messages"))));
-        metrics.addCustomChart(new SimplePie("enable_entity_name_messages", () -> getBooleanString(document.getBoolean("enable-custom-name-entity-messages"))));
-        metrics.addCustomChart(new SimplePie("enable_original_hover_message", () -> getBooleanString(document.getBoolean("enable-original-on-hover"))));
-        metrics.addCustomChart(new SimplePie("enable_item_tooltip_message", () -> getBooleanString(document.getBoolean("enable-item-on-hover"))));
+    public String addCustomMessage(String path, String message) {
+        return modify(doc -> {
+            List<String> messages = new ArrayList<>(doc.getStringList(path));
+            messages.add(message);
+            doc.set(path, messages);
+        });
     }
 
-    private double getHeadDropChance() {
-        if (document.get("drop-head-percentage") != null) {
-            return document.getDouble("drop-head-percentage");
-        }
+    public String removeCustomMessage(String path, int index) {
+        return modify(doc -> {
+            List<String> messages = new ArrayList<>(doc.getStringList(path));
 
-        return document.getDouble("drop-head-chance");
+            if (index >= messages.size()) {
+                throw new IllegalStateException("Index " + index + " no longer exists; " + FILE_NAME + " changed on disk.");
+            }
+
+            messages.remove(index);
+            doc.set(path, messages);
+        });
     }
 
-    private static String getBooleanString(boolean value) {
-        return value ? "Enabled" : "Disabled";
-    }
-
-    public void addCustomMessage(String path, String message) {
-        List<String> configMessages = new ArrayList<>(document.getStringList(path));
-        configMessages.add(message);
-        document.set(path, configMessages);
-        save();
-    }
-
-    public void removeCustomMessage(String path, int index) {
-        List<String> configMessages = new ArrayList<>(document.getStringList(path));
-        configMessages.remove(index);
-        document.set(path, configMessages);
-        save();
-    }
-
-    public void setBoolean(String path, boolean value) {
-        document.set(path, value);
-        save();
-    }
-
-    public void setDouble(String path, double value) {
-        document.set(path, value);
-        save();
-    }
-
-    public void setString(String path, String value) {
-        document.set(path, value);
-        save();
-    }
-
-    public int getMessagesCount(String path) {
-        return document.getStringList(path).size();
+    public String set(String path, Object value) {
+        return modify(doc -> doc.set(path, value));
     }
 
     public Set<String> getStringConfigPaths() {
@@ -195,30 +241,7 @@ public class ConfigManager extends BaseDocumentManager {
     }
 
     public Set<String> getNumConfigPaths() {
-        Set<String> paths = new LinkedHashSet<>();
-
-        for (String path : document.getRoutesAsStrings(false)) {
-            Object value = document.get(path);
-
-            if (value instanceof Double || value instanceof Integer) {
-                paths.add(path);
-            }
-        }
-
-        return paths;
-    }
-
-    public List<String> listDeathMessages(String path) {
-        return document.getStringList(path);
-    }
-
-    private boolean invalidCollection(List<?> collection, String name) {
-        if (collection == null || collection.isEmpty()) {
-            plugin.getLogger().warning(MessageFormat.format("No messages found for {0}! Check your document.yml.", name));
-            return true;
-        }
-
-        return false;
+        return getConfigPathsOfType(Number.class);
     }
 
     private Set<String> getConfigPathsOfType(Class<?> type) {
