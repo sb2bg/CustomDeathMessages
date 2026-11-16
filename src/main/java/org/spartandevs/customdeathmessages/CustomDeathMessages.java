@@ -7,16 +7,20 @@ import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spartandevs.customdeathmessages.commands.CDMCommand;
-import org.spartandevs.customdeathmessages.listeners.BukkitLoginListener;
+import org.spartandevs.customdeathmessages.listeners.UpdateNotifyListener;
 import org.spartandevs.customdeathmessages.listeners.BukkitPlayerDeathListener;
 import org.spartandevs.customdeathmessages.listeners.CustomPlayerDeathListener;
 import org.spartandevs.customdeathmessages.util.*;
 
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public final class CustomDeathMessages extends JavaPlugin {
+    private static final int SPIGOT_RESOURCE_ID = 69605;
+    private static final long UPDATE_CHECK_INTERVAL_TICKS = 20L * 60 * 60 * 6;
+
     private ConfigManager configManager;
     private CooldownManager cooldownManager;
     private DiscordManager discordManager;
@@ -45,7 +49,20 @@ public final class CustomDeathMessages extends JavaPlugin {
     }
 
     private void registerEvents() {
-        getServer().getPluginManager().registerEvents(new BukkitLoginListener(this), this);
+        UpdateChecker updateChecker = new UpdateChecker(SPIGOT_RESOURCE_ID);
+        getServer().getPluginManager().registerEvents(new UpdateNotifyListener(this, updateChecker), this);
+        // check at startup and every few hours in the background, never once per join
+        getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
+            if (!configManager.isCheckUpdatesEnabled()) {
+                return;
+            }
+
+            try {
+                updateChecker.check();
+            } catch (IOException e) {
+                getLogger().info("Failed to check for updates: " + e.getMessage());
+            }
+        }, 0L, UPDATE_CHECK_INTERVAL_TICKS);
         getServer().getPluginManager().registerEvents(new BukkitPlayerDeathListener(this), this);
         getServer().getPluginManager().registerEvents(new CustomPlayerDeathListener(this), this);
     }
