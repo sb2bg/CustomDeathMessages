@@ -26,6 +26,7 @@ import org.spartandevs.customdeathmessages.util.PlayerHeads;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 
 /**
@@ -123,6 +124,8 @@ public class DeathListener implements Listener {
         pendingDeath.legacyMessage = message.toLegacy();
         pendingDeath.richMessage = BungeeRenderer.render(message, originalHover ? original : null);
         event.setDeathMessage(pendingDeath.legacyMessage);
+        // read it back: some servers store the message as a component and normalize the text
+        pendingDeath.expectedMessage = event.getDeathMessage();
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -146,7 +149,8 @@ public class DeathListener implements Listener {
             victim.sendMessage(pendingDeath.placeholders.apply(victim, config.getVictimMessage()));
         }
 
-        if (pendingDeath.richMessage != null && pendingDeath.legacyMessage.equals(event.getDeathMessage())) {
+        // only swap in the hoverable version if no other plugin changed or hid the message
+        if (pendingDeath.richMessage != null && Objects.equals(pendingDeath.expectedMessage, event.getDeathMessage())) {
             broadcast(event, pendingDeath);
         }
     }
@@ -210,6 +214,7 @@ public class DeathListener implements Listener {
         private final Entity killer;
         private final Placeholders placeholders;
         private String legacyMessage;
+        private String expectedMessage;
         private BaseComponent[] richMessage;
 
         private PendingDeath(Entity killer, Placeholders placeholders) {
