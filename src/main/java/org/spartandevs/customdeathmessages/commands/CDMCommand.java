@@ -52,18 +52,26 @@ public class CDMCommand extends CDMBaseCommand {
     @Description("Lists all custom death messages and their indices.")
     @CommandCompletion("@messagePaths")
     public void onList(CommandSender sender, @Conditions("messagePath") String path) {
-        sendMessage(sender, "&aCustom death messages for &e&l" + path);
         List<String> messages = plugin.getConfigManager().listDeathMessages(path);
 
+        if (messages.isEmpty()) {
+            sendMessage(sender, "&e" + path + " &ais empty, so the vanilla death message is used.");
+            return;
+        }
+
+        sendMessage(sender, "&aDeath messages in &e" + path + "&a:");
+
+        // show the raw text (with & codes) so it can be copied and edited
         for (int i = 0; i < messages.size(); i++) {
-            sendMessage(sender, "&e&l" + i + ": &f" + messages.get(i));
+            String message = messages.get(i);
+            sendRaw(sender, ChatColor.translate("&e" + i + ": &r") + (message.isEmpty() ? ChatColor.translate("&7(blank: no message is shown)") : message));
         }
     }
 
     @Subcommand("remove")
     @Syntax("<path> <index>")
     @CommandPermission("cdm.modify")
-    @Description("Removes a custom death message.")
+    @Description("Removes a death message. Removing the last one makes this death use the vanilla message.")
     @CommandCompletion("@messagePaths @deathMessageIndices")
     public void onRemove(CommandSender sender, @Conditions("messagePath") String path, @Conditions("indexInBounds") int index) {
         report(sender, plugin.getConfigManager().removeCustomMessage(path, index), "&aRemoved death message.");
@@ -75,7 +83,7 @@ public class CDMCommand extends CDMBaseCommand {
     @Description("Sets a config flag.")
     @CommandCompletion("@boolConfigPaths true|false")
     public void onSetBoolean(CommandSender sender, @Conditions("validBoolConfigPath") String configPath, boolean value) {
-        report(sender, plugin.getConfigManager().set(configPath, value), "&aSet config value.");
+        report(sender, plugin.getConfigManager().set(configPath, value), "&aSet &e" + configPath + " &ato &e" + value + "&a.");
     }
 
     @Subcommand("set message")
@@ -84,7 +92,7 @@ public class CDMCommand extends CDMBaseCommand {
     @Description("Sets a config message.")
     @CommandCompletion("@stringConfigPaths @nothing")
     public void onSetString(CommandSender sender, @Conditions("validStringConfigPath") String configPath, String value) {
-        report(sender, plugin.getConfigManager().set(configPath, value), "&aSet config value.");
+        report(sender, plugin.getConfigManager().set(configPath, value), "&aSet &e" + configPath + "&a.");
     }
 
     @Subcommand("set number")
@@ -93,14 +101,21 @@ public class CDMCommand extends CDMBaseCommand {
     @Description("Sets a config number.")
     @CommandCompletion("@numConfigPaths @nothing")
     public void onSetNumber(CommandSender sender, @Conditions("validNumConfigPath") String configPath, double value) {
-        report(sender, plugin.getConfigManager().set(configPath, value), "&aSet config value.");
+        String invalid = ConfigManager.validateNumber(configPath, value);
+
+        if (invalid != null) {
+            sendMessage(sender, "&c" + invalid);
+            return;
+        }
+
+        report(sender, plugin.getConfigManager().set(configPath, value), "&aSet &e" + configPath + " &ato &e" + value + "&a.");
     }
 
     @Subcommand("debug shoot")
     @Syntax("<player>")
     @CommandCompletion("@players")
     @CommandPermission("cdm.debug")
-    @Description("Shoots the player with an instant-kill arrow. Used for debugging.")
+    @Description("Kills the player with an instant-kill melee hit from you. Used for debugging.")
     @Conditions("debugEnabled")
     public void onDebugShoot(Player sender, @Optional Player target) {
         if (target == null) {
@@ -108,7 +123,7 @@ public class CDMCommand extends CDMBaseCommand {
         }
 
         target.damage(1000, sender);
-        sendMessage(sender, "&aShot " + target.getName() + " with an instant-kill arrow.");
+        sendMessage(sender, "&aHit " + target.getName() + " with an instant-kill melee attack.");
     }
 
     @Subcommand("debug prime")

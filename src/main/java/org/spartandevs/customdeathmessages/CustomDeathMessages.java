@@ -12,6 +12,7 @@ import org.spartandevs.customdeathmessages.listeners.BukkitPlayerDeathListener;
 import org.spartandevs.customdeathmessages.listeners.CustomPlayerDeathListener;
 import org.spartandevs.customdeathmessages.util.*;
 
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -60,9 +61,10 @@ public final class CustomDeathMessages extends JavaPlugin {
             return IntStream.range(0, configManager.getMessagesCount(path)).mapToObj(String::valueOf).collect(Collectors.toList());
         });
 
-        commandManager.getCommandCompletions().registerStaticCompletion("stringConfigPaths", configManager::getStringConfigPaths);
-        commandManager.getCommandCompletions().registerStaticCompletion("boolConfigPaths", configManager::getBoolConfigPaths);
-        commandManager.getCommandCompletions().registerStaticCompletion("numConfigPaths", configManager::getNumConfigPaths);
+        // async (re-evaluated on every tab) so completions reflect the config after a reload
+        commandManager.getCommandCompletions().registerAsyncCompletion("stringConfigPaths", c -> configManager.getStringConfigPaths());
+        commandManager.getCommandCompletions().registerAsyncCompletion("boolConfigPaths", c -> configManager.getBoolConfigPaths());
+        commandManager.getCommandCompletions().registerAsyncCompletion("numConfigPaths", c -> configManager.getNumConfigPaths());
 
         commandManager.getCommandConditions().addCondition(String.class, "messagePath", (c, exec, value) -> {
             if (!configManager.hasMessageList(value)) {
@@ -85,11 +87,9 @@ public final class CustomDeathMessages extends JavaPlugin {
             int count = configManager.getMessagesCount(path);
 
             if (value >= count) {
-                throw new ConditionFailedException("Index " + value + " is out of bounds. The maximum index is " + (count - 1) + ".");
-            }
-
-            if (count == 1) {
-                throw new ConditionFailedException("Cannot remove the last death message.");
+                throw new ConditionFailedException(count == 0
+                        ? "'" + path + "' has no messages to remove."
+                        : "Index " + value + " is out of bounds. The maximum index is " + (count - 1) + ".");
             }
         });
 
@@ -119,7 +119,7 @@ public final class CustomDeathMessages extends JavaPlugin {
 
         commandManager.registerCommand(new CDMCommand().setExceptionHandler((command, registeredCommand, sender, args, t) -> {
             sender.sendMessage("An error occurred while executing the command. Please check the console for more information.");
-            t.printStackTrace();
+            getLogger().log(Level.SEVERE, "Error executing /" + command.getName() + " " + String.join(" ", args), t);
             return true;
         }));
     }

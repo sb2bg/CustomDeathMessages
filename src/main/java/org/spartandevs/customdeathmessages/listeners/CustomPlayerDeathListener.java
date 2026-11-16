@@ -64,6 +64,13 @@ public class CustomPlayerDeathListener implements Listener {
             String message = resolver.getMessage();
 
             if (message == null) {
+                // empty list: keep the vanilla message
+                return;
+            }
+
+            if (message.isEmpty()) {
+                // a blank message hides the death message entirely
+                event.setEmptyMessage();
                 return;
             }
 

@@ -25,6 +25,10 @@ import java.util.function.Consumer;
  */
 public class ConfigManager {
     private static final String FILE_NAME = "config.yml";
+    /**
+     * Managed by the plugin, never editable through commands.
+     */
+    private static final String VERSION_KEY = "config-version";
 
     private final CustomDeathMessages plugin;
     private final File file;
@@ -108,11 +112,16 @@ public class ConfigManager {
         return message == null || message.trim().isEmpty() ? e.toString() : FILE_NAME + ": " + message.trim();
     }
 
+    /**
+     * Picks a random message from a list.
+     *
+     * @return a message, or {@code null} when the list is empty or missing, meaning the vanilla message should be
+     * kept. A blank message ({@code ""}) means no message at all.
+     */
     public String getMessage(String path) {
         List<String> messages = document.getStringList(path);
 
         if (messages == null || messages.isEmpty()) {
-            plugin.getLogger().warning("No messages found for " + path + "! Check your " + FILE_NAME + ".");
             return null;
         }
 
@@ -232,6 +241,24 @@ public class ConfigManager {
         return modify(doc -> doc.set(path, value));
     }
 
+    /**
+     * @return {@code null} if {@code value} is acceptable for the numeric setting at {@code path}, otherwise why not
+     */
+    public static String validateNumber(String path, double value) {
+        if (Double.isNaN(value) || Double.isInfinite(value)) {
+            return "The value must be a finite number.";
+        }
+
+        switch (path) {
+            case "drop-head-percentage":
+                return value >= 0 && value <= 1 ? null : "drop-head-percentage must be between 0 and 1 (0.25 = 25%).";
+            case "message-cooldown":
+                return value >= 0 ? null : "message-cooldown must be 0 (disabled) or a positive number of seconds.";
+            default:
+                return null;
+        }
+    }
+
     public Set<String> getStringConfigPaths() {
         return getConfigPathsOfType(String.class);
     }
@@ -245,10 +272,10 @@ public class ConfigManager {
     }
 
     private Set<String> getConfigPathsOfType(Class<?> type) {
-        Set<String> paths = new LinkedHashSet<>();
+        Set<String> paths = new TreeSet<>();
 
         for (String path : document.getRoutesAsStrings(false)) {
-            if (type.isInstance(document.get(path))) {
+            if (!path.equals(VERSION_KEY) && type.isInstance(document.get(path))) {
                 paths.add(path);
             }
         }
