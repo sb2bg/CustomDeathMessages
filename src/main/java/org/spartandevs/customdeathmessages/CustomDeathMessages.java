@@ -24,7 +24,7 @@ public final class CustomDeathMessages extends JavaPlugin {
     private ConfigManager configManager;
     private CooldownManager cooldownManager;
     private DiscordManager discordManager;
-    private PlaceholderApiManager placeholderApiManager;
+    private PlaceholderApiHook placeholderApi;
 
     @Override
     public void onEnable() {
@@ -41,7 +41,7 @@ public final class CustomDeathMessages extends JavaPlugin {
         registerMetrics();
         // register bukkit related managers in onEnable to maintain softdepend
         discordManager = new DiscordManager(this);
-        placeholderApiManager = new PlaceholderApiManager(this);
+        placeholderApi = new PlaceholderApiHook(this);
         cooldownManager = new CooldownManager();
 
         registerEvents();
@@ -183,7 +183,7 @@ public final class CustomDeathMessages extends JavaPlugin {
         return discordManager;
     }
 
-    public PlaceholderApiManager getPlaceholderApiManager() {
-        return placeholderApiManager;
+    public PlaceholderApiHook getPlaceholderApi() {
+        return placeholderApi;
     }
 }

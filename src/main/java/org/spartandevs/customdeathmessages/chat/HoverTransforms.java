@@ -26,6 +26,13 @@ public class HoverTransforms {
     public BaseComponent[] transform(String message) {
         return transformers.transform(message, original, item);
     }
+
+    /**
+     * @return whether {@code %kill-weapon%} is turned into a hoverable item component
+     */
+    public boolean handlesItem() {
+        return transformers == HoverTransformers.ITEM_ON_HOVER || transformers == HoverTransformers.ORIGINAL_AND_ITEM_ON_HOVER;
+    }
 }
 
 interface Transform {

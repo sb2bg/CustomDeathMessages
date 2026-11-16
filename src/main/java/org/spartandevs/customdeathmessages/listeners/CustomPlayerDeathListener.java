@@ -1,6 +1,5 @@
 package org.spartandevs.customdeathmessages.listeners;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -8,9 +7,10 @@ import org.bukkit.inventory.ItemStack;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
 import org.spartandevs.customdeathmessages.chat.DeathMessage;
 import org.spartandevs.customdeathmessages.chat.HoverTransforms;
-import org.spartandevs.customdeathmessages.chat.PlaceholderPopulator;
+import org.spartandevs.customdeathmessages.chat.Placeholders;
 import org.spartandevs.customdeathmessages.events.CustomPlayerDeathEvent;
 import org.spartandevs.customdeathmessages.util.ConfigManager;
+import org.spartandevs.customdeathmessages.util.Items;
 import org.spartandevs.customdeathmessages.util.PlayerHeads;
 
 import java.util.logging.Level;
@@ -30,15 +30,9 @@ public class CustomPlayerDeathListener implements Listener {
         }
 
         ConfigManager config = plugin.getConfigManager();
-        ItemStack weapon = null;
-
-        if (event.getKiller() instanceof Player) {
-            Player killer = (Player) event.getKiller();
-            weapon = getKillWeapon(killer);
-        }
-
-        PlaceholderPopulator populator = new PlaceholderPopulator(plugin, event.getVictim(),
-                event.getKiller(), config.isItemOnHoverEnabled() ? null : weapon);
+        // the item held by the killer, for players and mobs alike (e.g. a skeleton's bow)
+        ItemStack weapon = Items.mainHand(event.getKiller());
+        Placeholders placeholders = new Placeholders(plugin.getPlaceholderApi(), event.getVictim(), event.getKiller(), weapon);
         HoverTransforms hoverTransforms = new HoverTransforms(plugin, event.getOriginalDeathMessage(), weapon);
 
         if (config.doLightningStrike()) {
@@ -46,18 +40,18 @@ public class CustomPlayerDeathListener implements Listener {
         }
 
         if (config.dropHead()) {
-            dropHead(event, populator.replace(event.getVictim(), config.getHeadName()));
+            dropHead(event, placeholders.apply(event.getVictim(), config.getHeadName()));
         }
 
         if (config.doPvpMessages() && event.getKiller() instanceof Player) {
             Player killer = (Player) event.getKiller();
-            killer.sendMessage(populator.replace(killer, config.getKillerMessage()));
-            event.getVictim().sendMessage(populator.replace(event.getVictim(), config.getVictimMessage()));
+            killer.sendMessage(placeholders.apply(killer, config.getKillerMessage()));
+            event.getVictim().sendMessage(placeholders.apply(event.getVictim(), config.getVictimMessage()));
         }
 
         if (config.isGlobalMessageEnabled()) {
             // the melee list is for players killed by a direct hit from an empty-handed player
-            DeathMessageResolver resolver = event.isMelee() && (weapon == null || weapon.getType() == Material.AIR)
+            DeathMessageResolver resolver = event.isMelee() && Items.isEmpty(weapon)
                     ? config::getMeleeMessage
                     : () -> config.getMessage(event.getMessagePath());
 
@@ -78,7 +72,7 @@ public class CustomPlayerDeathListener implements Listener {
                     ? DeathMessage.MessageType.JSON
                     : DeathMessage.MessageType.STRING;
 
-            event.setDeathMessage(new DeathMessage(message, populator, type), hoverTransforms, event.getEvent());
+            event.setDeathMessage(new DeathMessage(message, placeholders, type), hoverTransforms, event.getEvent());
         }
     }
 
@@ -96,12 +90,4 @@ public class CustomPlayerDeathListener implements Listener {
         String getMessage();
     }
 
-    @SuppressWarnings("deprecation") // 1.8 support
-    private static ItemStack getKillWeapon(Player killer) {
-        try {
-            return killer.getInventory().getItemInMainHand();
-        } catch (NoSuchMethodError ignored) {
-            return killer.getItemInHand();
-        }
-    }
 }

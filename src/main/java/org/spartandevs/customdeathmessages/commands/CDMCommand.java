@@ -10,8 +10,9 @@ import org.bukkit.inventory.ItemStack;
 import org.spartandevs.customdeathmessages.chat.ChatColor;
 import org.spartandevs.customdeathmessages.chat.DeathMessage;
 import org.spartandevs.customdeathmessages.chat.HoverTransforms;
-import org.spartandevs.customdeathmessages.chat.PlaceholderPopulator;
+import org.spartandevs.customdeathmessages.chat.Placeholders;
 import org.spartandevs.customdeathmessages.util.ConfigManager;
+import org.spartandevs.customdeathmessages.util.Items;
 
 import java.util.List;
 
@@ -154,24 +155,21 @@ public class CDMCommand extends CDMBaseCommand {
             target = sender;
         }
 
-        ItemStack weapon = getHeldItem(sender);
+        ItemStack weapon = Items.mainHand(sender);
 
-        if (weapon == null || weapon.getType() == Material.AIR) {
+        if (Items.isEmpty(weapon)) {
             sendMessage(sender, "&cHold the item you want to test first.");
             return;
         }
 
         ConfigManager config = plugin.getConfigManager();
         boolean useHover = config.isItemOnHoverEnabled() || config.isOriginalOnHoverEnabled();
-        ItemStack placeholderItem = config.isItemOnHoverEnabled() ? null : weapon;
-        Entity killer = sender;
-
-        PlaceholderPopulator populator = new PlaceholderPopulator(plugin, target, killer, placeholderItem);
-        String originalMessage = new PlaceholderPopulator(plugin, target, killer, null).replace(target, "%victim% was slain by %killer%");
+        Placeholders placeholders = new Placeholders(plugin.getPlaceholderApi(), target, sender, weapon);
+        String originalMessage = placeholders.apply(target, "%victim% was slain by %killer%");
         HoverTransforms hoverTransforms = new HoverTransforms(plugin, originalMessage, weapon);
         DeathMessage deathMessage = new DeathMessage(
                 "&c%victim% &ewas debugged by &c%killer% &eusing &7[&b%kill-weapon%&7]",
-                populator,
+                placeholders,
                 useHover ? DeathMessage.MessageType.JSON : DeathMessage.MessageType.STRING
         );
 
@@ -187,12 +185,4 @@ public class CDMCommand extends CDMBaseCommand {
         sendMessage(sender, "&cUnknown command. Type /cdm help for help.");
     }
 
-    @SuppressWarnings("deprecation")
-    private static ItemStack getHeldItem(Player player) {
-        try {
-            return player.getInventory().getItemInMainHand();
-        } catch (NoSuchMethodError ignored) {
-            return player.getItemInHand();
-        }
-    }
 }

@@ -5,7 +5,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.spartandevs.customdeathmessages.util.Items;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -16,7 +16,7 @@ public class ItemSerializer {
     public static BaseComponent[] serializeItemStack(ItemStack itemStack) {
         String nbt = NBTEditor.getNBTCompound(itemStack).toString();
         HoverEvent event = createItemHoverEvent(itemStack, nbt);
-        BaseComponent[] component = HoverTransformers.createBaseComponent(getItemName(itemStack));
+        BaseComponent[] component = HoverTransformers.createBaseComponent(Items.displayName(itemStack));
         HoverTransformers.setHoverEvent(component, event);
 
         return component;
@@ -48,19 +48,4 @@ public class ItemSerializer {
         return "minecraft:" + itemStack.getType().name().toLowerCase(Locale.ROOT);
     }
 
-    public static String getItemName(ItemStack item) {
-        if (item == null) {
-            return null;
-        }
-
-        ItemMeta meta = item.getItemMeta();
-
-        if (meta == null) {
-            return null;
-        }
-
-        return meta.hasDisplayName()
-                ? meta.getDisplayName()
-                : ChatColor.capitalize(item.getType().name().replaceAll("_", " ").toLowerCase());
-    }
 }
