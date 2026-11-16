@@ -1,22 +1,34 @@
 # Enable Update Messages: enables update messages
 enable-update-messages: true
 
-# To use hex colors: &#hex
+# Colors: use & color codes (&c, &l, ...) or hex colors with &#RRGGBB (for example &#FF8800). Servers older than
+# 1.16 cannot show hex colors, so there the closest standard color is used instead.
+#
+# Placeholders available in every message:
+#   %victim%, %victim-nick%, %victim-x%, %victim-y%, %victim-z%, %victim-world%
+# Placeholders available when something killed the player (empty otherwise):
+#   %killer%, %killer-nick%, %entity-name%, %killer-x%, %killer-y%, %killer-z%, %killer-world%
+#   %kill-weapon% - the item the killer was holding (players and mobs)
+# If PlaceholderAPI is installed, its placeholders work too. Use %papi_victim_<placeholder>% or
+# %papi_killer_<placeholder>% to resolve a placeholder for a specific player.
+
 # PvP Messages: sends a message to the killer and victim when a player is killed by another player.
-# Placeholders for pvp messages: %victim%, %victim-nick%, %killer%, %killer-nick%, %killer-x%, %killer-y%, %killer-z%, %victim-x%, %victim-y%, %victim-z%
 enable-pvp-messages: true
 killer-message: "&e[&cDeathMessages&e] &eYou killed &c%victim%"
 victim-message: "&e[&cDeathMessages&e] &eYou were killed by &c%killer%"
 
-# Lightning: lightning strike effect at the location of the death.
-enable-lightning: true
+# Lightning: lightning strike effect (no damage) at the location of the death.
+enable-lightning: false
 
-# Drop head percentage: chance to drop head, should be a number between 0 and 1: (0 = 0%, 0.5 = 50%, 1 = 100%)
+# Drop head percentage: chance for a player to drop their head on death, a number between 0 and 1
+# (0 = never, 0.5 = 50%, 1 = always). The head is added to the death drops.
 # Head name: name of the head whenever dropped from a player.
-drop-head-percentage: 0.5
+drop-head-percentage: 0.0
 head-name: "&c%victim%'s Head"
 
-# Message cooldown: cooldown in seconds between death messages for a specific player. 0 to disable.
+# Message cooldown: minimum number of seconds between two global death messages for the same player, to reduce
+# spam. Deaths during the cooldown have no death message. Head drops, lightning and PvP messages are not affected.
+# 0 to disable.
 message-cooldown: 0
 
 # Enable Global Messages: enables global death messages
@@ -25,11 +37,14 @@ enable-global-messages: true
 # Original on Hover: show the original death message when hovering over the custom message.
 enable-original-on-hover: false
 
-# Item on Hover: show the item used to kill the player when hovering over the item name.
+# Item on Hover: show the item used to kill the player when hovering over the item name (%kill-weapon%).
 enable-item-on-hover: true
 
-# You can add, edit, or remove any of the messages below.
-# Placeholders for melee messages: %kill-weapon%, %victim%, %victim-nick%, %killer%, %killer-nick%, %killer-x%, %killer-y%, %killer-z%, %victim-x%, %victim-y%, %victim-z%
+# You can add, edit, or remove any of the messages below. One message is picked at random from a list.
+# An empty list (for example "fall-damage-messages: []") keeps the vanilla death message for that death, and a
+# blank message ("") hides the death message entirely.
+
+# Messages for players killed by another player.
 global-pvp-death-messages:
   - "&c%victim% &ehas been killed by &c%killer%"
   - "&c%victim% &ewas defeated by &c%killer% &eusing &7[&b%kill-weapon%&7]"
@@ -40,14 +55,13 @@ global-pvp-death-messages:
   - "&c%killer% &eoutplayed &c%victim%"
   - "&c%victim% &ewas outplayed by &c%killer% &eusing &7[&b%kill-weapon%&7]"
 
-# Placeholders for melee messages: %victim%, %victim-nick%, %killer%, %killer-nick%, %killer-x%, %killer-y%, %killer-z%, %victim-x%, %victim-y%, %victim-z%
+# Messages for players killed by a direct hit from a player holding nothing.
 melee-death-messages:
   - "&c%victim% &ewas tagged by &c%killer%"
   - "&c%victim% &ewas knocked out by &c%killer%"
   - "&c%victim% &ewas outplayed by &c%killer%"
 
 # Messages for entities with custom names: will override their mob group message and display these instead, if enabled.
-# Placeholders: %victim%, %victim-nick%, %entity-name%, %victim-x%, %victim-y%, %victim-z%
 enable-custom-name-entity-messages: false
 custom-name-entity-messages:
   - "&c%victim% &egot rocked by %entity-name%"
@@ -55,7 +69,7 @@ custom-name-entity-messages:
   - "&c%entity-name% &ewas too much for &c%victim%"
   - "&c%victim% &ewishes they didn't fight %entity-name%"
 
-# Placeholders for ALL below messages: %victim%, %victim-nick%, %entity-name%, %victim-x%, %victim-y%, %victim-z%
+# Messages for each damage cause and mob. Mob messages can use the killer placeholders, e.g. %killer%.
 fall-damage-messages:
   - "&c%victim% &emade themself a pancake on the ground"
   - "&c%victim% &efell from a high spot"
@@ -78,7 +92,7 @@ thorns-messages:
 
 lava-messages:
   - "&c%victim% &eburned up in a pit of lava"
-  - "&c%victim% &efell into a lava pool... say goodbye to his items"
+  - "&c%victim% &efell into a lava pool... say goodbye to their items"
 
 magma-block-messages:
   - "&c%victim% &ewas removed by a hot &6&lmagma block... &ejust crouch?"
@@ -86,7 +100,7 @@ magma-block-messages:
 
 elytra-messages:
   - "&c%victim% &eflew into a wall and died...?"
-  - "&c%victim% &egot slammed into a wall by his elytra"
+  - "&c%victim% &egot slammed into a wall by their elytra"
 
 wither-messages:
   - "&c%victim% &egot the wither disease"
@@ -131,7 +145,7 @@ falling-block-messages:
 
 freeze-messages:
   - "&c%victim% &efroze to death. &b&lBrrrrr!"
-  - "&c%victim% &eforgot his winter jacket"
+  - "&c%victim% &eforgot their winter jacket"
 
 firework-messages:
   - "&c%victim% &elit the fuse on a firework too soon"
@@ -163,7 +177,7 @@ husk-messages:
   - "&c%victim% &elost a fight to a very dry Zombie"
 
 spider-messages:
-  - "&c%victim% &etried his luck against his worst fear... &c&lA SPIDER!"
+  - "&c%victim% &etried their luck against their worst fear... &c&lA SPIDER!"
   - "&c%victim% &epanicked when the Spider got a little too close"
 
 cavespider-messages:
@@ -180,14 +194,14 @@ witherboss-messages:
 dragon-messages:
   - "&c%victim% &ewas sent flying by the &d&lEnder Dragon"
   - "&c%victim% &ewas blasted away by the &d&lEnder Dragon"
-  - "&cc%victim% &efound a respawn screen, not the end portal"
+  - "&c%victim% &efound a respawn screen, not the end portal"
 
 dragon-breath-messages:
   - "&c%victim% &etook a bath in the &d&lEnder Dragon's &ebreath"
   - "&c%victim% &etook a deep breath of the &d&lEnder Dragon's &e(nasty)"
 
 elderguardian-messages:
-  - "&c%victim% &etried to clear a ocean monument but the &7&lElder Guardian &esaid no"
+  - "&c%victim% &etried to clear an ocean monument but the &7&lElder Guardian &esaid no"
   - "&c%victim% &egot sent back by an &7&lElder Guardian"
 
 tnt-messages:
@@ -196,7 +210,7 @@ tnt-messages:
   - "&e&lBOOM! &c%victim% &efound out about explosives the hard way"
 
 end-crystal-messages:
-  - "&c%victim% &egot pieced by an &d&lEnd Crystal"
+  - "&c%victim% &egot pierced by an &d&lEnd Crystal"
   - "&c%victim% &egot blown up by an &d&lEnd Crystal"
 
 creeper-messages:
@@ -306,10 +320,10 @@ dolphin-messages:
 
 panda-messages:
   - "&c%victim% &ewas no match for a Panda"
-  - "&c%victim% &etried stealing a Pandas bamboo"
+  - "&c%victim% &etried stealing a Panda's bamboo"
 
 piglin-messages:
-  - "&c%victim% &emet his maker against the new Piglins"
+  - "&c%victim% &emet their maker against the new Piglins"
   - "&c%victim% &emade the Piglins mad. I mean, we warned you, don't steal from them..."
   - "&c%victim% &emisses Zombie Pigmen, so they took their anger out on a Piglin... and lost"
 
@@ -318,7 +332,7 @@ hoglin-messages:
   - "&c%victim% &edidn't read the patch notes about Hoglins"
 
 zoglin-messages:
-  - "&c%victim% &eate a Zoglins horn for dinner"
+  - "&c%victim% &eate a Zoglin's horn for dinner"
   - "&c%victim% &ewas rammed by a Zoglin"
 
 goat-messages:
@@ -372,8 +386,8 @@ zombie-nautilus-messages:
   - "&c%victim% &ewas dragged under by a &3&lZombie Nautilus"
   - "&c%victim% &efound out the Zombie Nautilus was not a pet"
 
-# Only here to help me debug my plugin, not suggested you enable.
+# Developer mode: enables the /cdm debug commands (which can kill players). Not meant for production servers.
 developer-mode: false
 
 # Config version, do not change this.
-config-version: 3
+config-version: 4
