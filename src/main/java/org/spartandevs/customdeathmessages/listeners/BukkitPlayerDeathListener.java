@@ -28,7 +28,7 @@ public class BukkitPlayerDeathListener implements Listener {
         DeathResolver.Death death = DeathResolver.resolve(plugin, victim);
 
         CustomPlayerDeathEvent customPlayerDeathEvent = new CustomPlayerDeathEvent(
-                death.getCause(), death.isMelee(), event.getDeathMessage(), event, death.getKiller(), victim,
+                death.getMessagePath(), death.isMelee(), event.getDeathMessage(), event, death.getKiller(), victim,
                 (player, deathMessage, hoverTransforms, originalEvent) ->
                         setDeathMessage(event::setDeathMessage, player, deathMessage, hoverTransforms, originalEvent));
 

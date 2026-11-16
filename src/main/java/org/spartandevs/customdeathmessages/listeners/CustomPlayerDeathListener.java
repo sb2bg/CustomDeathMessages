@@ -11,7 +11,6 @@ import org.spartandevs.customdeathmessages.chat.HoverTransforms;
 import org.spartandevs.customdeathmessages.chat.PlaceholderPopulator;
 import org.spartandevs.customdeathmessages.events.CustomPlayerDeathEvent;
 import org.spartandevs.customdeathmessages.util.ConfigManager;
-import org.spartandevs.customdeathmessages.util.DeathCause;
 import org.spartandevs.customdeathmessages.util.PlayerHeads;
 
 import java.util.logging.Level;
@@ -57,18 +56,10 @@ public class CustomPlayerDeathListener implements Listener {
         }
 
         if (config.isGlobalMessageEnabled()) {
-            if (event.getDeathCause() == DeathCause.UNKNOWN) {
-                if (event.getKiller() != null) {
-                    plugin.getLogger().warning("Unknown death cause for killer " + event.getKiller().getType());
-                } else {
-                    plugin.getLogger().warning("Unknown death cause with no killer");
-                }
-            }
-
             // the melee list is for players killed by a direct hit from an empty-handed player
             DeathMessageResolver resolver = event.isMelee() && (weapon == null || weapon.getType() == Material.AIR)
                     ? config::getMeleeMessage
-                    : () -> config.getMessage(event.getDeathCause());
+                    : () -> config.getMessage(event.getMessagePath());
 
             String message = resolver.getMessage();
 

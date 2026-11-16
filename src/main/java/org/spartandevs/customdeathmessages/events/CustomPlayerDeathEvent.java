@@ -7,20 +7,19 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.spartandevs.customdeathmessages.chat.DeathMessage;
 import org.spartandevs.customdeathmessages.chat.HoverTransforms;
-import org.spartandevs.customdeathmessages.util.DeathCause;
 
 public class CustomPlayerDeathEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final DeathMessageSetter setDeathMessage;
-    private final DeathCause deathCause;
+    private final String messagePath;
     private final boolean melee;
     private final String originalDeathMessage;
     private final PlayerDeathEvent originalEvent;
     private final Entity killer;
     private final Player victim;
 
-    public CustomPlayerDeathEvent(DeathCause deathCause, boolean melee, String originalDeathMessage, PlayerDeathEvent originalEvent, Entity killer, Player victim, DeathMessageSetter setDeathMessage) {
-        this.deathCause = deathCause;
+    public CustomPlayerDeathEvent(String messagePath, boolean melee, String originalDeathMessage, PlayerDeathEvent originalEvent, Entity killer, Player victim, DeathMessageSetter setDeathMessage) {
+        this.messagePath = messagePath;
         this.melee = melee;
         this.originalDeathMessage = originalDeathMessage;
         this.originalEvent = originalEvent;
@@ -29,8 +28,11 @@ public class CustomPlayerDeathEvent extends Event {
         this.victim = victim;
     }
 
-    public DeathCause getDeathCause() {
-        return deathCause;
+    /**
+     * @return the config message list describing this death
+     */
+    public String getMessagePath() {
+        return messagePath;
     }
 
     /**

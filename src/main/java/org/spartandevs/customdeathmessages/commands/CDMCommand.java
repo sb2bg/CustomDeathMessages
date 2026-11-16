@@ -12,10 +12,8 @@ import org.spartandevs.customdeathmessages.chat.DeathMessage;
 import org.spartandevs.customdeathmessages.chat.HoverTransforms;
 import org.spartandevs.customdeathmessages.chat.PlaceholderPopulator;
 import org.spartandevs.customdeathmessages.util.ConfigManager;
-import org.spartandevs.customdeathmessages.util.DeathCause;
 
 import java.util.List;
-import java.util.Set;
 
 @CommandAlias("cdm|customdeathmessages|customdeathmessage|deathmessages|deathmessage")
 public class CDMCommand extends CDMBaseCommand {
@@ -40,8 +38,8 @@ public class CDMCommand extends CDMBaseCommand {
     @Syntax("<path> <death message>")
     @CommandPermission("cdm.modify")
     @Description("Adds a custom death message.")
-    @CommandCompletion("@deathMessagePaths @nothing")
-    public void onAdd(CommandSender sender, DeathCause path, String deathMessage) {
+    @CommandCompletion("@messagePaths @nothing")
+    public void onAdd(CommandSender sender, @Conditions("newMessagePath") String path, String deathMessage) {
         plugin.getConfigManager().addCustomMessage(path, deathMessage);
         sendMessage(sender, "&aAdded custom death message.");
     }
@@ -50,11 +48,9 @@ public class CDMCommand extends CDMBaseCommand {
     @Syntax("<path>")
     @CommandPermission("cdm.modify")
     @Description("Lists all custom death messages and their indices.")
-    @CommandCompletion("@deathMessagePaths")
-    public void onList(CommandSender sender, DeathCause path) {
-        Set<DeathCause> causes = DeathCause.deathCauseWithPath(path);
-
-        sendMessage(sender, "&aCustom death messages for &e&l" + setToString(causes));
+    @CommandCompletion("@messagePaths")
+    public void onList(CommandSender sender, @Conditions("messagePath") String path) {
+        sendMessage(sender, "&aCustom death messages for &e&l" + path);
         List<String> messages = plugin.getConfigManager().listDeathMessages(path);
 
         for (int i = 0; i < messages.size(); i++) {
@@ -62,24 +58,12 @@ public class CDMCommand extends CDMBaseCommand {
         }
     }
 
-    private static String setToString(Set<?> set) {
-        StringBuilder builder = new StringBuilder();
-
-        for (Object o : set) {
-            builder.append(ChatColor.capitalize(o.toString().toLowerCase().replace("_", " ")));
-            builder.append(", ");
-        }
-
-        builder.delete(builder.length() - 2, builder.length());
-        return builder.toString();
-    }
-
     @Subcommand("remove")
     @Syntax("<path> <index>")
     @CommandPermission("cdm.modify")
     @Description("Removes a custom death message.")
-    @CommandCompletion("@deathMessagePaths @deathMessageIndices")
-    public void onRemove(CommandSender sender, DeathCause path, @Conditions("indexInBounds") int index) {
+    @CommandCompletion("@messagePaths @deathMessageIndices")
+    public void onRemove(CommandSender sender, @Conditions("messagePath") String path, @Conditions("indexInBounds") int index) {
         plugin.getConfigManager().removeCustomMessage(path, index);
         sendMessage(sender, "&aRemoved death message.");
     }

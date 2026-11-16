@@ -42,33 +42,34 @@ public final class CustomDeathMessages extends JavaPlugin {
         BukkitCommandManager commandManager = new BukkitCommandManager(this);
         commandManager.enableUnstableAPI("help");
 
-        commandManager.getCommandContexts().registerContext(DeathCause.class, c -> {
-            String path = c.popFirstArg();
-            DeathCause cause = DeathCause.fromPathSingle(path);
-
-            if (cause == null) {
-                throw new InvalidCommandArgument("Invalid path.");
-            }
-
-            return cause;
-        });
-
+        commandManager.getCommandCompletions().registerAsyncCompletion("messagePaths", c -> configManager.getMessagePaths());
         commandManager.getCommandCompletions().registerAsyncCompletion("deathMessageIndices", c -> {
-            DeathCause path = c.getContextValue(DeathCause.class);
+            String path = c.getContextValueByName(String.class, "path");
             return IntStream.range(0, configManager.getMessagesCount(path)).mapToObj(String::valueOf).collect(Collectors.toList());
         });
 
         commandManager.getCommandCompletions().registerStaticCompletion("stringConfigPaths", configManager::getStringConfigPaths);
         commandManager.getCommandCompletions().registerStaticCompletion("boolConfigPaths", configManager::getBoolConfigPaths);
         commandManager.getCommandCompletions().registerStaticCompletion("numConfigPaths", configManager::getNumConfigPaths);
-        commandManager.getCommandCompletions().registerStaticCompletion("deathMessagePaths", DeathCause.PATH_SET);
+
+        commandManager.getCommandConditions().addCondition(String.class, "messagePath", (c, exec, value) -> {
+            if (!configManager.hasMessageList(value)) {
+                throw new InvalidCommandArgument("Unknown death message list '" + value + "'.");
+            }
+        });
+
+        commandManager.getCommandConditions().addCondition(String.class, "newMessagePath", (c, exec, value) -> {
+            if (!MessagePaths.isMessagePath(value)) {
+                throw new InvalidCommandArgument("Death message lists must end with '" + MessagePaths.SUFFIX + "'.");
+            }
+        });
 
         commandManager.getCommandConditions().addCondition(int.class, "indexInBounds", (c, exec, value) -> {
             if (value < 0) {
                 throw new ConditionFailedException("Index cannot be negative.");
             }
 
-            DeathCause path = (DeathCause) exec.getResolvedArg(DeathCause.class);
+            String path = (String) exec.getPassedArgs().get("path");
             int count = configManager.getMessagesCount(path);
 
             if (value >= count) {

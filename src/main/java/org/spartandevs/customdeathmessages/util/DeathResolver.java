@@ -9,6 +9,8 @@ import org.spartandevs.customdeathmessages.CustomDeathMessages;
 
 import java.util.EnumSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
 /**
  * Works out what killed a player from the damage that actually killed them.
@@ -21,6 +23,7 @@ public final class DeathResolver {
      * Damage causes whose dedicated message list is more specific than the attacking entity's list.
      */
     private static final Set<DamageCause> CAUSE_OVER_ENTITY = causes("THORNS", "DRAGON_BREATH", "SONIC_BOOM");
+    private static final Set<String> WARNED = ConcurrentHashMap.newKeySet();
 
     private DeathResolver() {
     }
@@ -30,13 +33,13 @@ public final class DeathResolver {
 
         if (lastDamage == null) {
             // e.g. plugins killing the player with setHealth(0)
-            return new Death(DeathCause.UNKNOWN, null, false);
+            return new Death(MessagePaths.UNKNOWN, null, false);
         }
 
         DamageCause damageCause = lastDamage.getCause();
 
         if (!(lastDamage instanceof EntityDamageByEntityEvent)) {
-            return new Death(DeathCause.from(damageCause, plugin), null, false);
+            return new Death(pathFor(plugin, damageCause), null, false);
         }
 
         Entity damager = ((EntityDamageByEntityEvent) lastDamage).getDamager();
@@ -44,31 +47,56 @@ public final class DeathResolver {
 
         if (victim.equals(attacker)) {
             // their own arrow, firework, trident, ender pearl...: nobody else gets credit for the kill
-            DeathCause byDamager = damager.equals(victim) ? null : DeathCause.fromOrNull(damager.getType());
-            return new Death(byDamager != null ? byDamager : DeathCause.from(damageCause, plugin), null, false);
+            String byDamager = damager.equals(victim) ? null : MessagePaths.forEntityType(damager.getType(), hasList(plugin));
+            return new Death(byDamager != null ? byDamager : pathFor(plugin, damageCause), null, false);
         }
 
         if (CAUSE_OVER_ENTITY.contains(damageCause)) {
-            return new Death(DeathCause.from(damageCause, plugin), attacker, false);
+            return new Death(pathFor(plugin, damageCause), attacker, false);
         }
 
         // TNT keeps its own messages even when a player lit it; otherwise use the responsible entity's messages
         Entity messageEntity = damager instanceof TNTPrimed ? damager : attacker;
-        Entity killer = attacker;
-        DeathCause cause = DeathCause.from(messageEntity.getType(), plugin);
-
-        // WITHER is both a potion effect damage cause and an entity; as an entity it is the boss
-        if (cause == DeathCause.WITHER) {
-            cause = DeathCause.WITHER_BOSS;
-        }
+        String path;
 
         if (isCustomNamedMob(messageEntity) && plugin.getConfigManager().isCustomNamedEntityMessageEnabled()) {
-            cause = DeathCause.CUSTOM_NAMED_ENTITY;
+            path = MessagePaths.CUSTOM_NAMED_ENTITY;
+        } else {
+            path = MessagePaths.forEntityType(messageEntity.getType(), hasList(plugin));
+
+            if (path == null) {
+                warnUnknown(plugin, "entity type", messageEntity.getType().name());
+                path = MessagePaths.UNKNOWN;
+            }
         }
 
         // a melee kill is a player hitting the victim directly
-        boolean melee = killer instanceof Player && damager.equals(killer);
-        return new Death(cause, killer, melee);
+        boolean melee = attacker instanceof Player && damager.equals(attacker);
+        return new Death(path, attacker, melee);
+    }
+
+    private static String pathFor(CustomDeathMessages plugin, DamageCause cause) {
+        String path = MessagePaths.forDamageCause(cause, hasList(plugin));
+
+        if (path == null) {
+            warnUnknown(plugin, "damage cause", cause.name());
+            return MessagePaths.UNKNOWN;
+        }
+
+        return path;
+    }
+
+    private static Predicate<String> hasList(CustomDeathMessages plugin) {
+        return plugin.getConfigManager()::hasMessageList;
+    }
+
+    private static void warnUnknown(CustomDeathMessages plugin, String kind, String name) {
+        // warn once per type instead of on every death
+        if (WARNED.add(kind + ':' + name)) {
+            plugin.getLogger().warning("No death messages are configured for " + kind + " " + name
+                    + ", using unknown-messages. Add a '" + MessagePaths.conventionalPath(name)
+                    + "' list to config.yml to customize it.");
+        }
     }
 
     /**
@@ -139,18 +167,21 @@ public final class DeathResolver {
     }
 
     public static final class Death {
-        private final DeathCause cause;
+        private final String messagePath;
         private final Entity killer;
         private final boolean melee;
 
-        Death(DeathCause cause, Entity killer, boolean melee) {
-            this.cause = cause;
+        Death(String messagePath, Entity killer, boolean melee) {
+            this.messagePath = messagePath;
             this.killer = killer;
             this.melee = melee;
         }
 
-        public DeathCause getCause() {
-            return cause;
+        /**
+         * @return the config message list describing this death
+         */
+        public String getMessagePath() {
+            return messagePath;
         }
 
         /**

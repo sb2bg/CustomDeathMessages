@@ -38,14 +38,33 @@ public class ConfigManager extends BaseDocumentManager {
                 .build();
     }
 
-    public String getMessage(DeathCause cause) {
-        List<String> messages = document.getStringList(cause.getPath());
+    public String getMessage(String path) {
+        List<String> messages = document.getStringList(path);
 
-        if (invalidCollection(messages, cause.getPath())) {
+        if (invalidCollection(messages, path)) {
             return null;
         }
 
-        return messages.get(new Random().nextInt(messages.size()));
+        return messages.get(ThreadLocalRandom.current().nextInt(messages.size()));
+    }
+
+    public boolean hasMessageList(String path) {
+        return document.isList(path);
+    }
+
+    /**
+     * @return every death message list in the config
+     */
+    public Set<String> getMessagePaths() {
+        Set<String> paths = new TreeSet<>();
+
+        for (String route : document.getRoutesAsStrings(false)) {
+            if (MessagePaths.isMessagePath(route) && document.isList(route)) {
+                paths.add(route);
+            }
+        }
+
+        return paths;
     }
 
     public boolean doLightningStrike() {
@@ -88,7 +107,7 @@ public class ConfigManager extends BaseDocumentManager {
             return null;
         }
 
-        return meleeMessages.get(new Random().nextInt(meleeMessages.size()));
+        return meleeMessages.get(ThreadLocalRandom.current().nextInt(meleeMessages.size()));
     }
 
     public boolean isOriginalOnHoverEnabled() {
@@ -134,18 +153,17 @@ public class ConfigManager extends BaseDocumentManager {
         return value ? "Enabled" : "Disabled";
     }
 
-    public void addCustomMessage(DeathCause cause, String message) {
-        List<String> configMessages = document.getStringList(cause.getPath());
+    public void addCustomMessage(String path, String message) {
+        List<String> configMessages = new ArrayList<>(document.getStringList(path));
         configMessages.add(message);
-        document.set(cause.getPath(), configMessages);
+        document.set(path, configMessages);
         save();
-
     }
 
-    public void removeCustomMessage(DeathCause cause, int index) {
-        List<String> configMessages = document.getStringList(cause.getPath());
+    public void removeCustomMessage(String path, int index) {
+        List<String> configMessages = new ArrayList<>(document.getStringList(path));
         configMessages.remove(index);
-        document.set(cause.getPath(), configMessages);
+        document.set(path, configMessages);
         save();
     }
 
@@ -164,8 +182,8 @@ public class ConfigManager extends BaseDocumentManager {
         save();
     }
 
-    public int getMessagesCount(DeathCause cause) {
-        return document.getStringList(cause.getPath()).size();
+    public int getMessagesCount(String path) {
+        return document.getStringList(path).size();
     }
 
     public Set<String> getStringConfigPaths() {
@@ -190,8 +208,8 @@ public class ConfigManager extends BaseDocumentManager {
         return paths;
     }
 
-    public List<String> listDeathMessages(DeathCause cause) {
-        return document.getStringList(cause.getPath());
+    public List<String> listDeathMessages(String path) {
+        return document.getStringList(path);
     }
 
     private boolean invalidCollection(List<?> collection, String name) {

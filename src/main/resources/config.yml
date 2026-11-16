@@ -341,8 +341,12 @@ warden-sonic-boom-messages:
   - "&c%victim% &ewas sonic boomed by a Warden"
   - "&c%victim% &ehad their ears rung by a Warden's sonic boom"
 
+# Any entity type or damage cause can get its own list named after it in lower case with dashes, followed by
+# "-messages" (for example "trader-llama-messages", "bogged-messages" or "dryout-messages").
+# Such a list is used automatically and takes priority over the built-in grouping above.
+#
 # This is for any messages that haven't been added, so if you die to a cause which doesn't have any messages,
-# one of these messages will display instead. (Please report any missing messages in my spigot discussion)
+# one of these messages will display instead.
 unknown-messages:
   - "&c%victim% &edied to unknown causes"
   - "&c%victim% &edied"
@@ -359,6 +363,14 @@ arrow-messages:
 breeze-messages:
   - "&c%victim% &egot launched around by a Breeze"
   - "&c%victim% &ecould not keep up with the Breeze"
+
+creaking-messages:
+  - "&c%victim% &elooked away from a &6&lCreaking"
+  - "&c%victim% &eheard a creak... and then nothing"
+
+zombie-nautilus-messages:
+  - "&c%victim% &ewas dragged under by a &3&lZombie Nautilus"
+  - "&c%victim% &efound out the Zombie Nautilus was not a pet"
 
 # Only here to help me debug my plugin, not suggested you enable.
 developer-mode: false
