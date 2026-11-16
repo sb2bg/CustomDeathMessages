@@ -52,11 +52,6 @@ public class DeathListener implements Listener {
         Player victim = event.getEntity();
         ConfigManager config = plugin.getConfigManager();
 
-        if (plugin.getCooldownManager().isOnCooldown(victim.getUniqueId())) {
-            event.setDeathMessage("");
-            return;
-        }
-
         DeathResolver.Death death = DeathResolver.resolve(plugin, victim);
         // the item held by the killer, for players and mobs alike (e.g. a skeleton's bow)
         ItemStack weapon = Items.mainHand(death.getKiller());
@@ -84,6 +79,13 @@ public class DeathListener implements Listener {
 
         ConfigManager config = plugin.getConfigManager();
         Player victim = event.getEntity();
+
+        if (plugin.getCooldownManager().isOnCooldown(victim.getUniqueId())) {
+            // the cooldown only limits global death messages; heads, lightning and PvP messages are unaffected
+            event.setDeathMessage("");
+            return;
+        }
+
         // the melee list is for players killed by a direct hit from an empty-handed player
         String path = death.isMelee() && Items.isEmpty(weapon) ? MessagePaths.MELEE : death.getMessagePath();
         String template = config.getMessage(path);
