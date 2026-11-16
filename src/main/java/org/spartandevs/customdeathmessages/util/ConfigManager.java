@@ -37,11 +37,6 @@ public class ConfigManager extends BaseDocumentManager {
                 .build();
     }
 
-    private void warnAndDisable() {
-        plugin.getLogger().warning("Unable to load config.yml from jar, disabling plugin.");
-        plugin.getServer().getPluginManager().disablePlugin(plugin);
-    }
-
     public String getMessage(DeathCause cause) {
         List<String> messages = document.getStringList(cause.getPath());
 
