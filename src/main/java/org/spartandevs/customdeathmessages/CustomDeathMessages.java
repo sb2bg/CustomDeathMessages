@@ -37,15 +37,16 @@ public final class CustomDeathMessages extends JavaPlugin {
         }
 
         registerMetrics();
-        // register bukkit related managers in onEnable to maintain softdepend
+        // created in onEnable so soft dependencies (PlaceholderAPI) are already enabled
         placeholderApi = new PlaceholderApiHook(this);
         cooldownManager = new CooldownManager();
 
-        registerEvents();
+        getServer().getPluginManager().registerEvents(new DeathListener(this), this);
+        startUpdateChecks();
         registerCommands();
     }
 
-    private void registerEvents() {
+    private void startUpdateChecks() {
         UpdateChecker updateChecker = new UpdateChecker(SPIGOT_RESOURCE_ID);
         getServer().getPluginManager().registerEvents(new UpdateNotifyListener(this, updateChecker), this);
         // check at startup and every few hours in the background, never once per join
@@ -60,7 +61,6 @@ public final class CustomDeathMessages extends JavaPlugin {
                 getLogger().info("Failed to check for updates: " + e.getMessage());
             }
         }, 0L, UPDATE_CHECK_INTERVAL_TICKS);
-        getServer().getPluginManager().registerEvents(new DeathListener(this), this);
     }
 
     @SuppressWarnings("deprecation") // Unstable API

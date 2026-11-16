@@ -113,7 +113,7 @@ public class CDMCommand extends CDMBaseCommand {
     }
 
     @Subcommand("debug shoot")
-    @Syntax("<player>")
+    @Syntax("[player]")
     @CommandCompletion("@players")
     @CommandPermission("cdm.debug")
     @Description("Kills the player with an instant-kill melee hit from you. Used for debugging.")
@@ -128,7 +128,7 @@ public class CDMCommand extends CDMBaseCommand {
     }
 
     @Subcommand("debug prime")
-    @Syntax("<player>")
+    @Syntax("[player]")
     @CommandCompletion("@players")
     @CommandPermission("cdm.debug")
     @Description("Sets the player's health to 1. Used for debugging.")
@@ -145,7 +145,7 @@ public class CDMCommand extends CDMBaseCommand {
     }
 
     @Subcommand("debug hover")
-    @Syntax("<player>")
+    @Syntax("[player]")
     @CommandCompletion("@players")
     @CommandPermission("cdm.debug")
     @Description("Sends a test death message with your held item so you can verify hover rendering.")
