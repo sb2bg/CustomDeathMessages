@@ -42,12 +42,53 @@ public final class PlayerHeads {
         return new ItemStack(Material.valueOf("SKULL_ITEM"), 1, (short) 3);
     }
 
+    /**
+     * Prefers the player's own profile: it already carries their skin, so the server does not have to look the
+     * owner up on Mojang's servers (slow, and failing with errors on offline-mode servers).
+     */
     @SuppressWarnings("deprecation") // setOwner(String) is the only option before 1.12.1
     private static void setOwner(SkullMeta meta, Player owner) {
+        if (PaperProfiles.copy(meta, owner) || copySpigotProfile(meta, owner)) {
+            return;
+        }
+
         try {
             meta.setOwningPlayer(owner);
         } catch (NoSuchMethodError ignored) {
             meta.setOwner(owner.getName());
+        }
+    }
+
+    /**
+     * Spigot 1.18.1+ profile API, accessed reflectively because it is newer than the API we compile against.
+     */
+    private static boolean copySpigotProfile(SkullMeta meta, Player owner) {
+        try {
+            Class<?> profileClass = Class.forName("org.bukkit.profile.PlayerProfile");
+            Object profile = Player.class.getMethod("getPlayerProfile").invoke(owner);
+
+            if (!profileClass.isInstance(profile)) {
+                return false;
+            }
+
+            SkullMeta.class.getMethod("setOwnerProfile", profileClass).invoke(meta, profile);
+            return true;
+        } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
+            return false;
+        }
+    }
+
+    /**
+     * Paper's profile API; only linked when called, and fails cleanly elsewhere.
+     */
+    private static final class PaperProfiles {
+        static boolean copy(SkullMeta meta, Player owner) {
+            try {
+                meta.setPlayerProfile(owner.getPlayerProfile());
+                return true;
+            } catch (RuntimeException | LinkageError e) {
+                return false;
+            }
         }
     }
 }
