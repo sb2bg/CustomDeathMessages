@@ -13,13 +13,15 @@ public class CustomPlayerDeathEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final DeathMessageSetter setDeathMessage;
     private final DeathCause deathCause;
+    private final boolean melee;
     private final String originalDeathMessage;
     private final PlayerDeathEvent originalEvent;
     private final Entity killer;
     private final Player victim;
 
-    public CustomPlayerDeathEvent(DeathCause deathCause, String originalDeathMessage, PlayerDeathEvent originalEvent, Entity killer, Player victim, DeathMessageSetter setDeathMessage) {
+    public CustomPlayerDeathEvent(DeathCause deathCause, boolean melee, String originalDeathMessage, PlayerDeathEvent originalEvent, Entity killer, Player victim, DeathMessageSetter setDeathMessage) {
         this.deathCause = deathCause;
+        this.melee = melee;
         this.originalDeathMessage = originalDeathMessage;
         this.originalEvent = originalEvent;
         this.setDeathMessage = setDeathMessage;
@@ -29,6 +31,13 @@ public class CustomPlayerDeathEvent extends Event {
 
     public DeathCause getDeathCause() {
         return deathCause;
+    }
+
+    /**
+     * @return whether a player killed the victim with a direct (melee) hit
+     */
+    public boolean isMelee() {
+        return melee;
     }
 
     public void setDeathMessage(DeathMessage deathMessage, HoverTransforms hoverTransforms, PlayerDeathEvent event) {

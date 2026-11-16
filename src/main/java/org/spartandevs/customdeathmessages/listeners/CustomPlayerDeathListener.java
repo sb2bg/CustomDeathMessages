@@ -65,7 +65,8 @@ public class CustomPlayerDeathListener implements Listener {
                 }
             }
 
-            DeathMessageResolver resolver = weapon != null && weapon.getType() == Material.AIR
+            // the melee list is for players killed by a direct hit from an empty-handed player
+            DeathMessageResolver resolver = event.isMelee() && (weapon == null || weapon.getType() == Material.AIR)
                     ? config::getMeleeMessage
                     : () -> config.getMessage(event.getDeathCause());
 

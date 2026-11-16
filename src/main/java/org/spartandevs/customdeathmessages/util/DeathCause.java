@@ -144,13 +144,14 @@ public enum DeathCause {
         return aliases;
     }
 
-    public static <E extends Enum<E>> DeathCause from(Enum<E> namedEnum, CustomDeathMessages plugin) {
+    public static DeathCause fromOrNull(Enum<?> namedEnum) {
         String name = namedEnum.name().toUpperCase(Locale.ROOT);
         DeathCause deathCause = BY_NAME.get(name);
+        return deathCause != null ? deathCause : BY_ALIAS.get(name);
+    }
 
-        if (deathCause == null) {
-            deathCause = BY_ALIAS.get(name);
-        }
+    public static DeathCause from(Enum<?> namedEnum, CustomDeathMessages plugin) {
+        DeathCause deathCause = fromOrNull(namedEnum);
 
         if (deathCause != null) {
             return deathCause;

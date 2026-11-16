@@ -5,7 +5,6 @@ import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.InvalidCommandArgument;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spartandevs.customdeathmessages.commands.CDMCommand;
-import org.spartandevs.customdeathmessages.listeners.BukkitKilledByEntityListener;
 import org.spartandevs.customdeathmessages.listeners.BukkitLoginListener;
 import org.spartandevs.customdeathmessages.listeners.BukkitPlayerDeathListener;
 import org.spartandevs.customdeathmessages.listeners.CustomPlayerDeathListener;
@@ -16,7 +15,6 @@ import java.util.stream.IntStream;
 
 public final class CustomDeathMessages extends JavaPlugin {
     private ConfigManager configManager;
-    private MessagePropagator messagePropagator;
     private CooldownManager cooldownManager;
     private DiscordManager discordManager;
     private PlaceholderApiManager placeholderApiManager;
@@ -27,7 +25,6 @@ public final class CustomDeathMessages extends JavaPlugin {
         configManager = new ConfigManager(this);
         discordManager = new DiscordManager(this);
         placeholderApiManager = new PlaceholderApiManager(this);
-        messagePropagator = new MessagePropagator(this);
         cooldownManager = new CooldownManager();
 
         registerEvents();
@@ -37,7 +34,6 @@ public final class CustomDeathMessages extends JavaPlugin {
     private void registerEvents() {
         getServer().getPluginManager().registerEvents(new BukkitLoginListener(this), this);
         getServer().getPluginManager().registerEvents(new BukkitPlayerDeathListener(this), this);
-        getServer().getPluginManager().registerEvents(new BukkitKilledByEntityListener(this), this);
         getServer().getPluginManager().registerEvents(new CustomPlayerDeathListener(this), this);
     }
 
@@ -122,7 +118,6 @@ public final class CustomDeathMessages extends JavaPlugin {
             return false;
         }
 
-        messagePropagator.clear();
         cooldownManager.clearCooldowns();
         return true;
     }
@@ -133,10 +128,6 @@ public final class CustomDeathMessages extends JavaPlugin {
 
     public CooldownManager getCooldownManager() {
         return cooldownManager;
-    }
-
-    public MessagePropagator getMessagePropagator() {
-        return messagePropagator;
     }
 
     public DiscordManager getDiscordManager() {

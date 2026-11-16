@@ -1,7 +1,6 @@
 package org.spartandevs.customdeathmessages.listeners;
 
 import net.md_5.bungee.api.chat.BaseComponent;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -10,8 +9,7 @@ import org.spartandevs.customdeathmessages.CustomDeathMessages;
 import org.spartandevs.customdeathmessages.chat.DeathMessage;
 import org.spartandevs.customdeathmessages.chat.HoverTransforms;
 import org.spartandevs.customdeathmessages.events.CustomPlayerDeathEvent;
-import org.spartandevs.customdeathmessages.util.DeathCause;
-import org.spartandevs.customdeathmessages.util.MessageInfo;
+import org.spartandevs.customdeathmessages.util.DeathResolver;
 
 public class BukkitPlayerDeathListener implements Listener {
     public interface OriginalDeathMessageSetter {
@@ -27,25 +25,10 @@ public class BukkitPlayerDeathListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player victim = event.getEntity();
-        Entity killer = victim.getKiller();
-
-        if (victim.getLastDamageCause() == null) {
-            return;
-        }
-
-        DeathCause deathCause = DeathCause.from(victim.getLastDamageCause().getCause(), plugin);
-        MessageInfo propagated = plugin.getMessagePropagator().getDeathMessage(victim.getUniqueId());
-
-        if (propagated != null) {
-            deathCause = propagated.getDeathCause();
-
-            if (killer == null) {
-                killer = propagated.getKiller();
-            }
-        }
+        DeathResolver.Death death = DeathResolver.resolve(plugin, victim);
 
         CustomPlayerDeathEvent customPlayerDeathEvent = new CustomPlayerDeathEvent(
-                deathCause, event.getDeathMessage(), event, killer, victim,
+                death.getCause(), death.isMelee(), event.getDeathMessage(), event, death.getKiller(), victim,
                 (player, deathMessage, hoverTransforms, originalEvent) ->
                         setDeathMessage(event::setDeathMessage, player, deathMessage, hoverTransforms, originalEvent));
 
