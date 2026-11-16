@@ -9,6 +9,7 @@ import org.spartandevs.customdeathmessages.CustomDeathMessages;
 
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ConfigManager extends BaseDocumentManager {
     public ConfigManager(CustomDeathMessages plugin) {
@@ -52,7 +53,8 @@ public class ConfigManager extends BaseDocumentManager {
     }
 
     public boolean dropHead() {
-        return new Random().nextDouble() <= getHeadDropChance();
+        // strictly less than, so a chance of 0 can never drop a head
+        return ThreadLocalRandom.current().nextDouble() < getHeadDropChance();
     }
 
     public String getHeadName() {

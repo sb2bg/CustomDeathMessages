@@ -1,12 +1,10 @@
 package org.spartandevs.customdeathmessages.listeners;
 
-import dev.dbassett.skullcreator.SkullCreator;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
 import org.spartandevs.customdeathmessages.chat.DeathMessage;
 import org.spartandevs.customdeathmessages.chat.HoverTransforms;
@@ -14,6 +12,9 @@ import org.spartandevs.customdeathmessages.chat.PlaceholderPopulator;
 import org.spartandevs.customdeathmessages.events.CustomPlayerDeathEvent;
 import org.spartandevs.customdeathmessages.util.ConfigManager;
 import org.spartandevs.customdeathmessages.util.DeathCause;
+import org.spartandevs.customdeathmessages.util.PlayerHeads;
+
+import java.util.logging.Level;
 
 public class CustomPlayerDeathListener implements Listener {
     private final CustomDeathMessages plugin;
@@ -46,17 +47,7 @@ public class CustomPlayerDeathListener implements Listener {
         }
 
         if (config.dropHead()) {
-            ItemStack item = SkullCreator.itemFromUuid(event.getVictim().getUniqueId());
-            ItemMeta meta = item.getItemMeta();
-
-            if (meta == null) {
-                return;
-            }
-
-            meta.setDisplayName(populator.replace(event.getVictim(), config.getHeadName()));
-            item.setItemMeta(meta);
-
-            event.getVictim().getWorld().dropItemNaturally(event.getVictim().getLocation(), item);
+            dropHead(event, populator.replace(event.getVictim(), config.getHeadName()));
         }
 
         if (config.doPvpMessages() && event.getKiller() instanceof Player) {
@@ -89,6 +80,16 @@ public class CustomPlayerDeathListener implements Listener {
                     : DeathMessage.MessageType.STRING;
 
             event.setDeathMessage(new DeathMessage(message, populator, type), hoverTransforms, event.getEvent());
+        }
+    }
+
+    private void dropHead(CustomPlayerDeathEvent event, String name) {
+        try {
+            // Add to the event drops (rather than spawning it) so grave/death-chest plugins can capture it
+            event.getEvent().getDrops().add(PlayerHeads.create(event.getVictim(), name));
+        } catch (RuntimeException | LinkageError e) {
+            // A failing head drop must never prevent the death message from being sent
+            plugin.getLogger().log(Level.WARNING, "Could not create a player head for " + event.getVictim().getName(), e);
         }
     }
 
