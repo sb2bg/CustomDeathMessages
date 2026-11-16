@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.spartandevs.customdeathmessages.CustomDeathMessages;
 import org.spartandevs.customdeathmessages.chat.BungeeRenderer;
@@ -146,6 +147,16 @@ public class DeathListener implements Listener {
         if (pendingDeath.richMessage != null && pendingDeath.legacyMessage.equals(event.getDeathMessage())) {
             broadcast(event, pendingDeath);
         }
+    }
+
+    /**
+     * The killer is resolved from {@link Player#getLastDamageCause()}, which survives respawning. On 1.8, damage
+     * without a source (and killing with {@code setHealth(0)} on any version) fires no damage event, so a death
+     * in the new life would otherwise be blamed on whatever killed the player last time.
+     */
+    @EventHandler
+    public void onRespawn(PlayerRespawnEvent event) {
+        event.getPlayer().setLastDamageCause(null);
     }
 
     /**
