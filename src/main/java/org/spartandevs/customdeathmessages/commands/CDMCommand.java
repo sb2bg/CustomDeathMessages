@@ -17,7 +17,7 @@ import org.spartandevs.customdeathmessages.util.DeathCause;
 import java.util.List;
 import java.util.Set;
 
-@CommandAlias("customdeathmessages|customdeathmessage|deathmessages|cdm")
+@CommandAlias("cdm|customdeathmessages|customdeathmessage|deathmessages|deathmessage")
 public class CDMCommand extends CDMBaseCommand {
     @HelpCommand
     public void onHelp(CommandSender sender, CommandHelp help) {

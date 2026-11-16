@@ -7,10 +7,8 @@ website: spartandevs.org
 api-version: 1.13
 softdepend: [ EssentialsDiscord, DiscordSRV, PlaceholderAPI ]
 
-commands:
-  cdm:
-    description: Add, remove, edit, disable, or list death messages.
-    aliases: [ customdeathmessages, customdeathmessage, deathmessage, deathmessages, cdm ]
+# Commands are registered at runtime by ACF (see CDMCommand). Declaring them here as well would create a
+# second, executor-less command that silently swallows any alias ACF does not know about.
 
 permissions:
   cdm.reload:
