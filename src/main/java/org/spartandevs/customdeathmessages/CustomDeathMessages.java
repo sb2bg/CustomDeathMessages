@@ -3,42 +3,64 @@ package org.spartandevs.customdeathmessages;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.InvalidCommandArgument;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spartandevs.customdeathmessages.commands.CDMCommand;
-import org.spartandevs.customdeathmessages.listeners.BukkitKilledByEntityListener;
-import org.spartandevs.customdeathmessages.listeners.BukkitLoginListener;
-import org.spartandevs.customdeathmessages.listeners.BukkitPlayerDeathListener;
-import org.spartandevs.customdeathmessages.listeners.CustomPlayerDeathListener;
+import org.spartandevs.customdeathmessages.listeners.UpdateNotifyListener;
+import org.spartandevs.customdeathmessages.listeners.DeathListener;
 import org.spartandevs.customdeathmessages.util.*;
 
+import java.io.IOException;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public final class CustomDeathMessages extends JavaPlugin {
+    private static final int SPIGOT_RESOURCE_ID = 69605;
+    private static final long UPDATE_CHECK_INTERVAL_TICKS = 20L * 60 * 60 * 6;
+
     private ConfigManager configManager;
-    private MessagePropagator messagePropagator;
     private CooldownManager cooldownManager;
-    private DiscordManager discordManager;
-    private PlaceholderApiManager placeholderApiManager;
+    private PlaceholderApiHook placeholderApi;
 
     @Override
     public void onEnable() {
-        // register bukkit related managers in onEnable to maintain softdepend
         configManager = new ConfigManager(this);
-        discordManager = new DiscordManager(this);
-        placeholderApiManager = new PlaceholderApiManager(this);
-        messagePropagator = new MessagePropagator(this);
+        String error = configManager.load();
+
+        if (error != null) {
+            getLogger().severe("Could not load config.yml, so CustomDeathMessages is disabled. Fix the file and restart:");
+            getLogger().severe(error);
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        registerMetrics();
+        // created in onEnable so soft dependencies (PlaceholderAPI) are already enabled
+        placeholderApi = new PlaceholderApiHook(this);
         cooldownManager = new CooldownManager();
 
-        registerEvents();
+        getServer().getPluginManager().registerEvents(new DeathListener(this), this);
+        startUpdateChecks();
         registerCommands();
     }
 
-    private void registerEvents() {
-        getServer().getPluginManager().registerEvents(new BukkitLoginListener(this), this);
-        getServer().getPluginManager().registerEvents(new BukkitPlayerDeathListener(this), this);
-        getServer().getPluginManager().registerEvents(new BukkitKilledByEntityListener(this), this);
-        getServer().getPluginManager().registerEvents(new CustomPlayerDeathListener(this), this);
+    private void startUpdateChecks() {
+        UpdateChecker updateChecker = new UpdateChecker(SPIGOT_RESOURCE_ID);
+        getServer().getPluginManager().registerEvents(new UpdateNotifyListener(this, updateChecker), this);
+        // check at startup and every few hours in the background, never once per join
+        getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
+            if (!configManager.isCheckUpdatesEnabled()) {
+                return;
+            }
+
+            try {
+                updateChecker.check();
+            } catch (IOException e) {
+                getLogger().info("Failed to check for updates: " + e.getMessage());
+            }
+        }, 0L, UPDATE_CHECK_INTERVAL_TICKS);
     }
 
     @SuppressWarnings("deprecation") // Unstable API
@@ -46,41 +68,41 @@ public final class CustomDeathMessages extends JavaPlugin {
         BukkitCommandManager commandManager = new BukkitCommandManager(this);
         commandManager.enableUnstableAPI("help");
 
-        commandManager.getCommandContexts().registerContext(DeathCause.class, c -> {
-            String path = c.popFirstArg();
-            DeathCause cause = DeathCause.fromPathSingle(path);
-
-            if (cause == null) {
-                throw new InvalidCommandArgument("Invalid path.");
-            }
-
-            return cause;
-        });
-
+        commandManager.getCommandCompletions().registerAsyncCompletion("messagePaths", c -> configManager.getMessagePaths());
         commandManager.getCommandCompletions().registerAsyncCompletion("deathMessageIndices", c -> {
-            DeathCause path = c.getContextValue(DeathCause.class);
+            String path = c.getContextValueByName(String.class, "path");
             return IntStream.range(0, configManager.getMessagesCount(path)).mapToObj(String::valueOf).collect(Collectors.toList());
         });
 
-        commandManager.getCommandCompletions().registerStaticCompletion("stringConfigPaths", configManager::getStringConfigPaths);
-        commandManager.getCommandCompletions().registerStaticCompletion("boolConfigPaths", configManager::getBoolConfigPaths);
-        commandManager.getCommandCompletions().registerStaticCompletion("numConfigPaths", configManager::getNumConfigPaths);
-        commandManager.getCommandCompletions().registerStaticCompletion("deathMessagePaths", DeathCause.PATH_SET);
+        // async (re-evaluated on every tab) so completions reflect the config after a reload
+        commandManager.getCommandCompletions().registerAsyncCompletion("stringConfigPaths", c -> configManager.getStringConfigPaths());
+        commandManager.getCommandCompletions().registerAsyncCompletion("boolConfigPaths", c -> configManager.getBoolConfigPaths());
+        commandManager.getCommandCompletions().registerAsyncCompletion("numConfigPaths", c -> configManager.getNumConfigPaths());
+
+        commandManager.getCommandConditions().addCondition(String.class, "messagePath", (c, exec, value) -> {
+            if (!configManager.hasMessageList(value)) {
+                throw new InvalidCommandArgument("Unknown death message list '" + value + "'.");
+            }
+        });
+
+        commandManager.getCommandConditions().addCondition(String.class, "newMessagePath", (c, exec, value) -> {
+            if (!MessagePaths.isMessagePath(value)) {
+                throw new InvalidCommandArgument("Death message lists must end with '" + MessagePaths.SUFFIX + "'.");
+            }
+        });
 
         commandManager.getCommandConditions().addCondition(int.class, "indexInBounds", (c, exec, value) -> {
             if (value < 0) {
                 throw new ConditionFailedException("Index cannot be negative.");
             }
 
-            DeathCause path = (DeathCause) exec.getResolvedArg(DeathCause.class);
+            String path = (String) exec.getPassedArgs().get("path");
             int count = configManager.getMessagesCount(path);
 
             if (value >= count) {
-                throw new ConditionFailedException("Index " + value + " is out of bounds. The maximum index is " + (count - 1) + ".");
-            }
-
-            if (count == 1) {
-                throw new ConditionFailedException("Cannot remove the last death message.");
+                throw new ConditionFailedException(count == 0
+                        ? "'" + path + "' has no messages to remove."
+                        : "Index " + value + " is out of bounds. The maximum index is " + (count - 1) + ".");
             }
         });
 
@@ -110,21 +132,39 @@ public final class CustomDeathMessages extends JavaPlugin {
 
         commandManager.registerCommand(new CDMCommand().setExceptionHandler((command, registeredCommand, sender, args, t) -> {
             sender.sendMessage("An error occurred while executing the command. Please check the console for more information.");
-            t.printStackTrace();
+            getLogger().log(Level.SEVERE, "Error executing /" + command.getName() + " " + String.join(" ", args), t);
             return true;
         }));
     }
 
-    public boolean reload() {
-        boolean reloaded = configManager.reload();
+    private void registerMetrics() {
+        Metrics metrics = new Metrics(this, 7287);
+        metrics.addCustomChart(new SimplePie("head_drop_percentage", () -> String.valueOf(configManager.getHeadDropChance())));
+        metrics.addCustomChart(new SimplePie("enable_lightning", () -> enabled(configManager.doLightningStrike())));
+        metrics.addCustomChart(new SimplePie("enable_global_messages", () -> enabled(configManager.isGlobalMessageEnabled())));
+        metrics.addCustomChart(new SimplePie("enable_pvp_messages", () -> enabled(configManager.doPvpMessages())));
+        metrics.addCustomChart(new SimplePie("enable_entity_name_messages", () -> enabled(configManager.isCustomNamedEntityMessageEnabled())));
+        metrics.addCustomChart(new SimplePie("enable_original_hover_message", () -> enabled(configManager.isOriginalOnHoverEnabled())));
+        metrics.addCustomChart(new SimplePie("enable_item_tooltip_message", () -> enabled(configManager.isItemOnHoverEnabled())));
+    }
 
-        if (!reloaded) {
-            return false;
+    private static String enabled(boolean value) {
+        return value ? "Enabled" : "Disabled";
+    }
+
+    /**
+     * Reloads config.yml. If it cannot be loaded the previous configuration stays active.
+     *
+     * @return {@code null} on success, otherwise a description of the problem
+     */
+    public String reload() {
+        String error = configManager.load();
+
+        if (error == null) {
+            cooldownManager.clearCooldowns();
         }
 
-        messagePropagator.clear();
-        cooldownManager.clearCooldowns();
-        return true;
+        return error;
     }
 
     public ConfigManager getConfigManager() {
@@ -135,15 +175,7 @@ public final class CustomDeathMessages extends JavaPlugin {
         return cooldownManager;
     }
 
-    public MessagePropagator getMessagePropagator() {
-        return messagePropagator;
-    }
-
-    public DiscordManager getDiscordManager() {
-        return discordManager;
-    }
-
-    public PlaceholderApiManager getPlaceholderApiManager() {
-        return placeholderApiManager;
+    public PlaceholderApiHook getPlaceholderApi() {
+        return placeholderApi;
     }
 }

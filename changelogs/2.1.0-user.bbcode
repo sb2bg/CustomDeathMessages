@@ -1,0 +1,29 @@
+[B][SIZE=6]CustomDeathMessages 2.1.0[/SIZE][/B]
+
+[B][SIZE=5]Fixes[/SIZE][/B]
+[LIST]
+[*]Fixed death messages not working on 1.8 - 1.12 when a player head dropped.
+[*]Fixed PvP death messages not showing at all on 26.x.
+[*]Fixed the weapon hover not showing the item's name and enchantments on 1.16 and newer.
+[*]Fixed players getting credit for kills they didn't make.
+[*]Fixed dying to your own arrow counting as a PvP kill.
+[*]Fixed hover messages ignoring the [ICODE]showDeathMessages[/ICODE] gamerule and vanish plugins.
+[*]Fixed a mistake in config.yml wiping all of your messages on reload.
+[*]Fixed [ICODE]/deathmessage[/ICODE] not doing anything.
+[*]Fixed players being able to add colors to death messages through item names.
+[*]Fixed hex colors showing the wrong color on servers older than 1.16.
+[/LIST]
+
+[B][SIZE=5]New[/SIZE][/B]
+[LIST]
+[*]Any mob can have its own messages: add a list named after it, for example [ICODE]creaking-messages[/ICODE].
+[*]Added messages for the creaking and zombie nautilus.
+[*]An empty message list now uses the vanilla death message, and a blank message ([ICODE]""[/ICODE]) hides it.
+[*]Player heads are added to the death drops, so grave plugins can pick them up.
+[/LIST]
+
+[B][SIZE=5]Changes[/SIZE][/B]
+[LIST]
+[*][ICODE]message-cooldown[/ICODE] now only affects the death message.
+[*]Lightning and head drops are now off by default for new installs. Existing configs are not changed.
+[/LIST]

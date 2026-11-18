@@ -5,12 +5,12 @@ authors: [ Sullivan, JP ]
 description: Create highly customizable death messages
 website: spartandevs.org
 api-version: 1.13
+# Discord bridges are listed so they load first: on servers without Adventure (Spigot, old Paper) their
+# MONITOR death listeners then run before ours and forward the plain-text custom death message.
 softdepend: [ EssentialsDiscord, DiscordSRV, PlaceholderAPI ]
 
-commands:
-  cdm:
-    description: Add, remove, edit, disable, or list death messages.
-    aliases: [ customdeathmessages, customdeathmessage, deathmessage, deathmessages, cdm ]
+# Commands are registered at runtime by ACF (see CDMCommand). Declaring them here as well would create a
+# second, executor-less command that silently swallows any alias ACF does not know about.
 
 permissions:
   cdm.reload:
