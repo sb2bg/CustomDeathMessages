@@ -1,33 +1,29 @@
 [B][SIZE=6]CustomDeathMessages 2.1.0[/SIZE][/B]
 
-[B][SIZE=5]Highlights[/SIZE][/B]
+[B][SIZE=5]Fixes[/SIZE][/B]
 [LIST]
-[*]Fixed death messages breaking on 1.8 - 1.12.0 whenever a head dropped.
-[*]Fixed PvP deaths showing no death message at all on 26.x.
-[*]Item hovers now show the weapon's real name, enchantments and lore on every version (1.16+ showed a plain item).
-[*]Deaths are credited correctly: no more "You killed ..." for a player who only hit someone before they fell, no stale killers after cancelled hits or totems, and dying to your own arrow is not a PvP kill.
-[*]Hover messages now respect the [ICODE]showDeathMessages[/ICODE] gamerule, vanish plugins and cancelled deaths, and Discord bridges forward them with their own formatting.
-[*]A typo in [ICODE]config.yml[/ICODE] can no longer wipe your messages: [ICODE]/cdm reload[/ICODE] keeps the working config and shows the line of the error.
-[*]New mobs: add a list named after any mob or damage cause (for example [ICODE]creaking-messages[/ICODE]) and it is used automatically.
-[*]Item names and nicknames can no longer inject colors or placeholders into death messages.
-[*][ICODE]/deathmessage[/ICODE] works again.
+[*]Fixed death messages not working on 1.8 - 1.12 when a player head dropped.
+[*]Fixed PvP death messages not showing at all on 26.x.
+[*]Fixed the weapon hover not showing the item's name and enchantments on 1.16 and newer.
+[*]Fixed players getting credit for kills they didn't make.
+[*]Fixed dying to your own arrow counting as a PvP kill.
+[*]Fixed hover messages ignoring the [ICODE]showDeathMessages[/ICODE] gamerule and vanish plugins.
+[*]Fixed a mistake in config.yml wiping all of your messages on reload.
+[*]Fixed [ICODE]/deathmessage[/ICODE] not doing anything.
+[*]Fixed players being able to add colors to death messages through item names.
+[*]Fixed hex colors showing the wrong color on servers older than 1.16.
+[/LIST]
+
+[B][SIZE=5]New[/SIZE][/B]
+[LIST]
+[*]Any mob can have its own messages: add a list named after it, for example [ICODE]creaking-messages[/ICODE].
+[*]Added messages for the creaking and zombie nautilus.
+[*]An empty message list now uses the vanilla death message, and a blank message ([ICODE]""[/ICODE]) hides it.
+[*]Player heads are added to the death drops, so grave plugins can pick them up.
 [/LIST]
 
 [B][SIZE=5]Changes[/SIZE][/B]
 [LIST]
-[*]An empty message list now uses the vanilla death message; a blank message ([ICODE]""[/ICODE]) hides it. The last message of a list can be removed.
-[*][ICODE]/cdm list[/ICODE] shows the raw text with [ICODE]&[/ICODE] codes, [ICODE]/cdm set number[/ICODE] validates values.
-[*][ICODE]message-cooldown[/ICODE] now only limits the global death message.
-[*]Heads are added to the death drops so grave plugins can pick them up.
-[*]Hex colors are approximated on servers older than 1.16.
-[*]Update checks no longer contact SpigotMC on every login.
-[*]New installs have lightning and head drops turned off by default (existing configs are unchanged).
-[/LIST]
-
-[B][SIZE=5]Notes[/SIZE][/B]
-[LIST]
-[*]Supports Spigot and Paper 1.8 through 26.x.
-[*]Your config is updated automatically ([ICODE]config-version[/ICODE] 4); your messages and settings are kept.
-[*]If you use head drops: they never actually worked before 2.0.2, so check [ICODE]drop-head-percentage[/ICODE] (the old default was 0.5 = 50%).
-[*]Plugins listening to [ICODE]CustomPlayerDeathEvent[/ICODE] should use [ICODE]PlayerDeathEvent[/ICODE] instead.
+[*][ICODE]message-cooldown[/ICODE] now only affects the death message.
+[*]Lightning and head drops are now off by default for new installs. Existing configs are not changed.
 [/LIST]
